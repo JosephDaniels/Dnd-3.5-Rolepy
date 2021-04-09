@@ -1,0 +1,17 @@
+name john
+charclass fighter
+race human
+sex male
+weight 150
+height 5'5
+skin fair
+eyes brown
+hair black
+age 21
+build lanky
+max_hp 10
+curr_hp 10
+experience 250
+gold 250
+attack 2
+armor 12

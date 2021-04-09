@@ -1,13 +1,10 @@
 from constant import *
 
-nathanfile = "nathan.txt"
-carolinefile = "caroline.txt"
 testfile = "test.txt"
 
 
-class CharacterSheet(object):
-    """ A level system similar to Dungeons and Dragons 3.5 Leveling. Uses a
-        value of EXP points, works with event handling and without. """
+class Charactersheet(object):
+    """ A module to handle Dungeons and Dragons Version 3.5 Characters. """
 
     CORE_ATTRIBUTES = ["attack", "armor", "name", "max_hp", "curr_hp", "init_mod"]
     
@@ -30,20 +27,22 @@ class CharacterSheet(object):
             for key in self.__dict__.keys():
                 self.__dict__[key] = dict_file[key]
         else:
-            self.attack = 1
+            print ("Character file not found.")
+            self.attack = 0
             self.armor = 10
             self.experience = 0
-            self.currency = 0
+            self.currency = None
+            self.inventory = None
             self.name = name
             self.charclass = charclass
             self.race = race
             self.introduction()
-        self.init_mod = 1
-        self.weapon = "shotgun"
-        self.inventory = ""
+        self.init_mod = 0
+        self.weapon = None
+        self.inventory = None
         self.max_hp = 10
         self.curr_hp = 10
-        self.dead = False
+        self.alive = True
         self.level_requirement = 1000
         self.exp_bonus = 1000
         self.level = 1
@@ -104,13 +103,13 @@ class CharacterSheet(object):
 
     def add_gold(self, val):
         self.gold+=val
-	self.tell_gold()
+	self.dump_gold_info()
 
     def add_currency(self, val, money_type):
         conversion_factor = money_dictionary[money_type]
         self.currency+=value*conversion_factor
 
-    def tell_gold(self):
+    def dump_gold_info(self):
 	print ("%s has a pouch containing %i gold pieces!." % (self.name, self.gold))
 
     
@@ -168,7 +167,7 @@ def test_functionality():
     "exp":CharacterSheet.add_experience,
     "gold":CharacterSheet.add_gold
     }
-    newplayer = CharacterSheet()
+    newplayer = Charactersheet()
     while True:
         text = raw_input()
         params = text.split()
@@ -177,6 +176,10 @@ def test_functionality():
             apply(command, [newplayer])
         if len(params) == 2:
             apply(command, [newplayer,int(params[1])])
+
+def test_2():
+    new_player = Charactersheet()
         
 if __name__ == "__main__":
-    test_functionality()
+##    test_functionality()
+    test_2()
