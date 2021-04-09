@@ -5,10 +5,14 @@ from dice import *
 
 from TOKEN import * ## You will need to go into the file and add your own token.
 
-dnd_players = ['StabbyStabby#1327', 'Coruba#1432']
+dnd_players = ['StabbyStabby#1327', 'Coruba#1432', 'mystia#2889',
+               'Frail Faintheart#5181', 'Magromancer#6352', 'NormL75#0235']
 
-valid_characters = {'StabbyStabby#1327' : ['Vsevellar', 'Zandrius'],
-                    'Coruba#1432'       : ['Ulfric']}
+valid_characters = {'StabbyStabby#1327' : ['Vsevellar', 'Zandrius Selwynn'],
+                    'Coruba#1432'       : ['Ulfric'],
+                    'mystia#2889'       : ['Chailaine'],
+                    'Magromancer#6352'  : ['Cymancer'],
+                    'NormL75#0235'      : ['Kaelyn']}
 
 logged_in_as = {}
 
@@ -34,7 +38,8 @@ async def on_message(message):
             await message.channel.send("You are not allowed to play")
             return
         try:
-            login_cmd, target_character = message.content.split(" ")
+            command_line = message.content.split(" ")
+            target_character = " ".join(command_line[1:])
         except ValueError:
             await message.channel.send("Failed to login.")
             return
