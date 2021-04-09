@@ -2,6 +2,7 @@ from constant import *
 
 johnfile = "john.txt"
 chaifile = "chailaine.txt"
+testfile = "test.txt"
 
 class Charactersheet(object):
     """ A module to handle Dungeons and Dragons Version 3.5 Characters. """
@@ -12,9 +13,8 @@ class Charactersheet(object):
                  name="Unnamed", charclass= "", race = ""):
         if save_file:
             data = self.load(save_file)
-            print (data)
-            self.__dict__.update(data) ## ISSUES
-            
+
+            self.__dict__.update(data)
             for key in self.__dict__.keys():
                 if key in TITLE_INFO:
                     print (key+" was loaded succesfully.")
@@ -35,7 +35,6 @@ class Charactersheet(object):
                 self.__dict__[key] = dict_file[key]
         else:
             print ("Character file not found.")
-        self.init_mod = 0
         self.weapon = None
         self.inventory = None
         self.max_hp = 10
@@ -45,6 +44,23 @@ class Charactersheet(object):
         self.exp_bonus = 1000
         self.level = 1
         self.do_leveling()
+
+        self.dexterity = 10
+        self.misc = 2
+
+    # example of using a property declaration
+    # in usage it looks like a regular property, but it's really calculated
+    def _initiative_getter(self):
+        return self.calc_modifier(self.dexterity)
+
+    initiative = property(_initiative_getter, None)
+
+        
+    def calc_modifier(self, attribute):
+        if attribute%2 == 1: ## Test if the attribute divides nicely
+            attribute = attribute-1 ## If not, remove one to make it even
+        modifier = int((attribute-10)*0.5)
+        return modifier
 
     def valid_input(self, expected_list):
         text = raw_input()
@@ -151,24 +167,28 @@ class Charactersheet(object):
         self.save(testfile)
 
     def tell_me_about(self):
-        print ("%s is a level %i %s %s with %i experience points under their belt." % (self.name, self.level, self.race, self.character_class, self.experience))
+        print ("%s is a level %s %s %s with %s experience points under their belt." % (self.name, self.level, self.race, self.character_class, self.experience))
     
 def test_functionality():
+    
     input_dictionary = {
     "me":Charactersheet.tell_me_about,
     "save":Charactersheet.quick_save,
     "exp":Charactersheet.add_experience,
     "gold":Charactersheet.add_gold
     }
+    
     newplayer = Charactersheet(save_file=chaifile)
+    
     while True:
         txt = input()
         params = txt.split()
         command = input_dictionary[params[0]]
         if len(params) == 1:
-            apply(command, [newplayer])
+            command(newplayer)
+            print(newplayer.initiative)
         if len(params) == 2:
-            apply(command, [newplayer,int(params[1])])
+            command(newplayer)
         
 if __name__ == "__main__":
     test_functionality()
