@@ -5,48 +5,30 @@ chaifile = "chailaine.txt"
 testfile = "test.txt"
 
 class Charactersheet(object):
+    
     """ A module to handle Dungeons and Dragons Version 3.5 Characters. """
 
-    CORE_ATTRIBUTES = ["attack", "armor", "name", "max_hp", "curr_hp", "init_mod"]
-    
-    def __init__(self, save_file=None, dict_file = None,
-                 name="Unnamed", charclass= "", race = ""):
-        if save_file:
-            data = self.load(save_file)
-
+    def __init__(self, character_file=None):
+        
+        if not character_file:
+            print ("Character file not found.")
+        else: ## Character file found
+            data = self.load(character_file)
             self.__dict__.update(data)
             for key in self.__dict__.keys():
-                if key in TITLE_INFO:
+                if key in TITLE_INFO or key in CHARACTER_DETAILS: ## These are all strings
                     print (key+" was loaded succesfully.")
                     self.__dict__[key] = str(self.__dict__[key])
-                elif key in STATS:
+                elif key in ATTRIBUTES or key in STATS: ## These are all integers
                     print (key+" was loaded succesfully.")
-                    self.__dict__[key] = str(self.__dict__[key])
-                elif key in ATTRIBUTES:
-                    print (key+" was loaded succesfully.")
-                    self.__dict__[key] = str(self.__dict__[key])
-                elif key in CHARACTER_DETAILS:
-                    print (key+" was loaded succesfully.")
-                    self.__dict__[key] = str(self.__dict__[key])
-                elif key not in TITLE_INFO or STATS or ATTRIBUTES:
+                    self.__dict__[key] = int(self.__dict__[key])
+                else:
                     print ("attempted to load "+key+ " but failed.")
-        elif dict_file:
-            for key in self.__dict__.keys():
-                self.__dict__[key] = dict_file[key]
-        else:
-            print ("Character file not found.")
-        self.weapon = None
-        self.inventory = None
-        self.max_hp = 10
-        self.curr_hp = 10
+                    
+        self.weapon_righthand = {}
+        self.weapon_lefthand = {}
+        self.inventory = []
         self.alive = True
-        self.level_requirement = 1000
-        self.exp_bonus = 1000
-        self.level = 1
-        self.do_leveling()
-
-        self.dexterity = 10
-        self.misc = 2
 
     # example of using a property declaration
     # in usage it looks like a regular property, but it's really calculated
@@ -102,7 +84,7 @@ class Charactersheet(object):
         self.armor+=1
 
     def add_experience(self, value):
-        self.experience+=value
+        self.experience+=int(value)
         self.try_lvl_up()
 
     def try_lvl_up(self):
@@ -127,23 +109,27 @@ class Charactersheet(object):
         print ("%s has a pouch containing %i gold pieces!." % (self.name, self.gold))
 
     
-    def do_leveling(self):
-        x =0
+    def _calc_level(self, debug=False):
+        level_requirement = 1000
+        exp_bonus = 1000
+        level = 1
         while True:
-            if int(self.experience) >= self.level_requirement:
-                x+=1
-                self.level+=1
-                self.exp_bonus = self.exp_bonus+1000
-                self.level_requirement += self.exp_bonus     
+            if int(self.experience) >= level_requirement:
+                level+=1
+                exp_bonus = exp_bonus+1000
+                level_requirement += exp_bonus    
             else:
-                print ("A level %i %s %s named %s has been initialized." % (self.level, self.race, self.character_class, self.name))
-                return False  
+                break
+        print ("A level %i %s %s named %s has been initialized." % (level, self.race, self.character_class, self.name))
+        return level
+            
+    level = property(_calc_level, None)
             
     def load(self, filename):
         """reads a text file and reads the data, turning it into names, experience etc."""
         profile = {}
-        save_file = open(filename, 'r')
-        for line in save_file:
+        character_file = open(filename, 'r')
+        for line in character_file:
             try:
                 x = line.split()
                 key, value = x[0],x[1]
@@ -151,7 +137,7 @@ class Charactersheet(object):
             except:
                 print("Found an invalid line in the file")
                 print ("|" + line + "|")
-        save_file.close()
+        character_file.close()
         return profile
 
     def save(self, filename):
@@ -178,7 +164,7 @@ def test_functionality():
     "gold":Charactersheet.add_gold
     }
     
-    newplayer = Charactersheet(save_file=chaifile)
+    newplayer = Charactersheet(character_file=johnfile)
     
     while True:
         txt = input()
@@ -186,9 +172,8 @@ def test_functionality():
         command = input_dictionary[params[0]]
         if len(params) == 1:
             command(newplayer)
-            print(newplayer.initiative)
         if len(params) == 2:
-            command(newplayer)
+            command(newplayer, int(params[1]))
         
 if __name__ == "__main__":
     test_functionality()

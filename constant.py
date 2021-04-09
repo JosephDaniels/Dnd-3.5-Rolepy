@@ -9,9 +9,9 @@ ATTRIBUTES = [
     "charisma"
     ]
 
-STATS = ["max_hp", "current_hp", "experience", "gold", "attack", "armor"]
+STATS = ["max_hp", "current_hp", "experience", "gold", "attack", "armor"] ## All of these are integers.
 
-CHARACTER_DETAILS = ["sex", "weight", "height", "skin", "eyes", "hair", "age", "build"]
+CHARACTER_DETAILS = ["gender", "weight", "height", "skin", "eyes", "hair", "age", "build"]
 
 DND_RACES = {
     "Human":"The most ambitious creatures, they are the most varied in their niches. The most adaptive of the races.",

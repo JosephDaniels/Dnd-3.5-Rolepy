@@ -5,9 +5,12 @@ from dice import *
 
 from TOKEN import * ## You will need to go into the file and add your own token.
 
-characters = ["Joey"]
+dnd_players = ['StabbyStabby#1327', 'Coruba#1432']
 
-logged_in_userlist = {}
+valid_characters = {'StabbyStabby#1327' : ['Vsevellar', 'Zandrius'],
+                    'Coruba#1432'       : ['Ulfric']}
+
+logged_in_as = {}
 
 client = discord.Client()
 
@@ -18,84 +21,78 @@ async def on_ready():
 @client.event
 async def on_message(message):
 
+    user = str(message.author)
+
     if message.author == client.user:
         return
 
     if message.content.startswith('!hello'):
-        user = str(message.author)
         await message.channel.send('Hello, ' + user)
 
     if message.content.startswith('!login'):
-        user = str(message.author)
-        command, character_name = message.content.split(" ")
-        if character_name in characters:
-            ## NEEDS MORE AUTHENTICATION
-            if character_name not in logged_in_userlist.values(): ## Not already logged in
-                logged_in_userlist[user] = character_name
-                print ("Successfully logged " + user + " in as the character " + character_name) 
-            elif character_name in logged_in_userlist.values():
-                print ("You are already logged in as " + character_name)
+        if not user in dnd_players:
+            await message.channel.send("You are not allowed to play")
+            return
+        try:
+            login_cmd, target_character = message.content.split(" ")
+        except ValueError:
+            await message.channel.send("Failed to login.")
+            return
+        if target_character in logged_in_as.keys(): ## Already logged in
+            await message.channel.send(user+", you are already logged in as " + target_character)
+        else: #Not already logged in
+            if target_character not in valid_characters[user]:
+                await message.channel.send("You cannot login as "+target_character+", "+target_character+" is not your character.")
+            else:
+                logged_in_as[user] = target_character
+                await message.channel.send("Successfully logged " + user + " in as the character " + target_character) 
 
     if message.content.startswith('!logout'):
-        user = str(message.author)
-        print (logged_in_userlist.keys())
-        if user in logged_in_userlist.keys():
-            character_name = logged_in_userlist[user]
-            logged_in_userlist.pop(user)
-            print(user + ", your character " + character_name + " has been logged out.")
-        elif user not in logged_in_userlist.keys():
-            print (user+ ", you're not logged in!")
+        if user in logged_in_as.keys():
+            character_name = logged_in_as[user]
+            logged_in_as.pop(user)
+            await message.channel.send(user + ", your character " + character_name + " has been logged out.")
         else:
-            print ("Something bad happened")
+            await message.channel.send ("You're not logged in!")
 
     if message.content.startswith('!rolld3'):
-        user = str(message.author)
         await message.channel.send(user + ' rolled a ' + str(rolld3()) + ' on a d3')
 
     if message.content.startswith('!rolld4'):
-        user = str(message.author)
         await message.channel.send(user + ' rolled a ' + str(rolld4()) + ' on a d4')
 
     if message.content.startswith('!rolld6'):
-        user = str(message.author)
         await message.channel.send(user + ' rolled a ' + str(rolld6()) + ' on a d6')
 
     if message.content.startswith('!rolld8'):
-        user = str(message.author)
         await message.channel.send(user + ' rolled a ' + str(rolld8()) + ' on a d8')
 
     if message.content.startswith('!rolld12'):
-        user = str(message.author)
         await message.channel.send(user + ' rolled a ' + str(rolld12()) + ' on a d12')
 
     if message.content.startswith('!rolld16'):
-        user = str(message.author)
         await message.channel.send(user + ' rolled a ' + str(rolld16()) + ' on a d16')
 
     if message.content.startswith('!rolld20'):
-        user = str(message.author)
         await message.channel.send(user + ' rolled a ' + str(rolld20()) + ' on a d20')
 
     if message.content.startswith('!rolld24'):
-        user = str(message.author)
         await message.channel.send(user + ' rolled a ' + str(rolld24()) + ' on a d24')
 
     if message.content.startswith('!rolld1000'):
-        user = str(message.author)
         await message.channel.send(user + ' rolled a ' + str(rolld1000()) + ' on a d1000')
 
     elif message.content.startswith('!rolld100'):
-        user = str(message.author)
         await message.channel.send(user + ' rolled a ' + str(rolld100()) + ' on a d100')
 
     elif message.content.startswith('!rolld10'):
-        user = str(message.author)
         await message.channel.send(user + ' rolled a ' + str(rolld10()) + ' on a d10')
 
     if message.content == '!help':
         await message.author.send("Need some help using the Roleplay Bot?\n" +
         "Here's a list of available commands. More to come.\n" +
-        "!help\n" +
-        "!rolld3\n"+"!rolld4\n !rolld6\n !rolld8\n !rolld10\n !rolld12\n !rolld20\n"+"!rolld100\n"+"!rolld1000\n")
+        "!help\n !login $user\n !logout\n" +
+        "!rolld3\n !rolld4\n !rolld6\n !rolld8\n !rolld10\n !rolld12\n !rolld16\n !rolld20\n"+
+        "!rolld24\n !rolld100\n !rolld1000\n")
 
 client.run(TOKEN)
