@@ -1,5 +1,6 @@
+TITLE_INFO = ["name", "character_class", "race"]
 
-DND_ATTRIBUTES = [
+ATTRIBUTES = [
     "strength",
     "dexterity",
     "constitution",
@@ -8,12 +9,9 @@ DND_ATTRIBUTES = [
     "charisma"
     ]
 
-MONSTERS = {
-    "rat":10,
-    "goblin":6,
-    "kobold":6,
-    "bandit":1
-    }
+STATS = ["max_hp", "current_hp", "experience", "gold", "attack", "armor"]
+
+CHARACTER_DETAILS = ["sex", "weight", "height", "skin", "eyes", "hair", "age", "build"]
 
 DND_RACES = {
     "Human":"The most ambitious creatures, they are the most varied in their niches. The most adaptive of the races.",
@@ -34,29 +32,6 @@ DND_CLASSES = {
     "Witch Doctor":"He conjures up danger with his voodoo dolls.",
     }
 
-PLAGUE_DOCTOR_SKILLS = [
-    "Science",
-    "Repair",
-    "Heal",
-    "Surgery",
-    "Perception"
-    ]
-
-PLAGUE_DOCTOR_ABILITIES = {
-    "Resist Disease":"a passive ability which allows the doctor to resist disease, % increase w/ level increase",
-    "Disinfect":"On hit, 25% chance to 'cure' zombie. Does extra damage to undead/diseased flesh.",
-    "Bloodletting":"Not sure yet... dps? name just sounds cool.",
-    }
-
-WARRIOR_SKILLS = [
-    "Climb",
-    "Swim",
-    "Intimidate",
-    "Perception"
-    ]
-
-## WARRIOR_ABILITIES = [FOR JOEY = HIS CLASS :D]
-
 WIZARD_SKILLS = [
     "Speech",
     "Science",
@@ -68,7 +43,7 @@ WIZARD_SKILLS = [
 WIZARD_SPELLS = {
     "Magic Missile":"Does (1-4) pure damage +1(1-4)/(2 caster levels)",
     "Protect":"Adds +1 to an individual's defence score for 10 rounds(+1 per caster level)",
-    "Sentry Wards":"Allows you to place down defensive wards to act as an early warning system for enemies.",
+    "Observer Wards":"Allows you to place down defensive wards to act as an early warning system for enemies.",
                 }
 
 ROGUE_SKILLS = [
@@ -82,61 +57,14 @@ ROGUE_SKILLS = [
     "Search"
     ]
 
-ROGUE_ABILITIES = {
-    "Backstab":"Rogues have ability to surprise foes for increased damage. At lv.1 = (1,6), lv.3 = (2,6), lv.5 = (3,18)",
-    "Shadow Blink":"Rogues are exceptionally good at jumping from shadow to shadow to move from and into backstab positions",
-    "Slip Away":"Passive, gives a % chance that rogue dodges out of the way of attack.",
-    }
-               
-SHAMAN_SKILLS = [
-    "Search",
-    "Perception",
-    "Spellcraft",
-    "Swim",
-    "Climb",
-    "Survival"
-    ]
-
-SHAMAN_ABILITIES = {
-   "Animal Ward":"Sets an owl in the trees as a stealthy sentry.",
-   "Bear Strength":"Imbues a target with +1 STR per caster level.",
-   "Totem Guide":"Spirit animal comes in to fight beside you. Acts as summon creature.",
-    }
-
-WITCH_DOCTOR_SKILLS = []
-# FOR JOEY TO FILL OUT AS WITCH DOCTOR IS HIS CLASS :D
-
-WITCH_DOCTOR_ABILITIES = []
-# FOR JOEY TO FILL OUT AS WITCH DOCTOR IS HIS CLASS :D
-
-DND_TITLE = ["name", "charclass", "race"]
-
-DETAILS = ["sex", "weight", "height", "skin", "eyes", "hair", "age", "build"]
-
-DND_STATS = ["max_hp", "curr_hp", "experience", "gold", "attack", "armor"]
-
 CURRENCY = {
     "astral_crystal":1000,
     "platinum":10,
-    "electrum":1.5
+    "electrum":1.5,
     "gold":1,
     "silver":0.1,
     "copper":0.01,
     "seashells":0.001
-    }
-
-MUTILATE_DESC = {
-    0:'%s falls victim to his wounds, and falls unconscious after being hit by %s.',
-    -2:'%s lays there helpless as he is kicked in the side by %s.',
-    -4:'%s makes a gasping noise as his chest is stomped on by %s.',
-    -6:'%s ribs crack under the assault of %s.',
-    -8:'%s can only bleed as he is smashed about by %s.',
-    -10:'%s has his head snapped off by %s.',
-    -12:'%s makes wet squirting noises as his headless corpse is kicked about by %s.',
-    -14:'What is left of %s is being kicked about like a tin can by %s.',
-    -16:'Though only giblets remain of %s, %s makes sure to stomp what is left into pulp.',
-    -18:'%s was reduced to pea soup by %s.',
-    -20:'%s is no more, thanks to %s.'
     }
 
 

@@ -1,0 +1,10 @@
+name chailaine leorique
+age 86
+character_class wizard
+race elf
+max_hp 56
+current_hp 32
+experience 11246
+gold 29319
+attack 12
+armor 20

@@ -1,86 +1,174 @@
-import random
-import time
-
-random.seed(time.time)
-
 from constant import *
 
+johnfile = "john.txt"
+chaifile = "chailaine.txt"
 
-class Character(object):
-    """Character is the base class for any character that exists in the game world
-        The primary attributes are:
-        .strength
-        .dexterity
-        .constitution
-        .intelligence
-        .wisdom
-        .charisma
-        .max_hp
-        .curr_hp
-        .armor_class"""
+class Charactersheet(object):
+    """ A module to handle Dungeons and Dragons Version 3.5 Characters. """
+
+    CORE_ATTRIBUTES = ["attack", "armor", "name", "max_hp", "curr_hp", "init_mod"]
     
-    def __init__(self):
-
-        #####CHARACTER ATTRIBUTES####
-        self._strength = 0
-        self._dexterity = 0
-        self._constitution = 0
-        self._intelligence = 0
-        self._wisdom = 0
-        self._charisma = 0
-        
-        ####Character Hitpoints, attack and armor####
-        self.max_hp = 0
-        self.curr_hp = 0
-        self.attack_bonus = 0
-        self.armor_class = 10
-        
-        ####Character Header####
-        self.name = "" ##
-        self.player = "" ##Name of the IRL person who owns/plays the character.
-        self.charclass = None ##Class type object
-        self.race = None ##Race type object
-        self.alignment = None ##Personality type object
-        
-        ####Details####
-        self.height = 0 ## A tuple of feet and inches
-        self.weight = 0 ##Weight in pounds.
-        self.age = 0 ##Age in years
-        self.gender = "" ##Male or Female.
-        self.eye_color = ""
-        self.hair_color = ""
-        self.skin_color = ""
-        
-        ####Character Score####
-        self.experience = 0
+    def __init__(self, save_file=None, dict_file = None,
+                 name="Unnamed", charclass= "", race = ""):
+        if save_file:
+            data = self.load(save_file)
+            print (data)
+            self.__dict__.update(data) ## ISSUES
+            
+            for key in self.__dict__.keys():
+                if key in TITLE_INFO:
+                    print (key+" was loaded succesfully.")
+                    self.__dict__[key] = str(self.__dict__[key])
+                elif key in STATS:
+                    print (key+" was loaded succesfully.")
+                    self.__dict__[key] = str(self.__dict__[key])
+                elif key in ATTRIBUTES:
+                    print (key+" was loaded succesfully.")
+                    self.__dict__[key] = str(self.__dict__[key])
+                elif key in CHARACTER_DETAILS:
+                    print (key+" was loaded succesfully.")
+                    self.__dict__[key] = str(self.__dict__[key])
+                elif key not in TITLE_INFO or STATS or ATTRIBUTES:
+                    print ("attempted to load "+key+ " but failed.")
+        elif dict_file:
+            for key in self.__dict__.keys():
+                self.__dict__[key] = dict_file[key]
+        else:
+            print ("Character file not found.")
+        self.init_mod = 0
+        self.weapon = None
+        self.inventory = None
+        self.max_hp = 10
+        self.curr_hp = 10
+        self.alive = True
+        self.level_requirement = 1000
         self.exp_bonus = 1000
         self.level = 1
-        
-        ####Character Stuff####
-        self.inventory = Inventory()
-        self.gold = 0
+        self.do_leveling()
 
-    def get_attribute_modifier(self, value):
-        if value%2 == 1: ## Test if the attribute divides nicely
-            value = value-1 ## If not, remove one to make it even
-        elif value%2 == 0:
+    def valid_input(self, expected_list):
+        text = raw_input()
+        if text in expected_list:
+            return text
+        if text not in expected_list:
+            print ("Invalid entry. Going to default value.")
             pass
-        modifier = int((value-10)*0.5)
-        return modifier
 
-    def classic_dnd_attribute_roll(self):
-        ##Rolls 4d6 and removes the lowest one, spitting out a total of the remainder.
-        pass
+    def introduction(self):
+        print ("Hello New Adventurer! Let's create a new character for you.")
+        while True:
+            print ("What is your name, Adventurer?")
+            self.name = raw_input()
+            print ("What is your race, %s? You can choose from %s" % (self.name, DND_RACES.keys()))
+            self.race = self.valid_input(DND_RACES.keys())
+            print ("The race you've selected %s, is... %s" % (self.race, DND_RACES[self.race]))
+            print ("What is your class, %s? You can choose from %s" % (self.name, DND_CLASSES.keys()))
+            self.charclass = self.valid_input(DND_CLASSES.keys())
+            print ('%s is a %s who is a %s good at %s!' % (self.name, self.race, self.charclass, DND_CLASSES[self.charclass]))
+            print ('Is this correct? y/n')
+            text = raw_input()
+            if text == "y":
+                break
+            if text == "n":
+                continue
+            
+    def clone_attribs_from(self, profile):
+        """ copy atrributes from the profile into our class """
+        attribs = ["name", "experience", "strength", "dexterity", "constitution"]
+        for key in attribs:
+            self.__dict__[key] = profile.__dict__.get(key)
+            
+    def level_up(self):
+        self.max_hp+=random.randint(1,6)
+        self.init_mod+=1
+        self.level+=1
+        self.attack+=1
+        self.armor+=1
 
-    def net_melee_bonus(self):
-        "calcs the total amount of modifier applied on a single melee attack from attack bonus, spells, and weapon bonuses"
-        total = self.attack_bonus + self.inventory.melee_bonus + self.get_modifier(self.strength) ##ADD IN SPELL MODIFIER LATER
-        return total
-        
-    def dump(self):
-        for k in self.__dict__.keys():
-            print k, self.__dict__[k]
+    def add_experience(self, value):
+        self.experience+=value
+        self.try_lvl_up()
 
-if __name__ == "__main__":
-    c = Character()
+    def try_lvl_up(self):
+        if self.experience >= self.level_requirement:
+            print ("Level Up!")
+            self.level_up()
+            self.exp_bonus = self.exp_bonus+1000
+            self.level_requirement += self.exp_bonus
+        else:
+            left = self.level_requirement-self.experience
+            print ("You have %i experience points and need %i more experience points to become stronger." % (self.experience,left))
+
+    def add_gold(self, val):
+        self.gold+=val
+        self.dump_gold_info()
+
+    def add_currency(self, val, money_type):
+        conversion_factor = money_dictionary[money_type]
+        self.currency+=value*conversion_factor
+
+    def dump_gold_info(self):
+        print ("%s has a pouch containing %i gold pieces!." % (self.name, self.gold))
+
     
+    def do_leveling(self):
+        x =0
+        while True:
+            if int(self.experience) >= self.level_requirement:
+                x+=1
+                self.level+=1
+                self.exp_bonus = self.exp_bonus+1000
+                self.level_requirement += self.exp_bonus     
+            else:
+                print ("A level %i %s %s named %s has been initialized." % (self.level, self.race, self.character_class, self.name))
+                return False  
+            
+    def load(self, filename):
+        """reads a text file and reads the data, turning it into names, experience etc."""
+        profile = {}
+        save_file = open(filename, 'r')
+        for line in save_file:
+            try:
+                x = line.split()
+                key, value = x[0],x[1]
+                profile[key] = value
+            except:
+                print("Found an invalid line in the file")
+                print ("|" + line + "|")
+        save_file.close()
+        return profile
+
+    def save(self, filename):
+        """saves data about this level system to a text file for later reading."""
+        dest = open(filename, 'w')
+        for key in self.__dict__.keys():
+            for param in character_sheet_params:
+                if key in param:
+                    dest.write('\n%s %s' % (key, self.__dict__[key]))
+        dest.close()
+
+    def quick_save(self):
+        self.save(testfile)
+
+    def tell_me_about(self):
+        print ("%s is a level %i %s %s with %i experience points under their belt." % (self.name, self.level, self.race, self.character_class, self.experience))
+    
+def test_functionality():
+    input_dictionary = {
+    "me":Charactersheet.tell_me_about,
+    "save":Charactersheet.quick_save,
+    "exp":Charactersheet.add_experience,
+    "gold":Charactersheet.add_gold
+    }
+    newplayer = Charactersheet(save_file=chaifile)
+    while True:
+        txt = input()
+        params = txt.split()
+        command = input_dictionary[params[0]]
+        if len(params) == 1:
+            apply(command, [newplayer])
+        if len(params) == 2:
+            apply(command, [newplayer,int(params[1])])
+        
+if __name__ == "__main__":
+    test_functionality()
