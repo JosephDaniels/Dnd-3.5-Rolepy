@@ -4,6 +4,8 @@ johnfile = "john.txt"
 chaifile = "chailaine.txt"
 testfile = "test.txt"
 
+import random
+
 class Charactersheet(object):
     
     """ A module to handle Dungeons and Dragons Version 3.5 Characters. """
@@ -29,6 +31,10 @@ class Charactersheet(object):
         self.weapon_lefthand = {}
         self.inventory = []
         self.alive = True
+        self.level = 1
+        self.next_level_exp_requirement = 1000
+        self.exp_bonus_increment = 1000
+        self.calc_level()
 
     # example of using a property declaration
     # in usage it looks like a regular property, but it's really calculated
@@ -75,55 +81,42 @@ class Charactersheet(object):
         attribs = ["name", "experience", "strength", "dexterity", "constitution"]
         for key in attribs:
             self.__dict__[key] = profile.__dict__.get(key)
-            
-    def level_up(self):
-        self.max_hp+=random.randint(1,6)
-        self.init_mod+=1
-        self.level+=1
-        self.attack+=1
-        self.armor+=1
 
     def add_experience(self, value):
         self.experience+=int(value)
         self.try_lvl_up()
 
     def try_lvl_up(self):
-        if self.experience >= self.level_requirement:
-            print ("Level Up!")
-            self.level_up()
-            self.exp_bonus = self.exp_bonus+1000
-            self.level_requirement += self.exp_bonus
+        if self.experience >= self.next_level_exp_requirement: ## Try to level once
+            print ("You've Leveled Up!") 
+            self.level+=1
+            self.exp_bonus_increment = self.exp_bonus_increment+1000
+            self.next_level_exp_requirement += self.exp_bonus_increment
         else:
-            left = self.level_requirement-self.experience
+            left = self.next_level_exp_requirement-self.experience
             print ("You have %i experience points and need %i more experience points to become stronger." % (self.experience,left))
+
+    def calc_level(self, debug=False):
+        while True: ## Keep leveling up until at the correct current level
+            if self.experience >= self.next_level_exp_requirement:
+                self.level+=1
+                self.exp_bonus_increment = self.exp_bonus_increment+1000
+                self.next_level_exp_requirement += self.exp_bonus_increment
+            else:
+                break
+        print ("A level %i %s %s named %s has been initialized." % (self.level, self.race, self.character_class, self.name))
 
     def add_gold(self, val):
         self.gold+=val
         self.dump_gold_info()
 
     def add_currency(self, val, money_type):
+        """ Automatically converts all currency into gold and tells you net worth."""
         conversion_factor = money_dictionary[money_type]
         self.currency+=value*conversion_factor
 
     def dump_gold_info(self):
         print ("%s has a pouch containing %i gold pieces!." % (self.name, self.gold))
-
-    
-    def _calc_level(self, debug=False):
-        level_requirement = 1000
-        exp_bonus = 1000
-        level = 1
-        while True:
-            if int(self.experience) >= level_requirement:
-                level+=1
-                exp_bonus = exp_bonus+1000
-                level_requirement += exp_bonus    
-            else:
-                break
-        print ("A level %i %s %s named %s has been initialized." % (level, self.race, self.character_class, self.name))
-        return level
-            
-    level = property(_calc_level, None)
             
     def load(self, filename):
         """reads a text file and reads the data, turning it into names, experience etc."""
@@ -144,17 +137,17 @@ class Charactersheet(object):
         """saves data about this level system to a text file for later reading."""
         dest = open(filename, 'w')
         for key in self.__dict__.keys():
-            for param in character_sheet_params:
-                if key in param:
-                    dest.write('\n%s %s' % (key, self.__dict__[key]))
+            dest.write('\n%s %s' % (key, self.__dict__[key]))
         dest.close()
+        print ("Saved.")
 
     def quick_save(self):
         self.save(testfile)
 
     def tell_me_about(self):
-        print ("%s is a level %s %s %s with %s experience points under their belt." % (self.name, self.level, self.race, self.character_class, self.experience))
-    
+        print ("%s is a level %s %s %s with %s experience points. They have %s gold." % (self.name, self.level, self.race, self.character_class, self.experience, self.gold))
+        print ("Strength:%s\nDexterity:%s\nConstitution:%s\nIntelligence:%s\nWisdom:%s\nCharisma:%s\n" % (self.strength, self.dexterity, self.constitution, self.intelligence, self.wisdom, self.charisma))
+        
 def test_functionality():
     
     input_dictionary = {
@@ -169,7 +162,7 @@ def test_functionality():
     while True:
         txt = input()
         params = txt.split()
-        command = input_dictionary[params[0]]
+        command = input_dictionary[params[0]] #command lookup
         if len(params) == 1:
             command(newplayer)
         if len(params) == 2:
