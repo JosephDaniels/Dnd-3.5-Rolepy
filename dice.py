@@ -9,6 +9,8 @@ specific dice and then re-roll them.
 It's basically to clean up some code in other modules, it was intended
 for use with the Rolepy system, which is a DnD 3.5 system that uses
 Discord for interfacing and interacting with the players.
+
+With the new update, it now has the ability to roll d10s in the WoD system.
 """
 
 def handle_dice_command(command):
@@ -30,7 +32,6 @@ def handle_dice_command(command):
     else: ## Simple dice roll
         dice_result, dice_type = eval(command + "()")
         return dice_result, dice_type
-        
 
 def coinflip():
     result = random.randint(1,2)
@@ -83,5 +84,20 @@ def rolld1000():
     dice_type = "d1000"
     return random.randint(1,1000), dice_type
 
+def roll_wod_dice(dice_pool, eight_again=False, nine_again=False):
+    success_values = [8,9,10]
+    successes = 0
+    rolled_dice = []
+    bonus_dice = 0
+    for dice in range(dice_pool):
+        dice_result = random.randint(1, 10)
+        rolled_dice.append(dice_result)
+        if dice_result in success_values:
+            successes+=1
+            if dice_result == 10:
+                dice_pool+=1
+                bonus_dice+=1
+    return rolled_dice, successes, bonus_dice
+            
 if __name__ == "__main__":
-    print(handle_dice_command("rolld20-3"))
+    print(roll_wod_dice(dice_pool = 10))

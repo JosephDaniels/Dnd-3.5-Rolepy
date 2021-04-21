@@ -33,7 +33,7 @@ async def on_message(message):
     if message.author == client.user:
         return
 
-    if message.content.startswith('!greet'):
+    if message.content.startswith('!hello'):
         await message.channel.send("Hello, welcome to The Joey DnD RP Server," + user)
 
     if message.content.startswith('!login'):
@@ -64,6 +64,34 @@ async def on_message(message):
         else:
             await message.channel.send ("You're not logged in!")
 
+    if message.content.startswith('!rollwod'):
+        try:
+            command, dice_pool = message.content.split(" ") ## splits the command like !rollwod 10 into [command] [dicepool]
+            dice_results, successes, bonus_dice = roll_wod_dice(int(dice_pool))
+        except ValueError:
+            await message.channel.send("Sorry that didn't work. Try again.")
+        if successes == 0:
+            await message.channel.send(user+" rolled "+dice_pool+" dice and failed their roll."
+                                        " Dice Results:"+str(dice_results))
+        elif successes>0:
+            if bonus_dice>0:
+                await message.channel.send(user+" rolled "+dice_pool+" dice and received "+str(successes)+" successes."
+                                           " They had "+str(bonus_dice)+" bonus dice."
+                                           " Dice Results:"+str(dice_results))
+            else:
+                await message.channel.send(user+" rolled "+dice_pool+" dice and had "+str(successes)+
+                                       " successes. Dice Results:"+str(dice_results))
+
+    if message.content.startswith('!rollchancedie'):
+        dice_result, dice_type = handle_dice_command("rolld10")
+        if dice_result == 1:
+            await message.channel.send(user+" rolled a chance die and suffered a dramatic failure. [Rolled 1 on a d10]")
+        elif dice_result == 10:
+            await message.channel.send(user+" rolled a chance die and managed to succeed. [Rolled 10 on a d10]")
+        else:
+            await message.channel.send(user+" rolled a chance die and failed. [Rolled "+str(dice_result)+" on a d10]")
+        
+        
     if message.content.startswith('!rolld'):
         if "+" in message.content or "-" in message.content:
             dice_result, dice_total, dice_type, modifier = handle_dice_command(message.content) ## Pulls the 
@@ -89,19 +117,17 @@ async def on_message(message):
         else:
             await message.author.send("Thanks!")
 
-    if message.content.startswith('!thumb'):
+    if message.content.startswith('!greet'):
         channel = message.channel
-        await channel.send('Send me that 👍 reaction, mate')
+        await channel.send('Say hello!')
 
-        def check(reaction, user):
-            return user == message.author and str(reaction.emoji) == '👍'
-
+        def check(m):
+            return m.content == 'hello' and m.channel == channel
         try:
-            reaction, user = await client.wait_for('reaction_add', timeout=30.0, check=check)
+            msg = await client.wait_for('message', timeout=30.0, check=check)
+            await channel.send('Hello {.author}!'.format(msg))
         except asyncio.TimeoutError:
-            await channel.send('👎')
-        else:
-            await channel.send('👍')
+            await message.author.send("I waited for you to say hello... </3")
     
     if message.content.startswith('!help'): ## All Help Commands
         if message.content == ('!help login'):
@@ -124,8 +150,7 @@ async def on_message(message):
             "Here's a list of available commands. More to come.\n"
             "!greet\n"
             "!help\n !help [command]\n !login [user]\n !logout\n"
-            "!whois [user]\n !me\n"
+            "!whois [user]\n !me\n !rollwod\n !rollchancedie\n"
             "!rolld3\n !rolld4\n !rolld6\n !rolld8\n !rolld10\n !rolld12\n" 
             "!rolld16\n !rolld20\n !rolld24\n !rolld100\n !rolld1000\n !coinflip\n")
-
 client.run(TOKEN)
