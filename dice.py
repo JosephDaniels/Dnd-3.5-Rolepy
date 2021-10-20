@@ -13,6 +13,53 @@ Discord for interfacing and interacting with the players.
 With the new update, it now has the ability to roll d10s in the WoD system.
 """
 
+def handle_multiple_dice(command):
+    '''
+Rolls multiple dice, and then adds a modifier on at the end.
+
+I plan on making another command for magic missiles that adds the modifier
+on EVERY dice roll. Not sure what to call that one yet.
+
+    '''
+    results = []
+    undigested_command = command.strip("!") ## Remove leading exclamation
+    if '+' in command:
+        cmd , modifier = undigested_command.split('+')
+        cmd = cmd.strip("roll") ## Remove roll remporarily
+        num_dice, dice_type = cmd.split('d') ## Splits number dice and dice type
+        for dice in range(int(num_dice)):
+            command = ("rolld"+dice_type+"()")
+            result = eval(command)[0]
+            result = result
+            results.append(result)
+        dice_total = sum(results)+int(modifier) ## add results together
+        modifier = "+"+modifier ## add a plus to show integer
+        dice_type = "d"+dice_type ## add the d back in
+        return dice_total, num_dice, results, dice_type, modifier
+    elif '-' in command:
+        cmd , modifier = undigested_command.split('-')
+        cmd = cmd.strip("roll") ## Remove roll remporarily
+        num_dice, dice_type = cmd.split('d') ## Splits number dice and dice type
+        for dice in range(int(num_dice)):
+            command = ("rolld"+dice_type+"()")
+            result = eval(command)[0]
+            results.append(result)
+        dice_total = sum(results)-int(modifier)
+        modifier = "-"+modifier ## add a minus to show integer
+        dice_type = "d"+dice_type ## add the d back in
+        return dice_total, num_dice, results, dice_type, modifier
+    else: ## Simple dice roll
+        cmd = undigested_command
+        cmd = cmd.strip("roll") ## Remove roll remporarily
+        num_dice, dice_type = cmd.split('d') ## Splits number dice and dice type
+        for dice in range(int(num_dice)):
+            command = ("rolld"+dice_type+"()")
+            result = eval(command)[0]
+            results.append(result)
+        dice_total = sum(results)
+        dice_type = "d"+dice_type ## add the d back in
+        return dice_total, num_dice, results, dice_type
+
 def handle_dice_command(command):
     command = command.strip("!")
     if '+' in command:
@@ -85,19 +132,39 @@ def rolld1000():
     return random.randint(1,1000), dice_type
 
 def roll_wod_dice(dice_pool, eight_again=False, nine_again=False):
+    
     success_values = [8,9,10]
     successes = 0
     rolled_dice = []
-    bonus_dice = 0
+    bonus_dice = 0 # Special variable holding dice to be re-rolled
+    rerolls = 0 # The resulting rerolls that occurred
+    
     for dice in range(dice_pool):
         dice_result = random.randint(1, 10)
         rolled_dice.append(dice_result)
-        if dice_result in success_values:
-            successes+=1
-            if dice_result == 10:
-                dice_pool+=1
+        if dice_result in success_values: ## Rolled 8, 9 or 10
+            successes+=1 ## Gains a success
+            if eight_again == True:
                 bonus_dice+=1
-    return rolled_dice, successes, bonus_dice
+            elif (dice_result == 9 or 10) and (nine_again == True):
+                bonus_dice+=1
+            elif (dice_result == 10) and (nine_again==False) and (eight_again==False):
+                bonus_dice+=1
+
+    while bonus_dice > 0:
+        dice_result = random.randint(1, 10)
+        rolled_dice.append(dice_result)
+        if dice_result in success_values: ## Rolled 8, 9 or 10
+            successes+=1
+            if eight_again == True:
+                bonus_dice+=1
+            elif (dice_result == 9 or 10 ) and (nine_again == True):
+                bonus_dice+=1
+            elif (dice_result == 10) and (nine_again==False) and (eight_again==False):
+                bonus_dice+=1
+        bonus_dice -= 1
+        rerolls += 1
+    return rolled_dice, successes, rerolls
             
 if __name__ == "__main__":
-    print(roll_wod_dice(dice_pool = 10))
+    print(handle_multiple_dice("roll3d8+1"))
