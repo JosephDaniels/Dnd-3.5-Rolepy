@@ -9,38 +9,45 @@ from TOKEN import * ## You will need to go into the file and add your own token.
 
 dnd_players = ['StabbyStabby#1327', 'Coruba#1432', 'mystia#2889',
                'Frail Faintheart#5181', 'Magromancer#6352', 'NormL75#0235',
-               'baronanansi#2600']
+               'baronanansi#2600', 'alanwongis#3590']
 
-valid_characters = {'StabbyStabby#1327' : ['Vsevellar', 'Zandrius', 'Zandria', 'Thaddeus'],
+valid_characters = {'StabbyStabby#1327' : ['Vsevellar', 'Zandrius', 'Zandria', 'Thaddeus', 'Paige'],
                     'Coruba#1432'       : ['Ulfric', 'Barco', 'Tebbo'],
-                    'mystia#2889'       : ['Chailaine'],
+                    'mystia#2889'       : ['Chailaine', 'Manda Lorien'],
                     'Magromancer#6352'  : ['Cymancer'],
-                    'NormL75#0235'      : ['Kaelyn']}
+                    'NormL75#0235'      : ['Kaelyn'],
+                    'baronanansi#2600'  : ['Barda'],
+                    'alanwongis#3590'   : ['Bob-the-tree', 'Akbar']}
 
 logged_in_as = {}
 
 client = discord.Client()
 
 @client.event
+
 async def on_ready():
     print('We have logged in as {0.user}'.format(client))
 
 @client.event
+
+
 async def on_message(message):
 
     user = str(message.author)
-
+    member = message.author
+    
     if message.content.startswith('!login'):
         if not user in dnd_players:
             await message.channel.send("You are not allowed to play DnD. Please contact DM Joey for permission.")
             return
         try:
-            command_line = message.content.split(" ")
-            target_character = " ".join(command_line[1:])
-        except ValueError:
+            command_line = message.content.split(" ") ## splits the argument into two pieces IE login character
+            target_character = " ".join(command_line[1:]) ## target character is the second side of the argument
+        except ValueError: ## means that the command failed to parse
             await message.channel.send("Failed to login.")
             return
-        if target_character in logged_in_as.keys(): ## Already logged in
+        print (logged_in_as.values()) ## Shows all the logged in characters
+        if target_character in logged_in_as.values(): ## Already logged in
             await message.channel.send(user+", you are already logged in as " + target_character)
         else:
             if target_character not in valid_characters[user]:
@@ -48,49 +55,22 @@ async def on_message(message):
                 await message.channel.send("You cannot login as "+target_character+", "+target_character+" is not your character.")
             else:
                 logged_in_as[user] = target_character
+                await member.edit(nick=target_character)
                 await message.channel.send("Successfully logged " + user + " in as the character " + target_character) 
 
     if message.content.startswith('!logout'):
         if user in logged_in_as.keys():
+            await member.edit(nick=user)
             character_name = logged_in_as[user]
             logged_in_as.pop(user)
             await message.channel.send(user + ", your character " + character_name + " has been logged out.")
+        elif message.author == client.user:
+            return
         else:
             await message.channel.send ("You're not logged in!")
-
-        if message.author == client.user:
-            return
 
     if message.content.startswith('!hello'):
         await message.channel.send("Hello, welcome to The Joey DnD RP Server," + user)
-
-    if message.content.startswith('!login'):
-        if not user in dnd_players:
-            await message.channel.send("You are not allowed to play DnD. Please contact DM Joey for permission.")
-            return
-        try:
-            command_line = message.content.split(" ")
-            target_character = " ".join(command_line[1:])
-        except ValueError:
-            await message.channel.send("Failed to login.")
-            return
-        if target_character in logged_in_as.keys(): ## Already logged in
-            await message.channel.send(user+", you are already logged in as " + target_character)
-        else:
-            if target_character not in valid_characters[user]:
-                print (user, target_character)
-                await message.channel.send("You cannot login as "+target_character+", "+target_character+" is not your character.")
-            else:
-                logged_in_as[user] = target_character
-                await message.channel.send("Successfully logged " + user + " in as the character " + target_character) 
-
-    if message.content.startswith('!logout'):
-        if user in logged_in_as.keys():
-            character_name = logged_in_as[user]
-            logged_in_as.pop(user)
-            await message.channel.send(user + ", your character " + character_name + " has been logged out.")
-        else:
-            await message.channel.send ("You're not logged in!")
             
     if message.content.startswith('!rollwod'):
         try:
@@ -170,11 +150,28 @@ async def on_message(message):
         result = coinflip()
         await message.channel.send(user+" flips a coin! Result is "+result)
 
-    if message.content.startswith('!fliptable'):
+    if message.content.startswith('!breaktable') or message.content.startswith('!tableflip'):
+        result, dice_type = rolld2()
+        print(result)
+        if (result == 1):
+            await message.channel.send(user+" dropkicks his foot straight through the table, splintering it into two seperate halves!")
+        if (result == 2):
+            await message.channel.send(user+" hammers their fist down upon  the innocent table in an unbridled display of nerd rage. It cracks directly in half!")
+            
+    if message.content.startswith('!fliptable') or message.content.startswith('!tableflip'):
         await message.channel.send(user+" grabs the table by the edges, flipping it over like an absolute savage and ruining everything! Paper, dice and doritos crash into the ground!")
 
-    if message.content.startswith('!tableflip'):
-        await message.channel.send(user+" grabs the table by the edges, flipping it over like an absolute savage and ruining everything! Paper, dice and doritos crash into the ground!")
+    if message.content.startswith('!unfliptable'):
+        await message.channel.send(user+" sheepishly returns the table to an upright position, collecting up the dice and brushing Dorito crumbs off the now orange-dusted character sheets.")
+
+    if message.content.startswith('!kickinthedoor'):
+        result, dice_type = rolld2()
+        print(result)
+        if (result == 1):
+            await message.channel.send(user+" delivers a swift kick to the door, but the sturdy door doesn't budge. Their foot crumples as the force of the blow reverberates back through their leg. You hop up and down on one foot for 1d4 rounds in agony.")
+        if (result == 2):
+            await message.channel.send(user+" delivers a hearty kick to the door. The door flies off its hinges under the weight of their mighty boot.")
+
 
     if message.content.startswith('!suggestion'):
         await message.author.send("Please type your message to be added to the suggestion box.")

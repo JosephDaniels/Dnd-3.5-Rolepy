@@ -87,6 +87,10 @@ def coinflip():
     elif result == 2:
         return ("Tails")
 
+def rolld2():
+    dice_type = "d2"
+    return random.randint(1,2), dice_type
+
 def rolld3():
     dice_type = "d3"
     return random.randint(1,3), dice_type
