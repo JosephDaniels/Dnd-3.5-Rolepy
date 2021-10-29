@@ -330,6 +330,14 @@ a text file. Please see the load for more information.
     def get_feat_count(self):
         level = self.get_current_level()
         return level/3+1
+
+    def get_class_skill_max_ranks(self):
+        level = self.get_current_level()
+        return level+3
+
+    def get_cross_class_skill_max_ranks(self):
+        level = self.get_current_level()
+        return (level+3)/2
     
 def test():
     paige_file = "characters/paige.txt"
