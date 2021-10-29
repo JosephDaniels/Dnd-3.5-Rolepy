@@ -325,7 +325,11 @@ a text file. Please see the load for more information.
         gold = self.gold_coins      #10 gold to a platinum
         platinum = self.platinum_coins
         net_worth = 0.01*copper+0.1*silver+gold+10*platinum
-        return net_worth        
+        return net_worth
+
+    def get_feat_count(self):
+        level = self.get_current_level()
+        return level/3+1
     
 def test():
     paige_file = "characters/paige.txt"
