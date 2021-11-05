@@ -1,5 +1,5 @@
 name  = paige
-display_name  =  Paige Belmont
+display_name  = Paige Belmont
 character_class  = "rogue","fighter","sorcerer"
 total_xp = 6000
 gold_coins = 600

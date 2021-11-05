@@ -46,17 +46,20 @@ async def on_message(message):
         except ValueError: ## means that the command failed to parse
             await message.channel.send("Failed to login.")
             return
-        print (logged_in_as.values()) ## Shows all the logged in characters
+        ##print (logged_in_as.values()) ## Shows all the logged in characters
         if target_character in logged_in_as.values(): ## Already logged in
             await message.channel.send(user+", you are already logged in as " + target_character)
         else:
             if target_character not in valid_characters[user]:
-                print (user, target_character)
+                ##print (user, target_character)
                 await message.channel.send("You cannot login as "+target_character+", "+target_character+" is not your character.")
             else:
                 logged_in_as[user] = target_character
-                await member.edit(nick=target_character)
-                await message.channel.send("Successfully logged " + user + " in as the character " + target_character) 
+                try:
+                    await member.edit(nick=target_character)
+                    await message.channel.send("Successfully logged " + user + " in as the character " + target_character)
+                except:
+                    await message.channel.send("Sorry, I wasn't able to log you in. Perhaps it's a permission error- are you the Admin?")
 
     if message.content.startswith('!logout'):
         if user in logged_in_as.keys():

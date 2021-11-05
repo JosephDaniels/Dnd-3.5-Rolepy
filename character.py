@@ -77,13 +77,15 @@ This handles a DnD 3.5e character sheet.
 This was built for use with the Rolepy Python Discord Bot.
 The class holds character information once its loaded inside from
 a text file. Please see the load for more information.
+
+If an attribute has a value of -1 then it has not been set.
     """
     def __init__(self):
 
         ## CHARACTER INFO
         self.name = "" ## e.g. Single name like "Conan"
         self.display_name = "" ## e.g. long name like "Conan the Barbarian"
-        self.character_class= "" ## lowercase character class
+        self.character_class= [] ## lowercase character class array
 
         ## ATTRIBUTES
         self.strength = -1
@@ -99,7 +101,7 @@ a text file. Please see the load for more information.
         self.armor_class = -1
         self.base_attack_bonus = -1
         self.initiative = -1
-        self.total_xp = -1
+        self.xp_points = -1
         self.copper_coins = 0
         self.silver_coins = 0
         self.gold_coins = 0
@@ -220,9 +222,16 @@ a text file. Please see the load for more information.
     @staticmethod
     def parse_character_class(st):
         classes = []
+        st = st.strip('[]')
         for char_class in st.split(","):
             classes.append(char_class.strip('"'))
         return classes
+
+    def save(self, filename):
+        data = self.get_character_sheet()
+        f = open('characters/'+filename, mode='w+')
+        f.write(data)
+        f.close()
 
     def load(self, filename):
         """reads a text file and reads the data, turning it into names, experience etc.
@@ -234,7 +243,7 @@ a text file. Please see the load for more information.
             constitution = 14
             etc..."""
         profile = {}
-        character_file = open(filename, encoding="latin-1").read()
+        character_file = open('characters/'+filename, encoding="latin-1").read()
         character_file = character_file.split("\n")
         print (character_file)
         for line in character_file:
@@ -250,16 +259,21 @@ a text file. Please see the load for more information.
             profile[attribute] = value
         self.__dict__.update(profile)
 
-    def print_character_sheet(self, show_all = False):
-        for key in self.__dict__.keys():
+    def get_character_sheet(self, show_all = False):
+        lines = []
+        for key in self.__dict__.keys(): ## Goes through all the attributes of the character
             value = self.__dict__[key]
+            #Depending on the type we'll format it correctly
             if type(value) == Data:
                 pass
+            elif type(value) == str:
+                lines.append('%s = "%s"' % (key, value))
             elif value == -1: ## Non-valid value
                 if show_all == True:
-                    print(key, " = ", self.__dict__[key])
+                    lines.append("%s = %s" % (key, value))
             else:
-                print(key, " = ", self.__dict__[key])
+                lines.append("%s = %s" % (key, value))
+        return "\n".join(lines)
 
     @staticmethod
     def calculate_modifier(value):
@@ -311,12 +325,12 @@ a text file. Please see the load for more information.
         initiative_bonus = attribute_modifier+misc_modifier
         return initiative_bonus
 
-    def get_current_level(self):
-        xp = self.total_xp
-        for level, xp_total in XP_CHART:
-            if xp > xp_total:
+    def get_level(self):
+        xp = self.xp_points
+        for level, xp_threshold in XP_CHART:
+            if xp > xp_threshold:
                 pass
-            elif xp <= xp_total:
+            elif xp <= xp_threshold:
                 return level
 
     def get_net_worth(self):
@@ -338,9 +352,10 @@ a text file. Please see the load for more information.
     def get_cross_class_skill_max_ranks(self):
         level = self.get_current_level()
         return (level+3)/2
+        
     
-def test():
-    paige_file = "characters/paige.txt"
+def test_1(): ## Runs a known working character and sees if the methods work
+    paige_file = "paige.txt"
     paige = Character()
     profile = paige.load(paige_file)
     paige.print_character_sheet()
@@ -350,15 +365,27 @@ def test():
     print("Melee attack bonus is ", paige.get_melee_attack_bonus(misc_modifier=0))
     print("Ranged attack bonus is ", paige.get_ranged_attack_bonus(misc_modifier=0))
     print("Initiative bonus is ", paige.get_initiative_bonus(misc_modifier=0))
-    print("Current level is ", paige.get_current_level())
+    print("Current level is ", paige.get_level())
     print("Current net worth is ", paige.get_net_worth(), " gold.")
     print("Base spell save is ", paige.get_spell_save("charisma"))
 
-def test_2():
+def test_2(): ## Runs a basic character sheet and see if it shows up
     c = Character()
-    c.print_character_sheet(show_all=True)
-    
+    print(c.get_character_sheet(show_all=True))
+
+def test_3():## Test the saving functionality
+    b = Character()
+    b.name = "Bobby Boy"
+    b.gold_coins = 1000000
+    b.xp_points = 36000
+    print("Bobby's level is ", b.get_level())
+    b.save("bobby.txt")
+
+def test_4(): ## Test the loading functionality from a save file
+    b = Character()
+    b.load("bobby.txt")
+    print(b.get_character_sheet(show_all=True))
     
 if __name__ == "__main__":
-    test()
+    test_4()
     
