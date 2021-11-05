@@ -86,6 +86,7 @@ If an attribute has a value of -1 then it has not been set.
         self.name = "" ## e.g. Single name like "Conan"
         self.display_name = "" ## e.g. long name like "Conan the Barbarian"
         self.character_class= [] ## lowercase character class array
+        self.alignment = "" ## Lawful <-> Chaotic and Evil <-> Good E.G. Lawful Good or Chaotic Evil
 
         ## GAME INFO
         self.dying = False
@@ -391,7 +392,12 @@ def test_4(): ## Test the loading functionality from a save file
     b = Character()
     b.load("bobby.txt")
     print(b.get_character_sheet(show_all=True))
+
+def test_5():
+    i = Character()
+    i.load("imp.txt")
+    print(i.get_character_sheet())
     
 if __name__ == "__main__":
-    test_4()
+    test_5()
     
