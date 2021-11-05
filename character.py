@@ -69,7 +69,7 @@ class Data(object):
     def __init__(self):
         return
     def __str__(self):
-        return 
+        return
 
 class Character(object):
     """
@@ -86,6 +86,10 @@ If an attribute has a value of -1 then it has not been set.
         self.name = "" ## e.g. Single name like "Conan"
         self.display_name = "" ## e.g. long name like "Conan the Barbarian"
         self.character_class= [] ## lowercase character class array
+
+        ## GAME INFO
+        self.dying = False
+        self.dead = False
 
         ## ATTRIBUTES
         self.strength = -1
@@ -219,6 +223,9 @@ If an attribute has a value of -1 then it has not been set.
         self.feats = [] ## feats will get added to this list
         self.special_abilities = [] ## special class abilities are added to this list
 
+    def __lt__(self,other):
+        return True ## It's a hack so that it sorts properly during initiative
+
     @staticmethod
     def parse_character_class(st):
         classes = []
@@ -245,7 +252,6 @@ If an attribute has a value of -1 then it has not been set.
         profile = {}
         character_file = open('characters/'+filename, encoding="latin-1").read()
         character_file = character_file.split("\n")
-        print (character_file)
         for line in character_file:
             attribute, value = line.split("=")
             attribute, value = attribute.strip(), value.strip()
