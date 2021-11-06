@@ -1,0 +1,14 @@
+item_name,hardness,hit_points,break_dc
+1inch_rope,0,2,23
+3inch_rope,0,6,25
+simple_wooden_door,5,10,13
+small_chest,5,1,17
+good_wooden_door,5,15,18
+treasure_chest,5,15,23
+strong_wooden_door,5,20,23
+1ft_masonry_wall,8,90,35
+hewn_stone,8,540,50
+chain,10,5,26
+manacles,10,10,26
+masterwork_manacles,10,10,28
+2inch_iron_door,10,60,28

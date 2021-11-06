@@ -7,7 +7,7 @@ class Item(object):
         lines = []
         for key in self.__dict__.keys():
             value = self.__dict__[key]
-            if value == "":
+            if value == "": ## detects an empty string
                 value = '""'
             lines.append("%s = %s" % (key,value))
         return lines
@@ -20,7 +20,7 @@ class Consumable(Item):
         self.consumable_benefits = [] ## A list of the various benefits the consumable confers. E.G. blindness, clarity(cure blindness), restore_mana, stabilize, cats_eyes
 
 class Melee_Weapon(Item):
-    def __init__(self, item_name = "", weapon_type = "", damage_type = ""
+    def __init__(self, item_name = "", weapon_type = "", damage_type = "",
                  can_use_two_handed = False, reach_weapon = False, enhancement_bonus = 0):
         self.item_name = item_name
         self.weapon_type = weapon_type ## E.G. sword, bastardsword, waraxe, glaive, spear, club.
@@ -36,7 +36,7 @@ class Melee_Weapon(Item):
             self.range = weapon_range ## The distance the weapon can reach. Usually around 5 feet for a medium character using a spear or glaive.
         
 class Ranged_Weapon(Item):
-    def __init__(self, item_name = "", weapon_type = "", damage_type = ""
+    def __init__(self, item_name = "", weapon_type = "", damage_type = "",
                  can_use_two_handed = False, enhancement_bonus = 0):
         self.item_name = item_name
         self.weapon_type = weapon_type ## E.G. longbow, shortbow, sling etc.
@@ -50,17 +50,19 @@ class Ranged_Weapon(Item):
         self.range = weapon_range ## The range increment for the weapon. -2 penalty per increment you are away from your target.
 
 class Equipment(Item):
-    def __init__(self, equipment_bonus=0):
+    def __init__(self, equip_location,
+                 equipment_bonus=0):
+        self.equip_location = equip_location ## Where the equipment goes E.G. Helmet on head, boots on feet, necklace on neck etc.
         self.equipment_bonus = equipment_bonus ## represents the bonus the equipment gives when used as a tool. E.G. Using a crowbar to open a door gives +2 on strength checks to pry something open.
-        
+
 class Armour(Equipment):
-    def __init__(self, armor_bonus = 0, armor_check_penalty = 0):
+    def __init__(self, equip_location,
+                 armor_bonus = 0,
+                 armor_check_penalty = 0):
         self.armor_bonus = armor_bonus ## Zero if the equipment does not provide armor
         self.armor_check_penalty = armor_check_penalty ## Will be a negative number. Applies on physical checks like swim and climb.
-        self.equip_location = equip_location ## Where the equipment goes E.G. Helmet on head, boots on feet, necklace on neck etc.
-
-
-def test():
+        
+def test(): ## test automatic enhancement detection based on name
     a = Melee_Weapon(item_name="Longsword of Thunder+2")
     a.item_description = "A manly sword of a thundering nature."
     print(a.dump_info())
@@ -69,5 +71,14 @@ def test_2(): ## test a weapon with no bonus
     a = Melee_Weapon(weapon_type="shortsword")
     print(a.dump_info())
 
+def test_3(): ## test an armour piece
+    studded_leather = Armour(armor_bonus = 3,
+                             armor_check_penalty = -1,
+                             equip_location = "torso")
+    print(studded_leather.dump_info())
+
+def test_4(): ## test automatic loading of items from the item database [dnd_
+    pass
+
 if __name__ == "__main__":
-    test()
+    test_3()

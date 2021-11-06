@@ -1,0 +1,78 @@
+item_name,proficiency,cost,damage_small,damage_medium,damage_large,damage_huge,damage_gargantuan,damage_colossal,critical,range_increment,weight,weapon_type,special
+gauntlet,simple,2gp,1d2,1d3,1d4,1d6,1d8,2d6,x2,,1lbs,bludgeoning,
+unarmed_strike,simple,,1d2NL,1d3NL,1d4NL,1d6NL,1d8NL,2d6NL,x2,,,bludgeoning,
+dagger,simple,2gp,1d3,1d4,1d6,1d8,1d10,2d8,19-20x2,10ft,1lbs,"piercing, slashing",light_melee
+punching_dagger,simple,2gp,1d3,1d4,1d6,1d8,1d10,2d8,x3,,1lbs,piercing,light_melee
+spiked_gauntlet,simple,5gp,1d3,1d4,1d6,1d8,1d10,2d8,x2,,1lbs,piercing,light_melee
+light_mace,simple,5gp,1d4,1d6,1d6,1d8,1d10,2d8,x2,,2lbs,bludgeoning,light_melee
+sickle,simple,6gp,1d4,1d6,1d6,1d8,1d10,2d8,x2,,2lbs,slashing,light_melee
+club,simple,,1d4,1d6,1d8,1d10,1d12,3d6,x2,10ft,3lbs,bludgeoning,
+heavy_mace,simple,12gp,1d6,1d8,1d10,1d12,3d6,4d6,x2,,8lbs,bludgeoning,stun
+morningstar,simple,8gp,1d6,1d8,1d10,1d12,3d6,4d6,x2,,6lbs,"bludgeoning,piercing",
+shortspear,simple,1gp,1d4,1d6,1d8,1d10,2d8,3d8,x2,20ft,3lbs,piercing,brace_spear
+longspear,simple,5gp,1d6,1d8,1d10,1d12,3d6,4d6,x3,,9lbs,piercing,"reach_weapon, brace_spear"
+quarterstaff,simple,1cp,1d4/1d4,1d6/1d6,1d8/1d8,1d10/1d10,1d12/1d12,3d6/3d6,x2,,4lbs,bludgeoning,
+spear,simple,2gp,1d6,1d8,1d10,1d12,3d6,4d6,x3,20ft,6lbs,piercing,brace_spear
+heavy_crossbow,simple,50gp,1d8,1d10,1d12,3d6,4d6,6d6,19-20/x2,120ft,8lbs,piercing,
+light_crossbow,simple,35gp,1d6,1d8,1d10,1d12,3d6,4d6,19-20/x2,80ft,4lbs,piercing,
+dart,simple,5sp,1d3,1d4,1d6,1d8,2d6,3d6,x2,20ft,0.5lbs,piercing,
+javelin,simple,1gp,1d4,1d6,1d8,1d10,2d8,3d8,x2,30ft,2lbs,piercing,
+sling,simple,,1d3,1d4,1d6,1d8,2d6,3d6,x2,50ft,0.1lbs,bludgeoning,
+throwing_axe,martial,8gp,1d4,1d6,1d8,1d10,2d8,3d8,x2,10ft,2lbs,slashing,light
+light_hammer,martial,1gp,1d3,1d4,1d6,1d8,2d6,3d6,x2,20ft,2lbs,bludgeoning,"light, stun"
+handaxe,martial,6gp,1d4,1d6,1d8,1d10,2d8,3d6,x3,,3lbs,slashing,light
+kukri,martial,8gp,1d3,1d4,1d6,1d8,2d6,3d6,18-20/x2,,2lbs,slashing,light
+light_pick,martial,4gp,1d3,1d4,1d6,1d8,2d6,3d6,x4,,3lbs,piercing,light
+sap,martial,1gp,1d4NL,1d6NL,1d8NL,1d10NL,2d8NL,3d8NL,x2,,2lbs,bludgeoning,"light, stun"
+light_shield,martial,special,1d2,1d3,1d4,1d6,1d8,2d6,x2,,special,bludgeoning,"light, stun"
+spiked_armor,martial,special,1d4,1d6,1d8,1d10,1d12,3d6,x2,,special,piercing,light
+light_spiked_shield,martial,special,1d3,1d4,1d6,1d8,1d10,2d8,x2,,special,piercing,light
+shortsword,martial,10gp,1d4,1d6,1d8,1d10,1d12,3d6,19-20/x2,,2lbs,piercing,light
+battleaxe,martial,10gp,1d6,1d8,1d10,1d12,3d6,4d6,x3,,6lbs,slashing,
+flail,martial,8gp,1d6,1d8,1d10,1d12,3d6,4d6,x2,,5lbs,bludgeoning,stun
+longsword,martial,15gp,1d6,1d8,1d10,1d12,3d6,4d6,19-20/x2,,4lbs,slashing,
+heavy_pick,martial,8gp,1d4,1d6,1d8,1d10,2d8,3d6,x4,,6lbs,piercing,
+rapier,martial,20gp,1d4,1d6,1d8,1d10,2d8,3d6,18-20/2,,2lbs,piercing,
+scimitar,martial,15gp,1d4,1d6,1d8,1d10,2d8,3d6,18-20/2,,4lbs,slashing,
+heavy_shield,martial,special,1d3,1d4,1d6,1d8,1d10,2d8,x2,,special,bludgeoning,stun
+heavy_spiked_shield,martial,special,1d4,1d6,1d8,1d10,2d8,3d8,x2,,special,piercing,
+trident,martial,15gp,1d6,1d8,1d10,1d12,3d6,4d6,x3,10ft,4lbs,piercing,
+warhammer,martial,12gp,1d6,1d8,1d10,1d12,3d6,4d6,x3,,5lbs,bludgeoning,
+falchion,martial,75gp,1d6,2d4,2d6,3d6,4d6,6d6,18-20/x2,,8lbs,slashing,two_handed
+glaive,martial,8gp,1d8,1d10,1d12,3d6,4d6,6d6,x3,,10lbs,slashing,"two_handed, reach, brace_spear"
+greataxe,martial,20gp,1d10,1d12,3d6,4d6,6d6,8d6,x3,,12lbs,slashing,two_handed
+greatclub,martial,5gp,1d8,1d10,2d8,3d8,4d6,6d6,x2,,8lbs,bludgeoning,two_handed
+heavy_flail,martial,15gp,1d8,1d10,2d8,3d8,4d6,6d6,19-20/x2,,10lbs,bludgeoning,two_handed
+greatsword,martial,50gp,1d10,2d6,3d6,4d6,6d6,8d6,19-20/x2,,8lbs,slashing,two_handed
+guisarme,martial,9gp,1d6,1d8,1d10,1d12,3d6,4d6,x3,,12lbs,slashing,"two_handed, reach, brace_spear"
+halberd,martial,10gp,1d8,1d10,1d12,3d6,4d6,6d6,x3,,12lbs,"piercing, slashing","two_handed, brace_spear"
+lance,martial,10gp,1d6,1d8,1d10,2d8,3d8,4d8,x3,,10lbs,piercing,"two_handed, reach, brace_spear"
+ranseur,martial,10gp,1d6,2d4,2d6,3d6,4d6,6d6,x3,,12lbs,piercing,"two_handed, reach, brace_spear"
+scythe,martial,18gp,1d6,2d4,2d6,3d6,4d6,6d6,x4,,10lbs,"piercing, slashing",two_handed
+longbow,martial,75gp,1d6,1d8,1d10,2d8,3d8,4d8,x3,100ft,3lbs,piercing,two_handed
+composite_longbow,martial,100gp,1d6,1d8,1d10,2d8,3d8,4d8,x3,110ft,3lbs,piercing,two_handed
+shortbow,martial,30gp,1d4,1d6,1d8,2d6,3d6,4d6,x3,60ft,2lbs,piercing,two_handed
+composite_shortbow,martial,75gp,1d4,1d6,1d8,2d6,3d6,4d6,x3,70ft,2lbs,piercing,two_handed
+chain_kama,exotic,5gp,1d4/1d4,1d6/1d6,1d8/1d8,1d10/1d10,1d12/1d12,3d6/3d6,x2,5ft,5lbs,slashing,"reach,disarm"
+kama,exotic,2gp,1d4,1d6,1d8,2d6,3d6,4d6,x2,,2lbs,slashing,disarm
+nunchaku,exotic,2gp,1d4,1d6,1d8,2d6,3d6,4d6,x2,,2lbs,bludgeoning,stun
+sai,exotic,1gp,1d3,1d4,1d6,1d8,2d6,3d6,x2,10ft,1lbs,bludgeoning,disarm
+siangham,exotic,3gp,1d4,1d6,1d8,1d10,2d8,3d8,x2,5ft,1lbs,piercing,reach
+bastardsword,exotic,35gp,1d8,1d10,2d8,3d8,4d6,6d6,19-20/x2,,6lbs,slashing,"one_handed, two_handed"
+dwarven_waraxe,exotic,30gp,1d8,1d10,2d8,3d8,4d6,6d6,x3,,8lbs,slashing,
+whip,exotic,1gp,1d2NL,1d3NL,1d4NL,1d6NL,1d8NL,2d6,x2,,2lbs,slashing,"noisemaker, stun"
+orc_double_axe,exotic,60gp,1d6/1d6,1d8/1d8,1d10/1d10,2d8/2d8,3d8/3d8,4d8/4d8,x3,,15lbs,slashing,
+spiked_chain,exotic,25gp,1d6,2d4,2d6,3d6,4d6,6d6,x2,,10lbs,bludgeoning,stun
+dire_flail,exotic,90gp,1d6/1d6,1d8/1d8,1d10/1d10,2d8/2d8,3d8/3d8,4d8/4d8,x2,,10lbs,bludgeoning,stun
+gnome_hooked_hammer,exotic,20gp,1d6/1d4,1d8/1d6,1d10/1d8,2d8/2d6,3d8/3d6,4d8/4d6,x3/x4,,6lbs,"bludgeoning, piercing",stun
+two_bladed_sword,exotic,100gp,1d6/1d6,1d8/1d8,1d10/1d10,2d8/2d8,3d8/3d8,4d8/4d8,19-20/x2,,10lbs,slashing,
+dwarven_urgrosh,exotic,50gp,1d6/1d4,1d8/1d6,1d10/1d8,2d8/2d6,3d8/3d6,4d8/4d6,x3,,12lbs,"slashing, piercing",brace_spear
+bolas,exotic,5gp,1d3NL,1d4NL,1d6NL,1d8NL,2d6NL,3d6NL,x2,10ft,2lbs,bludgeoning,stun
+hand_crossbow,exotic,100gp,1d3,1d4,1d6,1d8,2d6NL,3d6NL,19-20/x2,30ft,2lbs,piercing,
+repeating_heavy_crossbow,exotic,400gp,1d8,1d10,2d8,3d8,4d8,6d8,19-20/x2,120ft,12lbs,piercing,
+repeating_light_crossbow,exotic,250gp,1d6,1d8,1d10,2d8,3d8,4d8,19-20/x2,80ft,6lbs,piercing,
+net,exotic,20gp,,,,,,,,10ft,6lbs,,entangle
+5_shuriken,exotic,1gp,1,1d2,1d3,1d4,1d6,1d8,x2,10ft,0.5lbs,piercing,
+20_arrows,simple,1gp,,,,,,,,,3lbs,,
+10_bolts,simple,1gp,,,,,,,,,1lbs,,
+10_sling_bullets,simple,1sp,,,,,,,,,5lbs,,

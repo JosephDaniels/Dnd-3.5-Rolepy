@@ -1,0 +1,25 @@
+item_name,proficiency,cost,damage_small,damage_medium,damage_large,damage_huge,damage_gargantuan,damage_colossal,critical,range_increment,weight,weapon_type,hardness,hit_points,special
+pitchfork,improvised,2gp,1d6,1d8,1d10,1d12,3d6,4d6,x2,,5lbs,piercing,5,5,
+bottle,improvised,3sp,1d3,1d4,1d6,1d8,1d10,2d6,special,10ft,1lbs,bludgeoning,1,1,"becomes_broken_bottle, stun"
+broken_bottle,improvised,1cp,1d3,1d4,1d6,1d8,1d10,2d6,x2,,0.5lbs,piercing,1,1,damage_to_user_on_breakage
+piece_of_glass,improvised,,1d3,1d4,1d6,1d8,1d10,2d6,x2,,0.1lbs,"piercing, slashing",1,1,damage_to_user
+pool_que,improvised,5gp,1d3,1d4,1d6,1d8,1d10,2d6,x2,5ft,1lbs,bludgeoning,5,2,becomes_broken_pool_que
+broken_pool_que,improvised,,1d3,1d4,1d6,1d8,1d10,2d6,x2,,0.5lbs,"piercing, slashing",5,1,
+barstool,improvised,5gp,1d4,1d6,1d8,1d10,1d12,3d6,x2,,5lbs,bludgeoning,5,5,stun
+metal_barstool,improvised,10gp,1d4,1d6,1d8,1d10,1d12,3d6,x2,,10lbs,bludgeoning,10,10,stun
+frying_pan,improvised,3gp,1d4,1d6,1d8,1d10,1d12,3d6,x2,,3lbs,bludgeoning,10,10,stun
+pool_ball,improvised,1gp,1d3,1d4,1d6,1d8,1d10,2d6,x2,10ft,0.3lbs,bludgeoning,5,10,stun
+pool_ball_in_a_sock,improvised,1gp,1d4,1d6,1d8,1d10,1d12,3d6,x2,,0.4lbs,bludgeoning,5,10,stun
+small_crowbar,improvised,1gp,1d3,1d4,1d6,1d8,1d10,2d6,x2,,6lbs,bludgeoning,10,10,strength_check+2
+large_crowbar,improvised,2gp,1d4,1d6,1d8,1d10,1d12,3d6,x2,,12lbs,bludgeoning,10,10,"two_handed, strength_check+4, disarm, trip"
+sledgehammer,"exotic, improvised",40gp,2d4,2d6,2d8,3d8,4d8,6d8,x3,,14lbs,bludgeoning,10,10,stun
+shiv,improvised,1cp,1d2,1d3,1d4,1d6,1d8,1d10,x2,,0.1lbs,piercing,varies,varies,concealment_bonus+2
+straight_razor,improvised,13gp,1d3,1d4,1d6,1d8,1d10,1d12,x2,,0.1lbs,slashing,10,5,"concealment_bonus+2, keen_edge"
+pocket_sand,improvised,,,,,,,,special,,0.1lbs,special,0,0,"always_blinds_on_crit, cant_be_broken"
+spit,improvised,,,,,,,,special,5ft,0.01lbs,special,0,0,cant_be_broken
+rusty_chain,improvised,1gp,1d3,1d4,1d6,1d8,1d10,1d12,x2,5ft,5lbs,bludgeoning,10,10,rust_disease
+rusty_knife,improvised,1cp,1d3,1d4,1d6,1d8,1d10,1d12,x2,10ft,0.2lbs,"slashing, piercing",5,5,rust_disease
+poo_on_a_stick,improvised,,,,,,,,special,,2lbs,special,5,5,gross_out
+jarate,improvised,,,,,,,,special,,2lbs,special,1,5,gross_out
+spiked_plank,improvised,,1d4,1d6,1d8,1d10,1d12,3d6,x2,,5lbs,piercing,5,5,
+headbutt,simple,,1d2,1d3,1d4,1d6,1d8,1d10,x3,,,bludgeoning,1,,"both_players_take_damage, stun"

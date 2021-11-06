@@ -1,0 +1,14 @@
+item_name,cost,weight,special
+artisan_outfit,1gp,4lbs,
+cleric_vestments,5gp,6lbs,
+cold_weather_outfit,8gp,7lbs,add_warmth
+courtier_outfit,30gp,6lbs,
+entertainer_outfit,3gp,4lbs,
+explorer_outfit,10gp,8lbs,
+monk_outfit,5gp,2lbs,
+noble_outfit,75gp,10lbs,fancy
+peasant_outfit,1sp,2lbs,
+royal_outfit,200gp,15lbs,fancy
+scholar_outfit,5gp,6lbs,
+traveler_outfit,1gp,5lbs,
+desert_outfit,5gp,2lbs,resist_heat

@@ -1,0 +1,14 @@
+item_name,cost,weight,health_bonus,food_value,special,fort_save_dc,description
+apple,1cp,1/3lbs,1,1,,,"""A simple, crunchy apple. When your teeth pierce the skin, the crunch is loud enough to be heard from miles around."""
+banana,1cp,1/3lbs,1,1,,,"""A ripe yellow banana. I hope you throw away your peel responsibly."""
+peach,2cp,1/3lbs,1,1,,,"""A juicy, fuzzy skinned fruit with white flesh. It is soft and fragrant."""
+trail_rations,5sp,1lbs,0,3,hardy,,"""A standard trail mix with almonds, peanuts, raisins, small pieces of pemmican, beef and crushed hard tack. It doesn't taste great but its better than starving."""
+gallon_of_ale,2sp,8lbs,1,5,alcohol,15,
+mug_of_ale,4cp,1lbs,1,1,alcohol,12,
+loaf_of_bread,2cp,0.5lbs,1,3,,,
+hunk_of_cheese,1sp,0.5lbs,2,2,,,
+chunk_of_meat,3sp,0.5lbs,5,5,,,
+pitcher_of_common_wine,2sp,6lb,3,3,alcohol,12,
+bottle_of_fine_wine,10gp,1.5lbs,4,2,alcohol,13,
+bottle_of_whiskey,12gp,1.5lbs,4,2,alcohol,16,
+bottle_of_dwarven_spirits,15gp,1.5lbs,4,2,alcohol,18,

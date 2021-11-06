@@ -1,0 +1,12 @@
+strength_check,DC
+break_simple_door,13
+break_good_door,18
+break_strong_door,23
+burst_rope_bonds,23
+bend_iron_bars,24
+break_down_barred_door,25
+burst_chain_bonds,26
+break_down_iron_door,18
+condition,DC_adjustment
+hold_portal,5
+arcane_lock,10

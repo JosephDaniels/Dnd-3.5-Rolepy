@@ -1,0 +1,12 @@
+transport_name,cost,weight,weight_fully_loaded,max_crew,max_soldiers,slow_pace,moderate_pace,grueling_pace
+carriage,100gp,600lbs,1tons,6+2,,2_miles_per_hour,5_miles_per_hour,10_miles_per_hour
+one_horse_cart,15gp,200lbs,0.5tons,4+2,,3_miles_per_hour,6_miles_per_hour,15_miles_per_hour
+two_horse_cart,32gp,400lbs,1tons,6+2,,3_miles_per_hour,6_miles_per_hour,15_miles_per_hour
+galley,30000gp,60tons,150tons,200,250,2_miles_per_hour,4_miles_per_hour,7_miles_per_hour
+keelboat,3000gp,30tons,80tons,15,100,1.5_miles_per_hour,3_miles_per_hour,7_miles_per_hour
+longship,10000gp,20tons,10tons,50,120,3_miles_per_hour,6_miles_per_hour,15_miles_per_hour
+rowboat,50gp,100lbs,100lbs,2,1,2_miles_per_hour,4_miles_per_hour,8_miles_per_hour
+sailing_ship,10000gp,100tons,250tons,20,60,2_miles_per_hour,8_miles_per_hour,15_miles_per_hour
+sled,20gp,300lbs,500lbs,1,,3_miles_per_hour,6_miles_per_hour,15_miles_per_hour
+wagon,35gp,400lbs,800lbs,2,2,2_miles_per_hour,5_miles_per_hour,10_miles_per_hour
+warship,25000gp,55tons,75tons,80,160,2.5_miles_per_hour,5_miles_per_hour,7.5_miles_per_hour
