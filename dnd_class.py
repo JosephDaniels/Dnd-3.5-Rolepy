@@ -1,7 +1,10 @@
 import csv
 
-fighter_progression_file = "character_class_progression_fighter.csv"
+bard_progression_file = "character_class_progression_bard.csv"
+barbarian_progression_file = "character_class_progression_barbarian.csv"
 cleric_progression_file = "character_class_progression_cleric.csv"
+fighter_progression_file = "character_class_progression_fighter.csv"
+rogue_progression_file = "character_class_progression_rogue.csv"
 wizard_progression_file = "character_class_progression_wizard.csv"
 
 HITDIE_DICTIONARY = {

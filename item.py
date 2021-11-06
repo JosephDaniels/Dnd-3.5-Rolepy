@@ -1,52 +1,7 @@
-import csv
 
-## New and improved SRD+ homebrew content
-dnd_food_file = "dnd35_food_table.csv"
-dnd_improvised_weapons_file = "dnd35_improvised_weapon_table.csv"
-dnd_food_file = "dnd35_food_table.csv"
-
-## Stuff pulled straight from the original DnD 3.5e rulebook
-dnd_armour_file = "dnd35srd_armour_table.csv"
-dnd_clothing_file = "dnd35srd_clothing_table.csv"
-dnd_hardness_file = "dnd35srd_item_hardness_table.csv"
-dnd_mundane_items_file = "dnd35srd_mundane_items_table.csv"
-dnd_weapon_and_shield_hardness_file = "dnd35srd_weapon_and_shield_hardness_table.csv"
-dnd_substance_hardness_table = "dnd35srd+_substance_hardness_table
-
-def get_item_csv_from_table(table_name):
-    tablename = table_name
-    with open('"dnd_tables/'+filename, newline='') as csvfile:
-        reader = csv.DictReader(csvfile,dialect='excel')
-            for row in reader:
-                print(row['item_name'],
-                      row['proficiency'],
-                      row['cost'],
-                      row['damage_small'],
-                      row['damage_medium'],
-                      row['damage_large'],
-                      row['critical'],
-                      row['range_increment'],
-                      row['weight'],
-                      row['weapon_type'],
-                      row['special'])
 
 class Item(object):
-    """
-    This is a basic item. It can be manipulated and moved.
-    If initiated with some sort of name, it will look it up
-    in the local file folder and try to create that item
-    based on a typical one from the database.
-
-    If initiated by itself, you can override the default
-    instance to do whatever you need it to do.
-
-    Useful functions:
-    dump_info()
-"""
-    def __init__(self, item_name=""):
-        if item_name == "":
-            print("""Empty item created.
-                    Override me at your discretion."""
+    def __init__(self, consumable=False):
         self.item_name = "" ## Empty if generic, otherwise it will be something like "Great Flaming Axe of Burgeoning Dire-fire+3"
         self.item_description = "" ## Will be something that comes up if the player inspects an item. E.G. 'you see a glass bottle...'
 
@@ -60,10 +15,6 @@ class Item(object):
         return lines
 
 class Consumable(Item):
-    """
-A specialized version of item that's meant to be eaten.
-Examples: apples, banana, beer, bread, meat
-"""
     def __init__(self, servings=1):
         self.consumable = consumable ## True if you can eat it
         self.servings = servings ## 0 if there's none left, expects real integer
