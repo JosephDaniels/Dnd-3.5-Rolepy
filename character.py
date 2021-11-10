@@ -1,27 +1,8 @@
-XP_CHART = (
-    (1 ,    0),
-    (2 ,    1000),
-    (3 ,    3000),
-    (4 ,    6000),
-    (5 ,    10000),
-    (6 ,    15000),
-    (7 ,    21000),
-    (8 ,    28000),
-    (9 ,    36000),
-    (10,    45000),
-    (11,    55000),
-    (12,    66000),
-    (13,    78000),
-    (14,    91000),
-    (15,    105000),
-    (16,    120000),
-    (17,    136000),
-    (18,    153000),
-    (19,    171000),
-    (20,    190000)
-    )
+from dnd35_class import * ## This is Dnd 3.5e SRD Players handbook classes
 
-SKILL_KEY_ABILITIES = {
+## Just a bunch of skills related to abilities not much to see here
+
+SKILL_KEY_ABILITIES = { ## All skills and their related abilities
     "appraise"          :   "intelligence",
     "balance"           :   "dexterity",
     "bluff"             :   "charisma",
@@ -59,6 +40,74 @@ SKILL_KEY_ABILITIES = {
     "use_rope"          :   "dexterity"
     }
 
+SKILL_USABLE_UNTRAINED = { ## all skills; are they usable untrained or not?
+    ## True if usable untrained. False if not. 
+    "appraise"          :   True,
+    "balance"           :   True,
+    "bluff"             :   True,
+    "climb"             :   True,
+    "concentration"     :   True,
+    "craft"             :   True,
+    "decipher_script"   :   False,
+    "diplomacy"         :   True,
+    "disable_device"    :   False,
+    "disguise"          :   True,
+    "escape_artist"     :   True,
+    "forgery"           :   True,
+    "gather_information":   True,
+    "handle_animal"     :   False,
+    "heal"              :   True,
+    "hide"              :   True,
+    "intimidate"        :   True,
+    "jump"              :   True,
+    "knowledge"         :   False,
+    "listen"            :   True,
+    "move_silently"     :   True,
+    "open_lock"         :   False,
+    "perform"           :   False,
+    "profession"        :   False,
+    "ride"              :   True,
+    "search"            :   True,
+    "sense_motive"      :   True,
+    "sleight_of_hand"   :   False,
+    "spellcraft"        :   False,
+    "spot"              :   True,
+    "survival"          :   True,
+    "swim"              :   True,
+    "tumble"            :   False,
+    "use_magic_device"  :   True,
+    "use_rope"          :   True
+    }
+
+
+
+## Every level associated with the experience needed to get there.
+## It can easily be calculated with a formula but I have found
+## that life is easier when you type things like this out properly.
+
+XP_CHART = (
+    (1 ,    0),
+    (2 ,    1000),
+    (3 ,    3000),
+    (4 ,    6000),
+    (5 ,    10000),
+    (6 ,    15000),
+    (7 ,    21000),
+    (8 ,    28000),
+    (9 ,    36000),
+    (10,    45000),
+    (11,    55000),
+    (12,    66000),
+    (13,    78000),
+    (14,    91000),
+    (15,    105000),
+    (16,    120000),
+    (17,    136000),
+    (18,    153000),
+    (19,    171000),
+    (20,    190000)
+    )
+
 SAVE_KEY_ABILITIES = {
     "base_fortitude"    :   "constitution",
     "base_reflex"       :   "dexterity",
@@ -78,15 +127,16 @@ This was built for use with the Rolepy Python Discord Bot.
 The class holds character information once its loaded inside from
 a text file. Please see the load for more information.
 
-If an attribute has a value of -1 then it has not been set.
+If an attribute has a value of -1 then it has not been set or was corrupted somehow.
     """
     def __init__(self):
 
         ## CHARACTER INFO
         self.name = "" ## e.g. Single name like "Conan"
         self.display_name = "" ## e.g. long name like "Conan the Barbarian"
-        self.character_class= [] ## lowercase character class array
-        self.alignment = "" ## Lawful <-> Chaotic and Evil <-> Good E.G. Lawful Good or Chaotic Evil
+        self.player_name = "" ## The player's discord username such as Villager#1999
+        self.character_class= [] ## lowercase character class with associated level e.g. ["fighterLv1","rogueLv2"]
+        self.alignment = "" ## Lawful <-> Chaotic and Evil <-> Good E.G. "Lawful Good" or "Chaotic Evil" or "True Neutral"
 
         ## GAME INFO
         self.dying = False
@@ -107,10 +157,10 @@ If an attribute has a value of -1 then it has not been set.
         self.base_attack_bonus = -1
         self.initiative = -1
         self.xp_points = -1
-        self.copper_coins = 0
-        self.silver_coins = 0
-        self.gold_coins = 0
         self.platinum_coins = 0
+        self.gold_coins = 0
+        self.silver_coins = 0
+        self.copper_coins = 0
 
         ## SAVING THROWS
         self.base_fortitude = -1
@@ -243,12 +293,27 @@ If an attribute has a value of -1 then it has not been set.
 
     def load(self, filename):
         """reads a text file and reads the data, turning it into names, experience etc.
+            any variables that start with an underscore are internal variables and should not be
+            modified or overridden by external sources.
             EXAMPLE FORMAT:
-            name = Chailaine
-            character_class = wizard
-            strength = 11
-            dexterity = 12
+            name = zandrius
+            display_name = zandrius_selwynn
+            character_class = "fighterLv1,"wizardLv1","rogueLv1",
+            strength = 12
+            dexterity = 13
             constitution = 14
+            intelligence = 12
+            wisdom = 13
+            charisma = 14
+            gold_coins = 23
+            silver_coins = 12
+            copper_coins = 79
+            total_experience = 78000
+            current_hitpoints = 68
+            total_hitpoints = 98
+            _initiative_bonus = 1
+            _total_hp = 93
+            _total_
             etc..."""
         profile = {}
         character_file = open('characters/'+filename, encoding="latin-1").read()
@@ -309,12 +374,32 @@ If an attribute has a value of -1 then it has not been set.
         spell_save = 10+attribute_modifier+spell_level+misc_modifier
         return spell_save
 
+    def get_skill_ranks(self, skill):
+        if self.__dict__[skill] == -1:
+            print("Character doesn't have that skill. skill[%s]" % skill)
+        else:
+            skill_ranks = self.__dict__[skill] ##Looks up the number of ranks you have in a certain skill
+            return skill_ranks
+
     def get_skill_total(self, skill, misc_modifier=0):
-        relevant_attribute = SKILL_KEY_ABILITIES[skill] ## gets a attribute for a skill E.G. spellcraft > intelligence
-        attribute_value = self.__dict__[relevant_attribute] ## looks up the exact value of the attribute for the character
-        attribute_modifier = Character.calculate_modifier(attribute_value)
-        skill_ranks = self.__dict__[skill]
-        total = skill_ranks+attribute_modifier+misc_modifier ## adds the skill ranks to the attribute modifier
+        if self.__dict__[skill] == -1:
+            print("Character %s doesn't have that skill. skill[%s]" % (self.name, skill))
+        else:
+            if "(" in skill: ## Detects a skill like knowledge, craft, profession, perform
+                words = skill.strip(")") ## Removes the trailing bracket knowledge(arcana) -> knowledge(arcana
+                words = words.split("(") ## Splits the argument between the first bracket e.g. "knowledge", "arcana"
+                multi_area_skill, area_of_expertise = words[0], words[1] ## Puts them into a human sounding variable
+                relevant_attribute = SKILL_KEY_ABILITIES[multi_area_skill] ## gets a attribute for a skill E.G. spellcraft > intelligence
+                attribute_value = self.__dict__[relevant_attribute] ## looks up the exact value of the attribute for the character
+                attribute_modifier = Character.calculate_modifier(attribute_value)
+                skill_ranks = self.get_skill_ranks(skill) ## Looks up how many ranks you put on your character sheet
+                total = skill_ranks+attribute_modifier+misc_modifier ## adds the skill ranks to the attribute modifier
+            else:
+                relevant_attribute = SKILL_KEY_ABILITIES[skill] ## gets a attribute for a skill E.G. spellcraft > intelligence
+                attribute_value = self.__dict__[relevant_attribute] ## looks up the exact value of the attribute for the character
+                attribute_modifier = Character.calculate_modifier(attribute_value)
+                skill_ranks = self.get_skill_ranks(skill) ## Looks up how many ranks you put on your character sheet
+                total = skill_ranks+attribute_modifier+misc_modifier ## adds the skill ranks to the attribute modifier
         return total
 
     def get_saving_throw(self, base_save, misc_modifier=0):
@@ -340,6 +425,12 @@ If an attribute has a value of -1 then it has not been set.
             elif xp <= xp_threshold:
                 return level
 
+    def get_coins(self):
+        copper = self.copper_coins  #10 copper to a silver
+        silver = self.silver_coins  #10 silver to a gold
+        gold = self.gold_coins      #10 gold to a platinum
+        return gold, silver, copper
+
     def get_net_worth(self):
         copper = self.copper_coins  #10 copper to a silver
         silver = self.silver_coins  #10 silver to a gold
@@ -348,43 +439,59 @@ If an attribute has a value of -1 then it has not been set.
         net_worth = 0.01*copper+0.1*silver+gold+10*platinum
         return net_worth
 
-    def get_feat_count(self):
+    def get_base_feat_count(self):
         level = self.get_current_level()
         return level/3+1
 
-    def get_class_skill_max_ranks(self):
+    def get_max_class_skill_ranks(self):
         level = self.get_current_level()
         return level+3
 
-    def get_cross_class_skill_max_ranks(self):
+    def get_max_cross_class_skill_ranks(self):
         level = self.get_current_level()
         return (level+3)/2
-        
+
+    def _validate_all_skills(self): ## validates all skills
+        ## Do not use unless you know what you're doing
+        ## Should only be called once during character creation
+
+        ### CURRENTLY BREAKS WHEN IT TRIES TO VALIDATE CRAFT KNOWLEDGE PROFESSION PERFORM
+        skills = self.__dict__.keys()
+        skills_usable = SKILL_USABLE_UNTRAINED.keys()
+        for skill in skills:
+            if SKILL_USABLE_UNTRAINED[skill] == True: ## Checks for all usable untrained skills
+                if self.__dict__[skill] == -1: ## If it detects an unvalidated skill
+                    self.__dict__[skill] = 0 ## Then validate it so it can be usable.
     
 def test_1(): ## Runs a known working character and sees if the methods work
     paige_file = "paige.txt"
-    paige = Character()
-    profile = paige.load(paige_file)
-    paige.print_character_sheet()
-    print("Tumble total is ", paige.get_skill_total("tumble", misc_modifier=0))
-    print("Fortitude save total is ", paige.get_saving_throw("base_fortitude", misc_modifier=0))
-    print("Reflex save total is ", paige.get_saving_throw("base_reflex", misc_modifier=0))
-    print("Melee attack bonus is ", paige.get_melee_attack_bonus(misc_modifier=0))
-    print("Ranged attack bonus is ", paige.get_ranged_attack_bonus(misc_modifier=0))
-    print("Initiative bonus is ", paige.get_initiative_bonus(misc_modifier=0))
-    print("Current level is ", paige.get_level())
-    print("Current net worth is ", paige.get_net_worth(), " gold.")
-    print("Base spell save is ", paige.get_spell_save("charisma"))
+    chara = Character()
+    profile = chara.load(paige_file)
+    chara.get_character_sheet()
+    print("Tumble total is ", chara.get_skill_total("tumble", misc_modifier=0))
+    print("Fortitude save total is ", chara.get_saving_throw("base_fortitude", misc_modifier=0))
+    print("Reflex save total is ", chara.get_saving_throw("base_reflex", misc_modifier=0))
+    print("Melee attack bonus is ", chara.get_melee_attack_bonus(misc_modifier=0))
+    print("Ranged attack bonus is ", chara.get_ranged_attack_bonus(misc_modifier=0))
+    print("Initiative bonus is ", chara.get_initiative_bonus(misc_modifier=0))
+    print("Current level is ", chara.get_level())
+    gold, silver, copper = chara.get_coins()
+    character_net_worth = chara.get_net_worth()
+    print("%s has %i gold, %i silver and %i copper pieces for a total of %i gold."
+          % (chara.display_name, gold, silver, copper, character_net_worth))
+    print("Base spell save is ", chara.get_spell_save("charisma"))
+    print("Knowledge(Arcana) total is ", chara.get_skill_total("knowledge(arcana)", misc_modifier=0))
 
 def test_2(): ## Runs a basic character sheet and see if it shows up
     c = Character()
     print(c.get_character_sheet(show_all=True))
 
-def test_3():## Test the saving functionality
+def test_3():## Test the character cheet save functionality
     b = Character()
     b.name = "Bobby Boy"
     b.gold_coins = 1000000
     b.xp_points = 36000
+    b._validate_all_skills()
     print("Bobby's level is ", b.get_level())
     b.save("bobby.txt")
 
@@ -393,11 +500,14 @@ def test_4(): ## Test the loading functionality from a save file
     b.load("bobby.txt")
     print(b.get_character_sheet(show_all=True))
 
-def test_5():
+def test_5(): ## Test adding in an imp
     i = Character()
     i.load("imp.txt")
     print(i.get_character_sheet())
+
+def test_6(): ## attempting to use the character class tables from character.py
+    pass
     
 if __name__ == "__main__":
-    test_5()
+    test_1()
     
