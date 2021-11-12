@@ -99,9 +99,9 @@ async def do_logout(message):
     member = message.author
     username = str(message.author)
     if username in dm.logged_in_as.keys(): # checks if the username is in the logged_in_as dictionary keys ie Bobby#2451
-        character_name = dm.logged_in_as[username] # retrieves the name of the character they are logged in as
+        character = dm.logged_in_as[username] # retrieves the the character they are logged in as
         dm.logged_in_as.pop(username) # remove them from the logged in
-        return "%s, your character %s has been logged out." % (username, character_name)
+        return "%s, your character %s has been logged out." % (username, character.name)
     else:
         return "You're not logged in!"
 
@@ -161,7 +161,6 @@ async def on_message(message):
             if dm.logged_in_as[key].name == target_character: # check if a username is associated with a certain character
                 char_sheet = dm.logged_in_as[key]  ## Finds their character sheet from theirr discord username
                 response = char_sheet.get_profile() # This is a personal version of their character sheet
-                print(char_sheet.get_character_sheet())
                 ## I will have to differentiate between personal and public profile in the future
                 await message.author.send(response)
 
