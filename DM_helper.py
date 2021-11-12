@@ -93,7 +93,7 @@ It will take their characters, use their initiative bonus and roll initiative fo
         elif attack_type == "ranged":
             bab = attacker.get_ranged_attack_bonus() ## We need to grab the class base attack bonus and add their dexterity modifier
         else:
-            raise Error("this should never occur. Attack type was neither melee or ranged. Are you testing magic??"
+            raise Error("this should never occur. Attack type was neither melee or ranged. Are you testing magic??")
         roll_total = bab+dice_result
         if roll_total > target.armor_class:
             print ("%s hit %s with a total of %i. (AC=%i) [Natural %s+%i]" % (attacker.name,
@@ -177,7 +177,7 @@ def test(): # combat test
             except:
                 print("Don't know who that is!! Try again. =]")
         attacker = dm.get_character(attacker_name)
-        if dm.do_melee_attack(attacker, target):
+        if dm.do_attack(attacker, target):
             ## Everybody is using a short sword
             damage, dicetype = rolld6()
             damage+=attacker.calculate_modifier(attacker.strength) ## add strength mod

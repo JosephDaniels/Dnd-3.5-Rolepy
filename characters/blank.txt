@@ -1,0 +1,13 @@
+name = ""
+display_name = ""
+player_name = ""
+character_class = []
+alignment = ""
+dying = False
+dead = False
+platinum_coins = 0
+gold_coins = 0
+silver_coins = 0
+copper_coins = 0
+feats = []
+special_abilities = []

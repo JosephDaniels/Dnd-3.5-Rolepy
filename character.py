@@ -289,9 +289,9 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
             classes.append(char_class.strip('"'))
         return classes
 
-    def save(self, filename):
-        data = self.get_character_sheet(show_all=True)
-        f = open('characters/'+filename, mode='w+')
+    def save(self, filename, show_all=True):
+        data = self.get_character_sheet(show_all=show_all)
+        f = open(filename, mode='w+')
         f.write(data)
         f.close()
 
@@ -320,7 +320,7 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
             _total_
             etc..."""
         profile = {}
-        character_file = open('characters/'+filename, encoding="latin-1").read()
+        character_file = open(filename, encoding="latin-1").read()
         character_file = character_file.split("\n")
         for line in character_file: ## Reading each line in the character like strength = 18
             key, value = line.split("=") ## Splits the arguments by the equals sign
@@ -523,25 +523,29 @@ def test_3(): ## Test the character cheet save functionality
 
 def test_4(): ## Test the loading functionality from a save file
     b = Character()
-    b.load("bobby.txt")
+    b.load("characters/bobby.txt")
     print(b.get_character_sheet(show_all=True))
 
 def test_5(): ## Test adding in an imp
     i = Character()
-    i.load("imp.txt")
+    i.load("npcs/imp.txt")
     print(i.get_character_sheet())
 
 def test_6(): ## attempting to use the character class tables from character.py
     c = Character()
-    c.load("noob.txt")
+    c.load("characters/noob.txt")
     character_class = c.character_class
     print(character_class)
 
 def test_7(): ## testing multiclass functionality
     c = Character()
-    c.load("paige.txt")
+    c.load("characters/paige.txt")
     print(c.get_saving_throw())
 
+def test_8(): ## make a blank character
+    c = Character()
+    c.save("characters/blank.txt", show_all=False)
+
 if __name__ == "__main__":
-    test_7()
+    test_8()
     

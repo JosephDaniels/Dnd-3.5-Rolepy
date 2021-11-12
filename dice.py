@@ -13,7 +13,7 @@ Discord for interfacing and interacting with the players.
 With the new update, it now has the ability to roll d10s in the WoD system.
 """
 
-def handle_multiple_dice(command):
+def handle_multiple_dice(command): ## example roll2d6
     '''
 Rolls multiple dice, and then adds a modifier on at the end.
 
