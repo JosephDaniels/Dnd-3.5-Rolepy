@@ -133,7 +133,7 @@ a text file. Please see the load for more information.
 
 If an attribute has a value of -1 then it has not been set or was corrupted somehow.
     """
-    def __init__(self):
+    def __init__(self, character_name = ""):
 
         ## CHARACTER INFO
         self.name = "" ## e.g. Single name like "Conan"
@@ -277,6 +277,10 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
 
         self.feats = [] ## feats will get added to this list
         self.special_abilities = [] ## special class abilities are added to this list
+
+        if character_name:
+            filename = "characters/%s.txt" % (character_name)
+            self.load(filename)
 
     def __lt__(self,other):
         return True ## It's a hack so that it sorts properly during initiative

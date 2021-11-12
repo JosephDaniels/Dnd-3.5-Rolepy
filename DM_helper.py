@@ -8,10 +8,8 @@ class DM_helper(object):
     def __init__(self, debug = True):
         debug = debug ## special variable for debugging purposes, change it to false if you don't want a lot of print statements.
         ## Anyone who's not a player character is controlled by the DM system.
-        self.characters = {} ## a list of character objects indexed by names
         self.dnd_class_tables = {} ## all dnd classes indexed by their names
-
-        self.player_characters = [] ## names of the player characters.
+        self.logged_in_as = {} ## players actual discord name followed by their actual character sheet
         
         # for combat
         self.in_combat = False # in combat state or not
@@ -27,8 +25,13 @@ class DM_helper(object):
         for classname in DND35PH_CLASSES:
             self.dnd_class_tables[classname] = Dnd_class(classname)
 
-    def add_character(self, character):
-        self.characters[character.name] = character
+    def add_character(self, character_name):
+        ## creates a character that doesn't exist
+        c = Character(character_name)
+
+    def use_character(self, character):
+        pass
+        ## character received is a character object that contains their character sheet
 
     def get_character(self,character_name=""):
         return self.characters[character_name]

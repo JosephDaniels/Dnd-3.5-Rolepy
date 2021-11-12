@@ -1,14 +1,8 @@
 import discord
-import os
-
-from dice import *
 
 import asyncio
 
-from TOKEN import * ## You will need to go into the file and add your own token.
-
 from DM_helper import * ## Module for running the game, lets us keep track of characters
-from character import * ## player character information
 from NPC import * ## non-player character information
 
 help_login_message = """Wondering how to 'login'? Type !help followed by your characters first name.\n
@@ -48,8 +42,6 @@ valid_characters_for = {'StabbyStabby#1327' : ['vsevellar', 'zandrius', 'zandria
                         'NormL75#0235'      : ['kaelyn'],
                         'baronanansi#2600'  : ['barda'],
                         'alanwongis#3590'   : ['bob', 'akbar']}
-
-logged_in_as = {}
 
 client = discord.Client()
 
@@ -92,31 +84,27 @@ def do_login(message):
     except ValueError: ## means that the command failed to parse
         response = "Failed to login."
         return response, nick
-    
-    ## Attempt to actually login the character
-    print (logged_in_as.keys())
+
     ##Error Check 2 - Don't try to steal my character!!!
     if target_character not in valid_characters_for[username]: # checks if the target character is valid for the user
             response = "You cannot login as %s, %s is not your character." % (target_character, target_character)
             return response, nick
+
     ##Exception, you're already logged in, I'm going to swap your character for you.
     if username in logged_in_as.keys(): ## Already logged in
-        if target_character != logged_in_as[username]: #The target character is different from the character you're playing
-            logged_in_as[username] = target_character
-            response = "Switching your character. You are now logged in as %s." % (target_character)
-            return response, nick
-        else:
-            response = "%s, you are already logged in as %s." % (username, target_character)#thecharacter I'm logged in as
-            return response, nick
-    else: # truly log them in
-        logged_in_as[username] = target_character
+        response = "%s, you are already logged in as %s." % (username, target_character)#thecharacter I'm logged in as
+        return response, nick
+    else: # Truly log their character in and load them in the system
         try: ## tries to rename the person, will be successful if they are a normal username
-            response = "Successfully logged %s in as the character " % (username,target_character)
-            nick = target_character
+            response = "Successfully logged %s in as the character %s." % (username,target_character)
+            nick = target_character # for changing their name in discord
+            character_sheet = Character(target_character)
+            dm.logged_in_as[username] = character_sheet
             return response, nick
         except: ## fails to rename the person, they are stronger than the bot in priviledges
-            
             response = "Successfully logged in as %s (I wasn't able to change your username, you're probably an admin.)" % (target_character)
+            character_sheet = Character(target_character)
+            dm.logged_in_as[username] = character_sheet
             return response, nick
         
 async def do_logout(message):
@@ -174,10 +162,14 @@ async def on_message(message):
         ## Check if they have DM power
         if not (str(message.author) in ADMINS):
             await message.author.send("Hey!! You're not allowed to add combatants to the initiative. Nice try. Chump.")
-        
+
         else:
             combatant_name = message.content.split(" ")[1].strip()## grabs the second element and removes whitespace
-            enemy_type = NPC(combatant_name)
+            if combatant_name in logged_in_as.values():
+                pass
+                ## to do, during the login by the user, retrieve all their info
+            enemy = NPC(combatant_name) ## tries to make an npc of the type specified
+            dm.add_to_combat(enemy)
             
             
     ## DICE COMMANDS
