@@ -1,19 +1,26 @@
 from character import *
-from dnd_class import *
+from dnd35_class import *
 from dice import *
 
+DND35PH_CLASSES = ["bard","barbarian","cleric","druid","fighter","monk","paladin","ranger","rogue","sorcerer","wizard"] ## All the base classes from the DND 3.5e Player's handbook
+
 class DM_helper(object):
-    def __init__(self):
-        self.combat_active = False
-        self.current_round = -1 # undefined
-        self.current_combatant = -1 ## undefined
-        self.characters = {} ## a list of characters indexed by names
-        self.battle_order = [] ## characters associated with their current initiatives in a tuple
+    def __init__(self, debug = True):
+        debug = debug ## special variable for debugging purposes, change it to false if you don't want a lot of print statements.
+        ## Anyone who's not a player character is controlled by the DM system.
+        self.characters = {} ## a list of character objects indexed by names
         self.dnd_class_tables = {} ## all dnd classes indexed by their names
+        
+        self.battle_order = [] ## characters associated with their current initiatives in a tuple
+        self.player_characters = [] ## names of the player characters.
+
+        self.current_round = -1
+        self.current_combatant = -1
+        self.combat_active = False
         self.load_dnd_classes()
 
     def load_dnd_classes(self):
-        for classname in ["bard","barbarian","cleric","fighter","wizard"]:
+        for classname in DND35PH_CLASSES:
             self.dnd_class_tables[classname] = Dnd_class(classname)
 
     def add_character(self, character):
@@ -21,13 +28,21 @@ class DM_helper(object):
 
     ### Combat helper methods
     def start_combat(self, combatants):
+        """
+The purpose of this function is to quickly add a lot of combatants to the same combat.
+It will take their characters, use their initiative bonus and roll initiative for each character automatically.
+"""
         self.current_combatant = 0
         self.current_round = 1
         temp_list=[]
+        print ("Combat begins! Roll initiative!")
         for combatant in combatants:
             initiative_bonus = combatant.get_initiative_bonus(misc_modifier=0)
-            result, dicetype = rolld20()
-            initiative_result = result+initiative_bonus
+            print ("%s rolls for initiative! [+%i initiative bonus]" % (combatant.name, initiative_bonus))
+            dice_result, dice_type = rolld20()
+            initiative_result = dice_result+initiative_bonus
+            print ("%s rolled %i. [natural %i + %i init bonus]" % (combatant.name, initiative_result,
+                                                                   dice_result, initiative_bonus))
             temp_list.append((initiative_result, combatant))  ## Combatant name associated with a 
             temp_list.sort()
             temp_list.reverse()

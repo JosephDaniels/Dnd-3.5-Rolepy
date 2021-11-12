@@ -21,7 +21,7 @@ class Consumable(Item):
         self.healing_value = None ## E.G. 2d4+1 for an improved alchemical healing potion or 1d8+5 for a cure light wounds potion.
         self.consumable_benefits = [] ## A list of the various benefits the consumable confers. E.G. blindness, clarity(cure blindness), restore_mana, stabilize, cats_eyes
 
-class Melee_Weapon(Item):
+class Weapon(Item):
     def __init__(self, item_name = "", weapon_type = "", damage_type = "",
                  can_use_two_handed = False, reach_weapon = False, enhancement_bonus = 0):
         self.item_name = item_name
@@ -34,22 +34,7 @@ class Melee_Weapon(Item):
             self.enhancement_bonus = 0
         self.can_use_two_handed = can_use_two_handed ## True if the weapon can be used two-handed for additional damage. (1.5x str modifier in 3.5e)
         self.reach_weapon = reach_weapon ## Only change to true if the weapon has reach like a glaive.
-        if self.reach_weapon == True:
-            self.range = weapon_range ## The distance the weapon can reach. Usually around 5 feet for a medium character using a spear or glaive.
-        
-class Ranged_Weapon(Item):
-    def __init__(self, item_name = "", weapon_type = "", damage_type = "",
-                 can_use_two_handed = False, enhancement_bonus = 0):
-        self.item_name = item_name
-        self.weapon_type = weapon_type ## E.G. longbow, shortbow, sling etc.
-        self.damage_type = damage_type ## E.G. usually piercing or ballistic
-        try: ## has a name like orc killer bow+2 or something
-            name, enhancement_bonus = item_name.split("+")
-            self.enhancement_bonus = enhancement_bonus ## represents a bonus from masterwork quality or magical enhancements, usually applies directly to attack bonus
-        except: ## does not have the weapon bonus in its name
-            self.enhancement_bonus = 0 ## will have to be set manually if you wish it to be otherwise
-        self.can_use_two_handed = can_use_two_handed ## True if the weapon can be used two-handed like a longbow.
-        self.range = weapon_range ## The range increment for the weapon. -2 penalty per increment you are away from your target.
+        self.range = weapon_range ## The distance the weapon can reach. Usually around 5 feet for a medium character using a spear or glaive.
 
 class Equipment(Item):
     def __init__(self, equip_location,
@@ -63,7 +48,7 @@ class Armour(Equipment):
                  armor_check_penalty = 0):
         self.armor_bonus = armor_bonus ## Zero if the equipment does not provide armor
         self.armor_check_penalty = armor_check_penalty ## Will be a negative number. Applies on physical checks like swim and climb.
-        
+
 def test(): ## test automatic enhancement detection based on name
     a = Melee_Weapon(item_name="Longsword of Thunder+2")
     a.item_description = "A manly sword of a thundering nature."

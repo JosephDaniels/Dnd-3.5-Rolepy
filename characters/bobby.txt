@@ -1,10 +1,14 @@
 name = "Bobby Boy"
 display_name = ""
+player_name = ""
 character_class = []
+alignment = ""
+dying = False
+dead = False
 xp_points = 36000
-copper_coins = 0
-silver_coins = 0
-gold_coins = 1000000
 platinum_coins = 0
+gold_coins = 1000000
+silver_coins = 0
+copper_coins = 0
 feats = []
 special_abilities = []

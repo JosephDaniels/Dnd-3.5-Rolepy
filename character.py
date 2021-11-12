@@ -114,6 +114,10 @@ SAVE_KEY_ABILITIES = {
     "base_will"         :   "wisdom"
     }
 
+# in the txt file that saves attributes for a character, these will have braces in the file
+# eg. knowledge(arcana)
+MULTI_AREA_SKILLS = ["knowledge","profession","craft","perform"]
+
 class Data(object):
     def __init__(self):
         return
@@ -286,7 +290,7 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
         return classes
 
     def save(self, filename):
-        data = self.get_character_sheet()
+        data = self.get_character_sheet(show_all=True)
         f = open('characters/'+filename, mode='w+')
         f.write(data)
         f.close()
@@ -318,17 +322,32 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
         profile = {}
         character_file = open('characters/'+filename, encoding="latin-1").read()
         character_file = character_file.split("\n")
-        for line in character_file:
-            attribute, value = line.split("=")
-            attribute, value = attribute.strip(), value.strip()
-            if attribute == "character_class":
-                value = Character.parse_character_class(value) ## expects a string like "fighter","wizard","rogue"
-            else:
-                try:
-                    value = int(value) ## tries to convert to a number
-                except:
-                    pass ## doesn't matter, stays a string
-            profile[attribute] = value
+        for line in character_file: ## Reading each line in the character like strength = 18
+            key, value = line.split("=") ## Splits the arguments by the equals sign
+            key, value = key.strip(), value.strip() ## remove whitespace
+            if key == "character_class": ## SPECIAL PARSING FOR CHARACTERS CLASSES WHICH ARE ARRAYS
+                # the character's classes are formatted in the file as
+                #     character_class = clericLv1, druidLv10
+                # so split at the ',' and then each is split further on "Lv"
+                # The output will be a list of tuples like this:
+                # [ ('cleric', 1), ('druid', 10)]
+                parsed_classes =  []
+                char_classes= value.split(",") # split on comma, will give each class and their associated level
+                for raw_char_st in char_classes: ## Alan put this line it handles the full character string such as "fighterLv3" or "rogueLv2"
+                    char_class_name, level = raw_char_st.split("Lv") # split between class name and level
+                    try: level = int(level) # Tries to convert to a 
+                    except: print("didn't manage to convert ["+level+"] to an int.")
+                    parsed_classes.append( (char_class_name, level) )
+                value = parsed_classes
+            if "(" in key:
+                main_key, sub_key = key.strip(")").split("(")
+                if main_key in MULTI_AREA_SKILLS:
+                    main_key, sub_key = key.strip(")").split("(")
+                    key = main_key+"_"+sub_key ## constructs the key e.g. knowledge_arcana
+            else:   
+                try:    value = int(value) ## tries to convert to a number
+                except: pass ## doesn't matter, stays a string
+            profile[key] = value
         self.__dict__.update(profile)
 
     def get_character_sheet(self, show_all = False):
@@ -439,6 +458,15 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
         net_worth = 0.01*copper+0.1*silver+gold+10*platinum
         return net_worth
 
+    def get_base_save(self):
+        pass
+
+    def set_saving_throws_from_class_levels(self): ## Calculates the total save bonus across all classes for a certain saving throw
+        fort = 0
+        refl = 0
+        will = 0
+        
+
     def get_base_feat_count(self):
         level = self.get_current_level()
         return level/3+1
@@ -486,13 +514,11 @@ def test_2(): ## Runs a basic character sheet and see if it shows up
     c = Character()
     print(c.get_character_sheet(show_all=True))
 
-def test_3():## Test the character cheet save functionality
+def test_3(): ## Test the character cheet save functionality
     b = Character()
     b.name = "Bobby Boy"
     b.gold_coins = 1000000
     b.xp_points = 36000
-    b._validate_all_skills()
-    print("Bobby's level is ", b.get_level())
     b.save("bobby.txt")
 
 def test_4(): ## Test the loading functionality from a save file
@@ -506,8 +532,16 @@ def test_5(): ## Test adding in an imp
     print(i.get_character_sheet())
 
 def test_6(): ## attempting to use the character class tables from character.py
-    pass
-    
+    c = Character()
+    c.load("noob.txt")
+    character_class = c.character_class
+    print(character_class)
+
+def test_7(): ## testing multiclass functionality
+    c = Character()
+    c.load("paige.txt")
+    print(c.get_saving_throw())
+
 if __name__ == "__main__":
-    test_1()
+    test_7()
     

@@ -159,8 +159,6 @@ def return_class_csv(class_name, show_all = False):
             for row in reader:
                 print(row['level'],row['base_attack_bonus'])
 
-            
-
 class Dnd_class(object):
     def __init__(self,dnd_classname=""):
         if dnd_classname == "":
@@ -188,7 +186,6 @@ def test_2(): ## make an object that holds our class information and retrieve it
     print(cleric_cls.get(level,'base_attack_bonus'))
     print(cleric_cls.get(level,'base_fortitude'))
     print(cleric_cls.get(level,'base_reflex'))
-    
 
 if __name__ == "__main__":
     test_2()

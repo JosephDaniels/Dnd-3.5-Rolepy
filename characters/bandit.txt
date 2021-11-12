@@ -1,6 +1,6 @@
 name  = bandit
 display_name  = bandit
-character_class  = ['fighter']
+character_class  = fighterLv1
 strength  =  13
 dexterity  =  10
 constitution  =  12

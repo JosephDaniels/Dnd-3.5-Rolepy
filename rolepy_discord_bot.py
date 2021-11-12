@@ -55,11 +55,12 @@ async def on_message(message):
                 await message.channel.send("You cannot login as "+target_character+", "+target_character+" is not your character.")
             else:
                 logged_in_as[user] = target_character
-                try:
+                try: ## tries to rename the person, will be successful if they are a normal user
                     await member.edit(nick=target_character)
                     await message.channel.send("Successfully logged " + user + " in as the character " + target_character)
-                except:
-                    await message.channel.send("Sorry, I wasn't able to log you in. Perhaps it's a permission error- are you the Admin?")
+                except: ## fails to rename the person, they are stronger than the bot in priviledges
+                    await message.channel.send("Sorry, I wasn't able to change your name. Perhaps it's a permission error- are you the Admin?")
+                    
 
     if message.content.startswith('!logout'):
         if user in logged_in_as.keys():
