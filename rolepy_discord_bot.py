@@ -7,6 +7,31 @@ import asyncio
 
 from TOKEN import * ## You will need to go into the file and add your own token.
 
+from DM_helper import * ## Module for running the game, lets us keep track of characters
+
+help_login_message = "Wondering how to 'login'? Type !help followed by your characters first name.\n"
+                       "If your Discord account is associated with that character,"
+                       "You will be logged in and able to access your profile."
+                       "After that, you can type !me to view your logged in character,"
+                       "or you can type !whois [username] to see a character's profile."
+                       "Type '!help character sheet' to learn more about it."
+                      "Please note that your username is CASE SENSITIVE!"
+
+help_whois_message = "Wondering how to use 'whois'?: Type !whois followed by a target character's first name.\n"
+                     "This command will bring up a character profile, which is a"
+                     "version of their character sheet that is intended for others"
+                     "to see. This could include their picture, character description,"
+                     "character history and public backstory."
+                     "Please note that the username is CASE SENSITIVE!"
+
+help_general_message = "Need some help using the Roleplay Bot?\n"
+                        "Here's a list of available commands. More to come.\n"
+                        "!greet\n"
+                        "!help\n !help [command]\n !login [username]\n !logout\n"
+                        "!whois [username]\n !me\n !rollwod\n !rollchancedie\n"
+                        "!rolld3\n !rolld4\n !rolld6\n !rolld8\n !rolld10\n !rolld12\n" 
+                        "!rolld16\n !rolld20\n !rolld24\n !rolld100\n !rolld1000\n !coinflip\n"
+
 dnd_players = ['StabbyStabby#1327', 'Coruba#1432', 'mystia#2889',
                'Frail Faintheart#5181', 'Magromancer#6352', 'NormL75#0235',
                'baronanansi#2600', 'alanwongis#3590']
@@ -22,6 +47,8 @@ valid_characters_for = {'StabbyStabby#1327' : ['vsevellar', 'zandrius', 'zandria
 logged_in_as = {}
 
 client = discord.Client()
+
+dm = DM_helper()
 
 @client.event
 async def on_ready():
@@ -83,7 +110,8 @@ def do_login(message):
             nick = target_character
             return response, nick
         except: ## fails to rename the person, they are stronger than the bot in priviledges
-            response = "(Logged in as %s) Wasn't able to change your username, you're probably an admin." % (target_character)
+            
+            response = "Successfully logged in as %s (I wasn't able to change your username, you're probably an admin.)" % (target_character)
             return response, nick
         
 async def do_logout(message):
@@ -222,26 +250,9 @@ async def on_message(message):
     
     if message.content.startswith('!help'): ## All Help Commands
         if message.content == ('!help login'):
-            await message.author.send("Wondering how to 'login'? Type !help followed by your characters first name.\n"
-                                       "If your Discord account is associated with that character,"
-                                       "You will be logged in and able to access your profile."
-                                       "After that, you can type !me to view your logged in character,"
-                                       "or you can type !whois [username] to see a character's profile."
-                                       "Type '!help character sheet' to learn more about it."
-                                      "Please note that your username is CASE SENSITIVE!")
+            await message.author.send(help_login_message)
         if message.content.startswith('!help whois'):
-            await message.author.send("Wondering how to use 'whois'?: Type !whois followed by a target character's first name.\n"
-                                        "This command will bring up a character profile, which is a"
-                                      "version of their character sheet that is intended for others"
-                                      "to see. This could include their picture, character description,"
-                                      "character history and public backstory."
-                                      "Please note that the username is CASE SENSITIVE!")
+            await message.author.send(help_whois_message)
         if message.content == ('!help'):
-            await message.author.send("Need some help using the Roleplay Bot?\n" +
-            "Here's a list of available commands. More to come.\n"
-            "!greet\n"
-            "!help\n !help [command]\n !login [username]\n !logout\n"
-            "!whois [username]\n !me\n !rollwod\n !rollchancedie\n"
-            "!rolld3\n !rolld4\n !rolld6\n !rolld8\n !rolld10\n !rolld12\n" 
-            "!rolld16\n !rolld20\n !rolld24\n !rolld100\n !rolld1000\n !coinflip\n")
+            await message.author.send(help_general_message)
 client.run(TOKEN)

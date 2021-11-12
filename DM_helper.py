@@ -86,9 +86,14 @@ It will take their characters, use their initiative bonus and roll initiative fo
                 if self.current_combatant >= len(self.battle_order):
                     self.current_combatant = 0
 
-    def do_melee_attack(self, attacker, target):
+    def do_attack(self, attacker, target, attack_type = "melee"): # defaults to melee attack. change to "ranged" to reference ranged attack bonus.
         dice_result, dicetype = rolld20()
-        bab = attacker.get_melee_attack_bonus() ## We need to grab the class base attack bonus and add their strength modifier
+        if attack_type == "melee":
+            bab = attacker.get_melee_attack_bonus() ## We need to grab the class base attack bonus and add their strength modifier
+        elif attack_type == "ranged":
+            bab = attacker.get_ranged_attack_bonus() ## We need to grab the class base attack bonus and add their dexterity modifier
+        else:
+            raise Error("this should never occur. Attack type was neither melee or ranged. Are you testing magic??"
         roll_total = bab+dice_result
         if roll_total > target.armor_class:
             print ("%s hit %s with a total of %i. (AC=%i) [Natural %s+%i]" % (attacker.name,
@@ -105,27 +110,6 @@ It will take their characters, use their initiative bonus and roll initiative fo
                                                                                                   target.armor_class,
                                                                                                   dice_result,
                                                                                                   bab))
-            return False
-
-    def do_ranged_attack(self, attacker, victim):
-        dice_result, dicetype = rolld20()
-        bab = attacker.get_ranged_attack_bonus() ## We need to grab the class base attack bonus and add their strength modifier
-        roll_total = bab+dice_result
-        if roll_total > target.armor_class:
-            print ("%s hit %s with a total of %i. (AC=%i) [Natural %s+%i]" % (attacker.name,
-                                                                              target.name,
-                                                                              roll_total,
-                                                                              target.armor_class,
-                                                                              dice_result,
-                                                                              bab))
-            return True ## Attack successful, proceed to damage
-        else:
-            print("%s missed their attack on %s with a total of %i. (AC=%i) [natural %i + %i]" % (attacker.name,
-                                                                                                  target.name,
-                                                                                                  roll_total,
-                                                                                                  target.armor_class,
-                                                                                                  dice_result,
-                                                                                                  target.armor_class))
             return False
         
     def deal_damage(self,attacker,victim,damage):
@@ -154,7 +138,7 @@ It will take their characters, use their initiative bonus and roll initiative fo
     def get_character(self,character_name=""):
         return self.characters[character_name]
 
-def test():
+def test(): # combat test
     
     dm = DM_helper()
     
@@ -203,6 +187,9 @@ def test():
         print("%s's turn is over!" % attacker.name)
         dm.next_turn()
         print("It's now %s's turn!" % dm.whose_turn_isit())
+
+def test_2(): # 
+    pass
 
 if __name__ == "__main__":
     test()
