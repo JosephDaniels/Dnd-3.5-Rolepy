@@ -11,170 +11,212 @@ dnd_players = ['StabbyStabby#1327', 'Coruba#1432', 'mystia#2889',
                'Frail Faintheart#5181', 'Magromancer#6352', 'NormL75#0235',
                'baronanansi#2600', 'alanwongis#3590']
 
-valid_characters = {'StabbyStabby#1327' : ['Vsevellar', 'Zandrius', 'Zandria', 'Thaddeus', 'Paige'],
-                    'Coruba#1432'       : ['Ulfric', 'Barco', 'Tebbo'],
-                    'mystia#2889'       : ['Chailaine', 'Manda Lorien'],
-                    'Magromancer#6352'  : ['Cymancer'],
-                    'NormL75#0235'      : ['Kaelyn'],
-                    'baronanansi#2600'  : ['Barda'],
-                    'alanwongis#3590'   : ['Bob-the-tree', 'Akbar']}
+valid_characters_for = {'StabbyStabby#1327' : ['vsevellar', 'zandrius', 'zandria', 'thaddeus', 'paige'],
+                        'Coruba#1432'       : ['ulfric', 'barco', 'tebbo'],
+                        'mystia#2889'       : ['chai', 'manda'],
+                        'Magromancer#6352'  : ['cymancer'],
+                        'NormL75#0235'      : ['kaelyn'],
+                        'baronanansi#2600'  : ['barda'],
+                        'alanwongis#3590'   : ['bob', 'akbar']}
 
 logged_in_as = {}
 
 client = discord.Client()
 
 @client.event
-
 async def on_ready():
     print('We have logged in as {0.user}'.format(client))
 
-@client.event
+def do_roll(command_line, username):
+    print(command_line)
+    print(username)
+    if command_line.startswith('!rolld'): ## Rolls a single dice
+        if "+" in command_line or "-" in command_line:
+            dice_result, dice_total, dice_type, modifier = handle_dice_command(command_line) ## Pulls the 
+            return "%s rolled %i total on a %s. (Natural %i%i)" % (username, dice_total, dice_type, dice_result, modifier)
+        else:
+            dice_result, dice_type = handle_dice_command(command_line)
+            return "%s rolled a %i on a %s." % (username, dice_result, dice_type)
+    else: ## Multiple dice
+        if "+" in message.content or "-" in message.content:
+            dice_total, num_dice, results, dice_type, modifier = handle_multiple_dice(message.content) ## Pulls the 
+            return "%s rolled a %i on a %i%s. Results: %s%i" % (username, dice_total, num_dice, dice_type, results, modifier)
+        else:
+            dice_total, num_dice, results, dice_type = handle_multiple_dice(message.content)
+            return "%s rolled a %i on %i%s. Results: %s" % (username, dice_total, num_dice, dice_type, results)
 
-
-async def on_message(message):
-
-    user = str(message.author)
+def do_login(message):
+    nick = None
     member = message.author
+    username = str(message.author)
+    command_line = message.content
+    #Error Check 1 - You're not one of my friends
+    if not username in dnd_players:
+        response = "You are not allowed to play DnD. Please contact DM Joey for permission."
+        return response, nick
+    try:
+        command_line = command_line.split(" ") ## splits the argument into two pieces IE login character
+        target_character = " ".join(command_line[1:]) ## target character is the second side of the argument
+    except ValueError: ## means that the command failed to parse
+        response = "Failed to login."
+        return response, nick
+    
+    ## Attempt to actually login the character
+    print (logged_in_as.keys())
+    ##Error Check 2 - Don't try to steal my character!!!
+    if target_character not in valid_characters_for[username]: # checks if the target character is valid for the user
+            response = "You cannot login as %s, %s is not your character." % (target_character, target_character)
+            return response, nick
+    ##Exception, you're already logged in, I'm going to swap your character for you.
+    if username in logged_in_as.keys(): ## Already logged in
+        if target_character != logged_in_as[username]: #The target character is different from the character you're playing
+            logged_in_as[username] = target_character
+            response = "Switching your character. You are now logged in as %s." % (target_character)
+            return response, nick
+        else:
+            response = "%s, you are already logged in as %s." % (username, target_character)#thecharacter I'm logged in as
+            return response, nick
+    else: # truly log them in
+        logged_in_as[username] = target_character
+        try: ## tries to rename the person, will be successful if they are a normal username
+            response = "Successfully logged %s in as the character " % (username,target_character)
+            nick = target_character
+            return response, nick
+        except: ## fails to rename the person, they are stronger than the bot in priviledges
+            response = "(Logged in as %s) Wasn't able to change your username, you're probably an admin." % (target_character)
+            return response, nick
+        
+async def do_logout(message):
+    member = message.author
+    username = str(message.author)
+    if username in logged_in_as.keys(): # checks if the username is in the logged_in_as dictionary keys ie Bobby#2451
+        character_name = logged_in_as[username] # retrieves the name of the character they are logged in as
+        logged_in_as.pop(username) # remove them from the logged in 
+        return "%s, your character %s has been logged out." % (username, character_name)
+    else:
+        return "You're not logged in!"
+
+def do_roll_wod(message, dice_pool):
+    dice_pool = int(dice_pool)
+    username = str(message.author)
+    dice_results, successes, rerolls = roll_wod_dice(dice_pool)
+    print (dice_results, dice_pool, successes, rerolls)
+    if successes == 0:
+        return "%s rolled %i dice and failed their roll. Dice Results: %s" % (username, dice_pool, str(dice_results))
+    elif successes>0:
+        if rerolls>0:
+##            await message.channel.send(username+" rolled "+dice_pool+" dice and received "+str(successes)+" successes."
+##                                       " They had "+str(rerolls)+" rerolled dice."
+##                                       " Dice Results:"+str(dice_results))
+            return "%s rolled %i dice and received %i successes. They had %i rererolled dice. Dice Results: %s" % (username, dice_pool, successes, rerolls, str(dice_results))
+        else:
+##            await message.channel.send(username+" rolled "+dice_pool+" dice and had "+str(successes)+
+##                                   " successes. Dice Results:"+str(dice_results))
+            return "%s rolled %i dice and had %i successes. Dice Results: %s" % (username, dice_pool, successes, str(dice_results))
+
+@client.event
+async def on_message(message):
+    username = str(message.author)
+    member = message.author
+
+    if message.content.startswith('!sunglassesfingerguns'):
+        await message.channel.send("%s is looking too damn cool with their sunglasses and fingerguns. Watch out, here comes %s!" % (username, username))
     
     if message.content.startswith('!login'):
-        if not user in dnd_players:
-            await message.channel.send("You are not allowed to play DnD. Please contact DM Joey for permission.")
-            return
-        try:
-            command_line = message.content.split(" ") ## splits the argument into two pieces IE login character
-            target_character = " ".join(command_line[1:]) ## target character is the second side of the argument
-        except ValueError: ## means that the command failed to parse
-            await message.channel.send("Failed to login.")
-            return
-        ##print (logged_in_as.values()) ## Shows all the logged in characters
-        if target_character in logged_in_as.values(): ## Already logged in
-            await message.channel.send(user+", you are already logged in as " + target_character)
-        else:
-            if target_character not in valid_characters[user]:
-                ##print (user, target_character)
-                await message.channel.send("You cannot login as "+target_character+", "+target_character+" is not your character.")
-            else:
-                logged_in_as[user] = target_character
-                try: ## tries to rename the person, will be successful if they are a normal user
-                    await member.edit(nick=target_character)
-                    await message.channel.send("Successfully logged " + user + " in as the character " + target_character)
-                except: ## fails to rename the person, they are stronger than the bot in priviledges
-                    await message.channel.send("Sorry, I wasn't able to change your name. Perhaps it's a permission error- are you the Admin?")
-                    
+        response, nick = do_login(message)
+        if nick != None: # change their nickname
+            await member.edit(nick=target_character)
+        await message.channel.send(response)
 
     if message.content.startswith('!logout'):
-        if user in logged_in_as.keys():
-            await member.edit(nick=user)
-            character_name = logged_in_as[user]
-            logged_in_as.pop(user)
-            await message.channel.send(user + ", your character " + character_name + " has been logged out.")
-        elif message.author == client.user:
+        response = await do_logout(message)
+        if response == "logout!":
+            await member.edit(nick=username) # restore username
             return
         else:
-            await message.channel.send ("You're not logged in!")
+            await message.channel.send(response)
+            
 
     if message.content.startswith('!hello'):
-        await message.channel.send("Hello, welcome to The Joey DnD RP Server," + user)
+        await message.channel.send("Hello, welcome to The Joey DnD RP Server," + username)
             
     if message.content.startswith('!rollwod'):
         try:
-            command, dice_pool = message.content.split(" ") ## splits the command like !rollwod 10 into [command] [dicepool]
+            command, dice_pool = message.content.split(" ")
         except ValueError:
             await message.channel.send("Sorry that didn't work. Try again.")
+            return
+        if command == ("!rollwod"):
+            response = do_roll_wod(message, dice_pool)
+            await message.channel.send(response)
         if command == ("!rollwod8again"):
             dice_results, successes, rerolls = roll_wod_dice(int(dice_pool), eight_again=True)
             if successes == 0:
-                await message.channel.send(user+" rolled "+dice_pool+" dice with eight-again and failed their roll."
+                await message.channel.send(username+" rolled "+dice_pool+" dice with eight-again and failed their roll."
                                             " Dice Results:"+str(dice_results))
             elif successes>0:
                 if rerolls>0:
-                    await message.channel.send(user+" rolled "+dice_pool+" dice with eight-again and received "+str(successes)+" successes."
+                    await message.channel.send(username+" rolled "+dice_pool+" dice with eight-again and received "+str(successes)+" successes."
                                                " They had "+str(rerolls)+" rerolled dice."
                                                " Dice Results:"+str(dice_results))
                 else:
-                    await message.channel.send(user+" rolled "+dice_pool+" dice with eight-again and had "+str(successes)+
+                    await message.channel.send(username+" rolled "+dice_pool+" dice with eight-again and had "+str(successes)+
                                            " successes. Dice Results:"+str(dice_results))
                     
         if command == ("!rollwod9again"):
             dice_results, successes, rerolls = roll_wod_dice(int(dice_pool), nine_again=True)
             if successes == 0:
-                await message.channel.send(user+" rolled "+dice_pool+" dice with nine-again and failed their roll."
+                await message.channel.send(username+" rolled "+dice_pool+" dice with nine-again and failed their roll."
                                             " Dice Results:"+str(dice_results))
             elif successes>0:
                 if rerolls>0:
-                    await message.channel.send(user+" rolled "+dice_pool+" dice with nine-again and received "+str(successes)+" successes."
+                    await message.channel.send(username+" rolled "+dice_pool+" dice with nine-again and received "+str(successes)+" successes."
                                                " They had "+str(rerolls)+" rerolled dice."
                                                " Dice Results:"+str(dice_results))
                 else:
-                    await message.channel.send(user+" rolled "+dice_pool+" dice with nine-again and had "+str(successes)+
-                                           " successes. Dice Results:"+str(dice_results))
-        if command == ("!rollwod"):           
-            dice_results, successes, rerolls = roll_wod_dice(int(dice_pool))
-            if successes == 0:
-                await message.channel.send(user+" rolled "+dice_pool+" dice and failed their roll."
-                                            " Dice Results:"+str(dice_results))
-            elif successes>0:
-                if rerolls>0:
-                    await message.channel.send(user+" rolled "+dice_pool+" dice and received "+str(successes)+" successes."
-                                               " They had "+str(rerolls)+" rerolled dice."
-                                               " Dice Results:"+str(dice_results))
-                else:
-                    await message.channel.send(user+" rolled "+dice_pool+" dice and had "+str(successes)+
+                    await message.channel.send(username+" rolled "+dice_pool+" dice with nine-again and had "+str(successes)+
                                            " successes. Dice Results:"+str(dice_results))
 
     if message.content.startswith('!rollchancedie'):
         dice_result, dice_type = handle_dice_command("rolld10")
         if dice_result == 1:
-            await message.channel.send(user+" rolled a chance die and suffered a dramatic failure. [Rolled 1 on a d10]")
+            await message.channel.send(username+" rolled a chance die and suffered a dramatic failure. [Rolled 1 on a d10]")
         elif dice_result == 10:
-            await message.channel.send(user+" rolled a chance die and managed to succeed. [Rolled 10 on a d10]")
+            await message.channel.send(username+" rolled a chance die and managed to succeed. [Rolled 10 on a d10]")
         else:
-            await message.channel.send(user+" rolled a chance die and failed. [Rolled "+str(dice_result)+" on a d10]")
+            await message.channel.send(username+" rolled a chance die and failed. [Rolled "+str(dice_result)+" on a d10]")
         
     if message.content.startswith('!roll'):
-        if message.content.startswith('!rolld'):
-            if "+" in message.content or "-" in message.content:
-                dice_result, dice_total, dice_type, modifier = handle_dice_command(message.content) ## Pulls the 
-                await message.channel.send(user+" rolled "+str(dice_total)+" total on a "+dice_type+". (Natural "+
-                                           str(dice_result)+str(modifier)+")")
-            else:
-                dice_result, dice_type = handle_dice_command(message.content)
-                await message.channel.send(user+' rolled a '+str(dice_result)+' on a '+dice_type+".")
-        else: ## Multiple dice
-            if "+" in message.content or "-" in message.content:
-                dice_total, num_dice, results, dice_type, modifier = handle_multiple_dice(message.content) ## Pulls the 
-                await message.channel.send(user+' rolled a '+str(dice_total)+' on '+str(num_dice)+str(dice_type)+" Results: "
-                                           +str(results)+str(modifier))
-            else:
-                dice_total, num_dice, results, dice_type = handle_multiple_dice(message.content)
-                await message.channel.send(user+' rolled a '+str(dice_total)+' on '+str(num_dice)+str(dice_type)+" Results: "
-                                           +str(results))
-
+        print("Got to roll code block")
+        cmd = message.content
+        response = do_roll(cmd, username)
+        await message.channel.send(response)
+        
     if message.content.startswith('!coinflip'):
         result = coinflip()
-        await message.channel.send(user+" flips a coin! Result is "+result)
+        await message.channel.send(username+" flips a coin! Result is "+result)
 
     if message.content.startswith('!breaktable') or message.content.startswith('!tableflip'):
         result, dice_type = rolld2()
         print(result)
         if (result == 1):
-            await message.channel.send(user+" dropkicks his foot straight through the table, splintering it into two seperate halves!")
+            await message.channel.send(username+" dropkicks his foot straight through the table, splintering it into two seperate halves!")
         if (result == 2):
-            await message.channel.send(user+" hammers their fist down upon  the innocent table in an unbridled display of nerd rage. It cracks directly in half!")
+            await message.channel.send(username+" hammers their fist down upon  the innocent table in an unbridled display of nerd rage. It cracks directly in half!")
             
     if message.content.startswith('!fliptable') or message.content.startswith('!tableflip'):
-        await message.channel.send(user+" grabs the table by the edges, flipping it over like an absolute savage and ruining everything! Paper, dice and doritos crash into the ground!")
+        await message.channel.send(username+" grabs the table by the edges, flipping it over like an absolute savage and ruining everything! Paper, dice and doritos crash into the ground!")
 
     if message.content.startswith('!unfliptable'):
-        await message.channel.send(user+" sheepishly returns the table to an upright position, collecting up the dice and brushing Dorito crumbs off the now orange-dusted character sheets.")
+        await message.channel.send(username+" sheepishly returns the table to an upright position, collecting up the dice and brushing Dorito crumbs off the now orange-dusted character sheets.")
 
     if message.content.startswith('!kickinthedoor'):
         result, dice_type = rolld2()
         print(result)
         if (result == 1):
-            await message.channel.send(user+" delivers a swift kick to the door, but the sturdy door doesn't budge. Their foot crumples as the force of the blow reverberates back through their leg. You hop up and down on one foot for 1d4 rounds in agony.")
+            await message.channel.send(username+" delivers a swift kick to the door, but the sturdy door doesn't budge. Their foot crumples as the force of the blow reverberates back through their leg. You hop up and down on one foot for 1d4 rounds in agony.")
         if (result == 2):
-            await message.channel.send(user+" delivers a hearty kick to the door. The door flies off its hinges under the weight of their mighty boot.")
+            await message.channel.send(username+" delivers a hearty kick to the door. The door flies off its hinges under the weight of their mighty boot.")
 
 
     if message.content.startswith('!suggestion'):
@@ -204,7 +246,7 @@ async def on_message(message):
                                        "If your Discord account is associated with that character,"
                                        "You will be logged in and able to access your profile."
                                        "After that, you can type !me to view your logged in character,"
-                                       "or you can type !whois [user] to see a character's profile."
+                                       "or you can type !whois [username] to see a character's profile."
                                        "Type '!help character sheet' to learn more about it."
                                       "Please note that your username is CASE SENSITIVE!")
         if message.content.startswith('!help whois'):
@@ -218,8 +260,8 @@ async def on_message(message):
             await message.author.send("Need some help using the Roleplay Bot?\n" +
             "Here's a list of available commands. More to come.\n"
             "!greet\n"
-            "!help\n !help [command]\n !login [user]\n !logout\n"
-            "!whois [user]\n !me\n !rollwod\n !rollchancedie\n"
+            "!help\n !help [command]\n !login [username]\n !logout\n"
+            "!whois [username]\n !me\n !rollwod\n !rollchancedie\n"
             "!rolld3\n !rolld4\n !rolld6\n !rolld8\n !rolld10\n !rolld12\n" 
             "!rolld16\n !rolld20\n !rolld24\n !rolld100\n !rolld1000\n !coinflip\n")
 client.run(TOKEN)
