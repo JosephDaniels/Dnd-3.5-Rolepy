@@ -1,5 +1,7 @@
 import random
 
+VALID_DICE = [2,3,4,6,8,10,12,16,20,24,30,100,1000]
+
 
 """
 
@@ -13,7 +15,7 @@ Discord for interfacing and interacting with the players.
 With the new update, it now has the ability to roll d10s in the WoD system.
 """
 
-def handle_multiple_dice(command): ## example roll2d6
+def parse_dice_command(command_line): ## for example rolld6 or roll2d6
     '''
 Rolls multiple dice, and then adds a modifier on at the end.
 
@@ -21,64 +23,38 @@ I plan on making another command for magic missiles that adds the modifier
 on EVERY dice roll. Not sure what to call that one yet.
 
     '''
-    results = []
-    undigested_command = command.strip("!") ## Remove leading exclamation
-    if '+' in command:
-        cmd , modifier = undigested_command.split('+')
-        cmd = cmd.strip("roll") ## Remove roll remporarily
-        num_dice, dice_type = cmd.split('d') ## Splits number dice and dice type
-        for dice in range(int(num_dice)):
-            command = ("rolld"+dice_type+"()")
-            result = eval(command)[0]
-            result = result
-            results.append(result)
-        dice_total = sum(results)+int(modifier) ## add results together
-        modifier = "+"+modifier ## add a plus to show integer
-        dice_type = "d"+dice_type ## add the d back in
-        return dice_total, num_dice, results, dice_type, modifier
-    elif '-' in command:
-        cmd , modifier = undigested_command.split('-')
-        cmd = cmd.strip("roll") ## Remove roll remporarily
-        num_dice, dice_type = cmd.split('d') ## Splits number dice and dice type
-        for dice in range(int(num_dice)):
-            command = ("rolld"+dice_type+"()")
-            result = eval(command)[0]
-            results.append(result)
-        dice_total = sum(results)-int(modifier)
-        modifier = "-"+modifier ## add a minus to show integer
-        dice_type = "d"+dice_type ## add the d back in
-        return dice_total, num_dice, results, dice_type, modifier
-    else: ## Simple dice roll
-        cmd = undigested_command
-        cmd = cmd.strip("roll") ## Remove roll remporarily
-        num_dice, dice_type = cmd.split('d') ## Splits number dice and dice type
-        for dice in range(int(num_dice)):
-            command = ("rolld"+dice_type+"()")
-            result = eval(command)[0]
-            results.append(result)
-        dice_total = sum(results)
-        dice_type = "d"+dice_type ## add the d back in
-        return dice_total, num_dice, results, dice_type
-
-def handle_dice_command(command):
-    command = command.strip("!")
-    if '+' in command:
-        cmd = command.split('+')
-        dice_result, dice_type = eval(cmd[0] + "()")
-        modifier = cmd[1]
-        dice_total = dice_result+int(modifier)
-        modifier = "+"+modifier
-        return dice_result, dice_total, dice_type, modifier
-    elif '-' in command:
-        cmd = command.split('-')
-        dice_result, dice_type = eval(cmd[0] + "()")
-        modifier = cmd[1]
-        dice_total = dice_result-int(modifier)
-        modifier = "-"+modifier
-        return dice_result, dice_total, dice_type, modifier
-    else: ## Simple dice roll
-        dice_result, dice_type = eval(command + "()")
-        return dice_result, dice_type
+    command_line = command_line.strip("!roll") ## Remove leading exclamation
+    num_dice, rest_of_line = command_line.split('d') ## Splits number dice and dice type
+    if '+' in rest_of_line:
+        modifier_type = +1
+        dice_type, modifier = rest_of_line.split('+')
+    elif '-' in command_line:
+        modifier_type = -1
+        dice_type, modifier = rest_of_line.split('-')
+    else: # modifier equals zero if none specified
+        modifier = 0
+    #convert the parsed parts into numbers, etc.
+    if num_dice == "":
+        num_dice = 1
+    else:
+        num_dice = int(num_dice)
+    dice_type, modifier = int(dice_type), int(modifier)
+    ## Do the actual dice rolls
+    results = [] ## Results of all dice rolled
+    for dice in range(num_dice):
+        results.append(rolld(dice_type))
+    print (results)
+    dice_total = sum(results)+modifier ## add results together
+    modifier = modifier_type*modifier ## shows the correct sign and significance
+    ## Formattin the modifier as feedback to the player
+    if modifier_type == +1:
+        modifier = "+"+str(modifier)
+    elif modifier_type == -1:
+        modifier = "-"+str(modifier)
+    else:
+        modifier = ""
+    dice_type = "d"+str(dice_type) ## add the d back in
+    return dice_total, num_dice, results, dice_type, modifier
 
 def coinflip():
     result = random.randint(1,2)
@@ -87,55 +63,14 @@ def coinflip():
     elif result == 2:
         return ("Tails")
 
-def rolld2():
-    dice_type = "d2"
-    return random.randint(1,2), dice_type
-
-def rolld3():
-    dice_type = "d3"
-    return random.randint(1,3), dice_type
-
-def rolld4():
-    dice_type = "d4"
-    return random.randint(1,4), dice_type
-
-def rolld6():
-    dice_type = "d6"
-    return random.randint(1,6), dice_type
-
-def rolld8():
-    dice_type = "d8"
-    return random.randint(1,8), dice_type
-
-def rolld10():
-    dice_type = "d10"
-    return random.randint(1,10), dice_type
-
-def rolld12():
-    dice_type = "d12"
-    return random.randint(1,12), dice_type
-
-def rolld16():
-    dice_type = "d16"
-    return random.randint(1,16), dice_type
-
-def rolld20():
-    dice_type = "d20"
-    return random.randint(1,20), dice_type
-
-def rolld24():
-    dice_type = "d24"
-    return random.randint(1,20), dice_type
-
-def rolld100():
-    dice_type = "d100"
-    return random.randint(1,100), dice_type
-
-def rolld1000():
-    dice_type = "d1000"
-    return random.randint(1,1000), dice_type
+def rolld(n):
+    if not n in VALID_DICE:
+        raise Error("tried to roll a invalid dice. I'm crashing now lol")
+    else:
+        return random.randint(1,n)
 
 def roll_wod_dice(dice_pool, eight_again=False, nine_again=False):
+    
     success_values = [8,9,10]
     successes = 0
     rolled_dice = []
@@ -171,4 +106,4 @@ def roll_wod_dice(dice_pool, eight_again=False, nine_again=False):
     return rolled_dice, successes, rerolls
             
 if __name__ == "__main__":
-    print(handle_multiple_dice("roll3d8+1"))
+    print(parse_dice_command("roll3d8+1"))

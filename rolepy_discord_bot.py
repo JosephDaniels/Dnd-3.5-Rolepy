@@ -8,29 +8,34 @@ import asyncio
 from TOKEN import * ## You will need to go into the file and add your own token.
 
 from DM_helper import * ## Module for running the game, lets us keep track of characters
+from character import * ## player character information
+from NPC import * ## non-player character information
 
-help_login_message = "Wondering how to 'login'? Type !help followed by your characters first name.\n"
-                       "If your Discord account is associated with that character,"
-                       "You will be logged in and able to access your profile."
-                       "After that, you can type !me to view your logged in character,"
-                       "or you can type !whois [username] to see a character's profile."
-                       "Type '!help character sheet' to learn more about it."
-                      "Please note that your username is CASE SENSITIVE!"
+help_login_message = """Wondering how to 'login'? Type !help followed by your characters first name.\n
+If your Discord account is associated with that character,
+You will be logged in and able to access your profile.
+After that, you can type !me to view your logged in character,
+or you can type !whois [username] to see a character's profile.
+Type '!help character sheet' to learn more about it.
+Please note that your username is CASE SENSITIVE!"""
 
-help_whois_message = "Wondering how to use 'whois'?: Type !whois followed by a target character's first name.\n"
-                     "This command will bring up a character profile, which is a"
-                     "version of their character sheet that is intended for others"
-                     "to see. This could include their picture, character description,"
-                     "character history and public backstory."
-                     "Please note that the username is CASE SENSITIVE!"
+help_whois_message = """Wondering how to use 'whois'?: Type !whois followed by a target character's first name.\n
+This command will bring up a character profile, which is a
+version of their character sheet that is intended for others
+to see. This could include their picture, character description,
+character history and public backstory.
+Please note that the username is CASE SENSITIVE!"""
 
-help_general_message = "Need some help using the Roleplay Bot?\n"
-                        "Here's a list of available commands. More to come.\n"
-                        "!greet\n"
-                        "!help\n !help [command]\n !login [username]\n !logout\n"
-                        "!whois [username]\n !me\n !rollwod\n !rollchancedie\n"
-                        "!rolld3\n !rolld4\n !rolld6\n !rolld8\n !rolld10\n !rolld12\n" 
-                        "!rolld16\n !rolld20\n !rolld24\n !rolld100\n !rolld1000\n !coinflip\n"
+help_general_message = """Need some help using the Roleplay Bot?\n
+Here's a list of available commands. More to come.\n
+!greet\n !hello
+!help\n !help [command]\n !login [username]\n !logout\n
+!whois [username]\n !me\n !rollwod\n !rollchancedie\n
+!rolld3\n !rolld4\n !rolld6\n !rolld8\n !rolld10\n !rolld12\n
+!rolld16\n !rolld20\n !rolld24\n !rolld100\n !rolld1000\n !coinflip\n
+!tableflip\n !fliptable\n"""
+
+ADMINS = ['StabbyStabby#1327', 'alanwongis#3590']
 
 dnd_players = ['StabbyStabby#1327', 'Coruba#1432', 'mystia#2889',
                'Frail Faintheart#5181', 'Magromancer#6352', 'NormL75#0235',
@@ -148,9 +153,6 @@ def do_roll_wod(message, dice_pool, eight_again = False, nine_again = False):
 async def on_message(message):
     username = str(message.author)
     member = message.author
-
-    if message.content.startswith('!sunglassesfingerguns'):
-        await message.channel.send("%s is looking too damn cool with their sunglasses and fingerguns. Watch out, here comes %s!" % (username, username))
     
     if message.content.startswith('!login'):
         response, nick = do_login(message)
@@ -165,10 +167,20 @@ async def on_message(message):
             return
         else:
             await message.channel.send(response)
-            
 
-    if message.content.startswith('!hello'):
-        await message.channel.send("Hello, welcome to The Joey DnD RP Server," + username)
+    ## BATTLE COMMANDS
+
+    if message.content.startswith('!addcombatant'):
+        ## Check if they have DM power
+        if not (str(message.author) in ADMINS):
+            await message.author.send("Hey!! You're not allowed to add combatants to the initiative. Nice try. Chump.")
+        
+        else:
+            combatant_name = message.content.split(" ")[1].strip()## grabs the second element and removes whitespace
+            enemy_type = NPC(combatant_name)
+            
+            
+    ## DICE COMMANDS
             
     if message.content.startswith('!rollwod'):
         try:
@@ -204,6 +216,8 @@ async def on_message(message):
         result = coinflip()
         await message.channel.send(username+" flips a coin! Result is "+result)
 
+    ## JUST FOR FUN COMMANDS
+
     if message.content.startswith('!breaktable') or message.content.startswith('!tableflip'):
         result, dice_type = rolld2()
         print(result)
@@ -226,6 +240,12 @@ async def on_message(message):
         if (result == 2):
             await message.channel.send(username+" delivers a hearty kick to the door. The door flies off its hinges under the weight of their mighty boot.")
 
+    if message.content.startswith('!sunglassesfingerguns'):
+        await message.channel.send("%s is looking too damn cool with their sunglasses and fingerguns. Watch out, here comes %s!" % (username, username))
+
+    ## HELP AND SUGGESTION COMMANDS
+    if message.content.startswith('!hello'):
+        await message.channel.send("Hello, welcome to The Joey DnD RP Server," + username)
 
     if message.content.startswith('!suggestion'):
         await message.author.send("Please type your message to be added to the suggestion box.")

@@ -17,6 +17,9 @@ class NPC(Character):
             filename = "npcs/%s.txt" % (npc_name)
             self.load(filename)
         self.__dict__.pop("player_name") ## Removes player name
+
+    def __str__(self):
+        return "I'm %s" % (self.name)
         
 
 def test(): # tries to create a NPC
@@ -24,13 +27,15 @@ def test(): # tries to create a NPC
     print(g.get_character_sheet())
 
 def test_2(): #create a group of NPCS
-    result = roll("roll2d6")
+    result = rolld(6)+rolld(6)
     goblins = []
     for n in range(result):
         goblin_name = "goblin#"+str(n+1)
         a_goblin = NPC("goblin")
         a_goblin.name = goblin_name
         goblins.append(a_goblin)
+    for goblin in goblins:
+        print(str(goblin))
 
 if __name__ == "__main__":
     test_2()

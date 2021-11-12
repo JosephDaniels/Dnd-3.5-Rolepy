@@ -10,13 +10,17 @@ class DM_helper(object):
         ## Anyone who's not a player character is controlled by the DM system.
         self.characters = {} ## a list of character objects indexed by names
         self.dnd_class_tables = {} ## all dnd classes indexed by their names
-        
-        self.battle_order = [] ## characters associated with their current initiatives in a tuple
-        self.player_characters = [] ## names of the player characters.
 
-        self.current_round = -1
-        self.current_combatant = -1
-        self.combat_active = False
+        self.player_characters = [] ## names of the player characters.
+        
+        # for combat
+        self.in_combat = False # in combat state or not
+        self.combatants = []   # all players and npcs in the current battle
+        self.battle_order = [] ## after intiative phase, holds a sorted list of tuples of (combatant, initiative value)
+        self.current_round = -1 ## The current round of combat, used for keeping of duration. defaults to -1 if no combat started.
+        self.current_combatant = -1 #  used to track the current combatant
+
+      
         self.load_dnd_classes()
 
     def load_dnd_classes(self):
@@ -26,55 +30,20 @@ class DM_helper(object):
     def add_character(self, character):
         self.characters[character.name] = character
 
-    ### Combat helper methods
-    def start_combat(self, combatants):
-        """
-The purpose of this function is to quickly add a lot of combatants to the same combat.
-It will take their characters, use their initiative bonus and roll initiative for each character automatically.
-"""
-        self.current_combatant = 0
-        self.current_round = 1
-        temp_list=[]
-        print ("Combat begins! Roll initiative!")
-        for combatant in combatants:
-            initiative_bonus = combatant.get_initiative_bonus(misc_modifier=0)
-            print ("%s rolls for initiative! [+%i initiative bonus]" % (combatant.name, initiative_bonus))
-            dice_result, dice_type = rolld20()
-            initiative_result = dice_result+initiative_bonus
-            print ("%s rolled %i. [natural %i + %i init bonus]" % (combatant.name, initiative_result,
-                                                                   dice_result, initiative_bonus))
-            temp_list.append((initiative_result, combatant))  ## Combatant name associated with a 
-            temp_list.sort()
-            temp_list.reverse()
-        self.battle_order = temp_list
-        self.combat_active = True
+    def get_character(self,character_name=""):
+        return self.characters[character_name]
 
-    def end_combat(self):
-        if len(self.battle_order) > 1:
-            self.combat_active = False
-        self.current_combatant = -1
+    ##Combat interface
 
-    def dump_battle_order(self):
-        ## test function
-        for initiative, participant in self.battle_order:
-            print(initiative, participant.name)
-
-    def whose_turn_isit(self):
-        return self.battle_order[self.current_combatant][1].name
-
-    def next_turn(self):
-        self.current_combatant+=1
-        if self.current_combatant>=len(self.battle_order):
-            self.current_combatant=0
-            self.current_round+=1
-
-    def set_distance(self, distance):
-        ## sets distance between two enemies
-        pass
-
-    def add_to_combat(self):
-        ## For if someone/something joins during the combat
-        pass
+    def refresh_combat(self):
+        # readies for a new battle by clearing the combatant and initiative lists
+        self.combatants = []   # all players and npcs in the current battle
+        self.battle_order = [] ## after intiative phase, holds a sorted list of tuples of (combatant, initiative value)
+        self.current_round = -1 ## The current round of combat, used for keeping of duration. defaults to -1 if no combat started.
+        self.current_combatant = -1 #  used to track the current combatant
+    
+    def add_to_combat(self, char_or_npc):
+        self.combat_order.append(char_or_npc)
 
     def remove_from_combat(self,character_name=""):
         ## Used when someone retreats from the battle successfully and basically is a coward
@@ -85,6 +54,35 @@ It will take their characters, use their initiative bonus and roll initiative fo
                 self.battle_order.pop(pos)
                 if self.current_combatant >= len(self.battle_order):
                     self.current_combatant = 0
+    
+    def dump_battle_order(self):
+        ## test function
+        for initiative, participant in self.battle_order:
+            print(initiative, participant.name)
+
+    def whose_turn_isit(self):
+        return self.battle_order[self.current_combatant][1].name
+
+    def ready_next_turn(self):
+        # this is the phase which asks the current player their choice
+        pass
+    
+    def do_next_turn(self):
+        # this is where you as the DM confirm the turn and execute
+        self.current_combatant+=1
+        if self.current_combatant>=len(self.battle_order):
+            self.current_combatant=0
+            self.current_round+=1
+
+    # this is a DM exclusive command to direct npcs to attack a specific player during combat
+    def command_to_fight(self, npc, player):
+        pass
+    
+    def set_distance(self, distance):
+        ## sets distance between two enemies
+        pass
+
+    
 
     def do_attack(self, attacker, target, attack_type = "melee"): # defaults to melee attack. change to "ranged" to reference ranged attack bonus.
         dice_result, dicetype = rolld20()
@@ -104,12 +102,8 @@ It will take their characters, use their initiative bonus and roll initiative fo
                                                                               bab))
             return True ## Attack successful, proceed to damage
         else:
-            print("%s missed their attack on %s with a total of %i. (AC=%i) [natural %i + %i]" % (attacker.name,
-                                                                                                  target.name,
-                                                                                                  roll_total,
-                                                                                                  target.armor_class,
-                                                                                                  dice_result,
-                                                                                                  bab))
+            print("%s missed their attack on %s with a total of %i. (AC=%i) [natural %i + %i]" %
+                  (attacker.name, roll_total, target.armor_class, dice_result,bab))
             return False
         
     def deal_damage(self,attacker,victim,damage):
@@ -135,8 +129,39 @@ It will take their characters, use their initiative bonus and roll initiative fo
         _effective_attack_bonus = defender.total_attack_bonus-4
         return (_effective_armor_class, _effective_attack_bonus)
 
-    def get_character(self,character_name=""):
-        return self.characters[character_name]
+    def end_combat(self):
+        if len(self.battle_order) > 1:
+            self.combat_active = False
+        self.current_combatant = -1
+        self.refresh_combat()
+
+    
+
+    
+    def _test_combat(self, combatants):
+        """
+The purpose of this function is to quickly add a lot of combatants to the same combat.
+It will take their characters, use their initiative bonus and roll initiative for each character automatically.
+"""
+        self.current_combatant = 0
+        self.current_round = 1
+        temp_list=[]
+        print ("Combat begins! Roll initiative!")
+        for combatant in combatants:
+            initiative_bonus = combatant.get_initiative_bonus(misc_modifier=0)
+            print ("%s rolls for initiative! [+%i initiative bonus]" % (combatant.name, initiative_bonus))
+            dice_result, dice_type = rolld20()
+            initiative_result = dice_result+initiative_bonus
+            print ("%s rolled %i. [natural %i + %i init bonus]" % (combatant.name, initiative_result,
+                                                                   dice_result, initiative_bonus))
+            temp_list.append((initiative_result, combatant))  ## Combatant name associated with a 
+            temp_list.sort()
+            temp_list.reverse()
+        self.battle_order = temp_list
+        self.combat_active = True
+
+    
+
 
 def test(): # combat test
     
