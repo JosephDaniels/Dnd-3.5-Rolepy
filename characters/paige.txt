@@ -1,6 +1,10 @@
 name  = paige
 display_name  = Paige Belmont
 character_class  = rogueLv1,fighterLv1,sorcererLv1
+gender = female
+age = 21
+description = a shady looking female vampire hunter
+history = you don't wanna mess with her
 size = medium
 total_xp = 6000
 gold_coins = 600

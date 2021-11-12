@@ -32,26 +32,34 @@ on EVERY dice roll. Not sure what to call that one yet.
         modifier_type = -1
         dice_type, modifier = rest_of_line.split('-')
     else: # modifier equals zero if none specified
+        modifier_type = ""
         modifier = 0
+        dice_type = rest_of_line
     #convert the parsed parts into numbers, etc.
     if num_dice == "":
         num_dice = 1
     else:
         num_dice = int(num_dice)
     dice_type, modifier = int(dice_type), int(modifier)
-    ## Do the actual dice rolls
+
+    ## Do all of the actual dice rolls
     results = [] ## Results of all dice rolled
     for dice in range(num_dice):
         results.append(rolld(dice_type))
-    print (results)
+
+    if modifier_type == "":
+        modifier = +0
+    else:
+        modifier = modifier_type * modifier
     dice_total = sum(results)+modifier ## add results together
-    modifier = modifier_type*modifier ## shows the correct sign and significance
+
     ## Formattin the modifier as feedback to the player
     if modifier_type == +1:
         modifier = "+"+str(modifier)
+
     elif modifier_type == -1:
         modifier = "-"+str(modifier)
-    else:
+    else: #modifier type is ""
         modifier = ""
     dice_type = "d"+str(dice_type) ## add the d back in
     return dice_total, num_dice, results, dice_type, modifier

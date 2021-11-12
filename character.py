@@ -142,6 +142,12 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
         self.character_class= [] ## lowercase character class with associated level e.g. ["fighterLv1","rogueLv2"]
         self.alignment = "" ## Lawful <-> Chaotic and Evil <-> Good E.G. "Lawful Good" or "Chaotic Evil" or "True Neutral"
 
+        ## PROFILE INFO
+        self.age = -1
+        self.gender = ""
+        self.description = ""
+        self.history = ""
+
         ## GAME INFO
         self.dying = False
         self.dead = False
@@ -343,7 +349,7 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
                     except: print("didn't manage to convert ["+level+"] to an int.")
                     parsed_classes.append( (char_class_name, level) )
                 value = parsed_classes
-            if "(" in key:
+            if "(" in key: # detected that the user typed something like knowledge(arcana)
                 main_key, sub_key = key.strip(")").split("(")
                 if main_key in MULTI_AREA_SKILLS:
                     main_key, sub_key = key.strip(")").split("(")
@@ -353,6 +359,12 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
                 except: pass ## doesn't matter, stays a string
             profile[key] = value
         self.__dict__.update(profile)
+
+    def get_profile(self):
+        """ Returns a string that tells you public information about the character."""
+        response = "Name: %s\n Gender: %s\n Age: %i\n Description: %s\n History: %s\n Picture: 'TBD'" %\
+                   (self.display_name, self.gender, self.age, self.description, self.history)
+        return response
 
     def get_character_sheet(self, show_all = False):
         lines = []
@@ -461,9 +473,6 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
         platinum = self.platinum_coins
         net_worth = 0.01*copper+0.1*silver+gold+10*platinum
         return net_worth
-
-    def get_base_save(self):
-        pass
 
     def set_saving_throws_from_class_levels(self): ## Calculates the total save bonus across all classes for a certain saving throw
         fort = 0

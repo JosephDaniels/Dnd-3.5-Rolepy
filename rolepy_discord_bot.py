@@ -2,6 +2,8 @@ import discord
 
 import asyncio
 
+from TOKEN import TOKEN
+
 from DM_helper import * ## Module for running the game, lets us keep track of characters
 from NPC import * ## non-player character information
 
@@ -52,22 +54,8 @@ async def on_ready():
     print('We have logged in as {0.user}'.format(client))
 
 def do_roll(command_line, username):
-    print(command_line)
-    print(username)
-    if command_line.startswith('!rolld'): ## Rolls a single dice
-        if "+" in command_line or "-" in command_line:
-            dice_result, dice_total, dice_type, modifier = handle_dice_command(command_line) ## Pulls the 
-            return "%s rolled %i total on a %s. (Natural %i%i)" % (username, dice_total, dice_type, dice_result, modifier)
-        else:
-            dice_result, dice_type = handle_dice_command(command_line)
-            return "%s rolled a %i on a %s." % (username, dice_result, dice_type)
-    else: ## Multiple dice
-        if "+" in message.content or "-" in message.content:
-            dice_total, num_dice, results, dice_type, modifier = handle_multiple_dice(message.content) ## Pulls the 
-            return "%s rolled a %i on a %i%s. Results: %s%i" % (username, dice_total, num_dice, dice_type, results, modifier)
-        else:
-            dice_total, num_dice, results, dice_type = handle_multiple_dice(message.content)
-            return "%s rolled a %i on %i%s. Results: %s" % (username, dice_total, num_dice, dice_type, results)
+    dice_total, num_dice, results, dice_type, modifier = parse_dice_command(command_line) ## Pulls the
+    return "%s rolled a %i on a %i%s. Results: %s%s" % (username, dice_total, num_dice, dice_type, results, modifier)
 
 def do_login(message):
     nick = None
@@ -91,7 +79,7 @@ def do_login(message):
             return response, nick
 
     ##Exception, you're already logged in, I'm going to swap your character for you.
-    if username in logged_in_as.keys(): ## Already logged in
+    if username in dm.logged_in_as.keys(): ## Already logged in
         response = "%s, you are already logged in as %s." % (username, target_character)#thecharacter I'm logged in as
         return response, nick
     else: # Truly log their character in and load them in the system
@@ -110,9 +98,9 @@ def do_login(message):
 async def do_logout(message):
     member = message.author
     username = str(message.author)
-    if username in logged_in_as.keys(): # checks if the username is in the logged_in_as dictionary keys ie Bobby#2451
-        character_name = logged_in_as[username] # retrieves the name of the character they are logged in as
-        logged_in_as.pop(username) # remove them from the logged in 
+    if username in dm.logged_in_as.keys(): # checks if the username is in the logged_in_as dictionary keys ie Bobby#2451
+        character_name = dm.logged_in_as[username] # retrieves the name of the character they are logged in as
+        dm.logged_in_as.pop(username) # remove them from the logged in
         return "%s, your character %s has been logged out." % (username, character_name)
     else:
         return "You're not logged in!"
@@ -145,7 +133,10 @@ async def on_message(message):
     if message.content.startswith('!login'):
         response, nick = do_login(message)
         if nick != None: # change their nickname
-            await member.edit(nick=target_character)
+            if username in ADMINS:
+                pass ## can't change their name they too powerful
+            else:
+                await member.edit(nick=target_character)
         await message.channel.send(response)
 
     if message.content.startswith('!logout'):
@@ -156,6 +147,24 @@ async def on_message(message):
         else:
             await message.channel.send(response)
 
+    ## ROLEPLAY COMMANDS
+
+    if message.content == ("!whoami"):
+        char_sheet = dm.logged_in_as[username] ## Finds your character sheet from your discord username
+        response = "You are %s, AKA %s" % (char_sheet.display_name, char_sheet.name)
+        await message.author.send(response)
+
+    if message.content.startswith("!whois"):
+        target_character = message.content.split(" ")[1].strip() ## gets the second parameter which is the target chara
+        char_sheet = None
+        for key in dm.logged_in_as.keys(): # A list of usernames
+            if dm.logged_in_as[key].name == target_character: # check if a username is associated with a certain character
+                char_sheet = dm.logged_in_as[key]  ## Finds their character sheet from theirr discord username
+                response = char_sheet.get_profile() # This is a personal version of their character sheet
+                print(char_sheet.get_character_sheet())
+                ## I will have to differentiate between personal and public profile in the future
+                await message.author.send(response)
+
     ## BATTLE COMMANDS
 
     if message.content.startswith('!addcombatant'):
@@ -165,7 +174,7 @@ async def on_message(message):
 
         else:
             combatant_name = message.content.split(" ")[1].strip()## grabs the second element and removes whitespace
-            if combatant_name in logged_in_as.values():
+            if combatant_name in dm.logged_in_as.values():
                 pass
                 ## to do, during the login by the user, retrieve all their info
             enemy = NPC(combatant_name) ## tries to make an npc of the type specified
