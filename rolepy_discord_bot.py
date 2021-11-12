@@ -245,7 +245,14 @@ async def on_message(message):
 
     ## HELP AND SUGGESTION COMMANDS
     if message.content.startswith('!hello'):
-        await message.channel.send("Hello, welcome to The Joey DnD RP Server," + username)
+        msg = "Hello, welcome to The Joey DnD RP Server, %s." % (username)
+        # await message.channel.send({ files: [{
+        #             attachment: 'entire/path/to/file.jpg',
+        #             name: 'file.jpg'
+        #         }]
+        #     })
+        await message.author.send(msg, file=discord.File('images/BaldursGate2Enhanced.jpg'))
+
 
     if message.content.startswith('!suggestion'):
         await message.author.send("Please type your message to be added to the suggestion box.")
