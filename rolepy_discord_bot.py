@@ -96,23 +96,25 @@ async def do_logout(message):
     else:
         return "You're not logged in!"
 
-def do_roll_wod(message, dice_pool):
+def do_roll_wod(message, dice_pool, eight_again = False, nine_again = False):
     dice_pool = int(dice_pool)
     username = str(message.author)
-    dice_results, successes, rerolls = roll_wod_dice(dice_pool)
+    dice_results, successes, rerolls = roll_wod_dice(dice_pool, eight_again, nine_again)
     print (dice_results, dice_pool, successes, rerolls)
+    extra_text = ""
+    
+    if eight_again == True:
+        extra_text = " with eight-again"
+    elif nine_again == True:
+        extra_text = " with nine-again"
+        
     if successes == 0:
-        return "%s rolled %i dice and failed their roll. Dice Results: %s" % (username, dice_pool, str(dice_results))
+        return "%s rolled %i dice and failed their roll %s. Dice Results: %s" % (username, dice_pool, extra_text, str(dice_results))
     elif successes>0:
         if rerolls>0:
-##            await message.channel.send(username+" rolled "+dice_pool+" dice and received "+str(successes)+" successes."
-##                                       " They had "+str(rerolls)+" rerolled dice."
-##                                       " Dice Results:"+str(dice_results))
-            return "%s rolled %i dice and received %i successes. They had %i rererolled dice. Dice Results: %s" % (username, dice_pool, successes, rerolls, str(dice_results))
+            return "%s rolled %i dice and received %i successes %s. They had %i rererolled dice. Dice Results: %s" % (username, dice_pool, successes, extra_text, rerolls, str(dice_results))
         else:
-##            await message.channel.send(username+" rolled "+dice_pool+" dice and had "+str(successes)+
-##                                   " successes. Dice Results:"+str(dice_results))
-            return "%s rolled %i dice and had %i successes. Dice Results: %s" % (username, dice_pool, successes, str(dice_results))
+            return "%s rolled %i dice and had %i successes %s. Dice Results: %s" % (username, dice_pool, successes, extra_text, str(dice_results))
 
 @client.event
 async def on_message(message):
@@ -150,32 +152,11 @@ async def on_message(message):
             response = do_roll_wod(message, dice_pool)
             await message.channel.send(response)
         if command == ("!rollwod8again"):
-            dice_results, successes, rerolls = roll_wod_dice(int(dice_pool), eight_again=True)
-            if successes == 0:
-                await message.channel.send(username+" rolled "+dice_pool+" dice with eight-again and failed their roll."
-                                            " Dice Results:"+str(dice_results))
-            elif successes>0:
-                if rerolls>0:
-                    await message.channel.send(username+" rolled "+dice_pool+" dice with eight-again and received "+str(successes)+" successes."
-                                               " They had "+str(rerolls)+" rerolled dice."
-                                               " Dice Results:"+str(dice_results))
-                else:
-                    await message.channel.send(username+" rolled "+dice_pool+" dice with eight-again and had "+str(successes)+
-                                           " successes. Dice Results:"+str(dice_results))
-                    
+            response = do_roll_wod(message, dice_pool, eight_again=True)
+            await message.channel.send(response)
         if command == ("!rollwod9again"):
-            dice_results, successes, rerolls = roll_wod_dice(int(dice_pool), nine_again=True)
-            if successes == 0:
-                await message.channel.send(username+" rolled "+dice_pool+" dice with nine-again and failed their roll."
-                                            " Dice Results:"+str(dice_results))
-            elif successes>0:
-                if rerolls>0:
-                    await message.channel.send(username+" rolled "+dice_pool+" dice with nine-again and received "+str(successes)+" successes."
-                                               " They had "+str(rerolls)+" rerolled dice."
-                                               " Dice Results:"+str(dice_results))
-                else:
-                    await message.channel.send(username+" rolled "+dice_pool+" dice with nine-again and had "+str(successes)+
-                                           " successes. Dice Results:"+str(dice_results))
+            response = do_roll_wod(message, dice_pool, nine_again=True)
+            await message.channel.send(response)
 
     if message.content.startswith('!rollchancedie'):
         dice_result, dice_type = handle_dice_command("rolld10")
@@ -187,7 +168,6 @@ async def on_message(message):
             await message.channel.send(username+" rolled a chance die and failed. [Rolled "+str(dice_result)+" on a d10]")
         
     if message.content.startswith('!roll'):
-        print("Got to roll code block")
         cmd = message.content
         response = do_roll(cmd, username)
         await message.channel.send(response)

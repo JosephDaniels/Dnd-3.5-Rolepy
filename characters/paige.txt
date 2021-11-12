@@ -1,6 +1,6 @@
 name  = paige
 display_name  = Paige Belmont
-character_class  = rogueLv1, fighterLv1,sorcererLv1
+character_class  = rogueLv1,fighterLv1,sorcererLv1
 size = medium
 total_xp = 6000
 gold_coins = 600

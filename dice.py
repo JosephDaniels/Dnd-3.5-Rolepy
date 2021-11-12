@@ -136,23 +136,22 @@ def rolld1000():
     return random.randint(1,1000), dice_type
 
 def roll_wod_dice(dice_pool, eight_again=False, nine_again=False):
-    
     success_values = [8,9,10]
     successes = 0
     rolled_dice = []
     bonus_dice = 0 # Special variable holding dice to be re-rolled
     rerolls = 0 # The resulting rerolls that occurred
     
-    for dice in range(dice_pool):
-        dice_result = random.randint(1, 10)
-        rolled_dice.append(dice_result)
+    for dice in range(dice_pool): # for each dice in the dice pool
+        dice_result = random.randint(1, 10) # roll a dice
+        rolled_dice.append(dice_result) # save that dice result
         if dice_result in success_values: ## Rolled 8, 9 or 10
             successes+=1 ## Gains a success
-            if eight_again == True:
+            if dice_result == 10:
                 bonus_dice+=1
-            elif (dice_result == 9 or 10) and (nine_again == True):
+            elif eight_again == True: ## any success gives a bonus dice
                 bonus_dice+=1
-            elif (dice_result == 10) and (nine_again==False) and (eight_again==False):
+            elif (nine_again == True) and (dice_result >= 9):
                 bonus_dice+=1
 
     while bonus_dice > 0:
@@ -160,14 +159,15 @@ def roll_wod_dice(dice_pool, eight_again=False, nine_again=False):
         rolled_dice.append(dice_result)
         if dice_result in success_values: ## Rolled 8, 9 or 10
             successes+=1
-            if eight_again == True:
+            if dice_result == 10:
                 bonus_dice+=1
-            elif (dice_result == 9 or 10 ) and (nine_again == True):
+            elif eight_again == True: ## any success gives a bonus dice
                 bonus_dice+=1
-            elif (dice_result == 10) and (nine_again==False) and (eight_again==False):
+            elif (nine_again == True) and (dice_result >= 9):
                 bonus_dice+=1
         bonus_dice -= 1
         rerolls += 1
+        
     return rolled_dice, successes, rerolls
             
 if __name__ == "__main__":
