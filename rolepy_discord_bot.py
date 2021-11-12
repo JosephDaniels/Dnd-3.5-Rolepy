@@ -2,6 +2,8 @@ import discord
 
 import asyncio
 
+from TOKEN import TOKEN
+
 from DM_helper import * ## Module for running the game, lets us keep track of characters
 from NPC import * ## non-player character information
 
