@@ -1,4 +1,4 @@
-from dnd35_class import * ## This is Dnd 3.5e SRD Players handbook classes
+#from dnd35_class import * ## This is Dnd 3.5e SRD Players handbook classes
 
 ## Just a bunch of skills related to abilities not much to see here
 
@@ -362,8 +362,9 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
 
     def get_profile(self):
         """ Returns a string that tells you public information about the character."""
-        response = "Name: %s\n Gender: %s\n Age: %i\n Description: %s\n History: %s\n Picture: 'TBD'" %\
-                   (self.display_name, self.gender, self.age, self.description, self.history)
+        picture_status = "TBD"
+        response = "Name: %s\n Age: %i\n Gender: %s\n Description: %s\n History: %s\n Picture: '%s'" %\
+                   (self.display_name, self.age, self.gender, self.description, self.history, picture_status)
         return response
 
     def get_character_sheet(self, show_all = False):
@@ -417,6 +418,7 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
             return skill_ranks
 
     def get_skill_total(self, skill, misc_modifier=0):
+        total = 0
         if self.__dict__[skill] == -1:
             print("Character %s doesn't have that skill. skill[%s]" % (self.name, skill))
         else:
@@ -481,15 +483,15 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
         
 
     def get_base_feat_count(self):
-        level = self.get_current_level()
+        level = self.get_level()
         return level/3+1
 
     def get_max_class_skill_ranks(self):
-        level = self.get_current_level()
+        level = self.get_level()
         return level+3
 
     def get_max_cross_class_skill_ranks(self):
-        level = self.get_current_level()
+        level = self.get_level()
         return (level+3)/2
 
     def _validate_all_skills(self): ## validates all skills
@@ -553,7 +555,7 @@ def test_6(): ## attempting to use the character class tables from character.py
 def test_7(): ## testing multiclass functionality
     c = Character()
     c.load("characters/paige.txt")
-    print(c.get_saving_throw())
+    print(c.get_saving_throw("fortitude"))
 
 def test_8(): ## make a blank character
     c = Character()
