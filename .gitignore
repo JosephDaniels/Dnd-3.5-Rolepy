@@ -1,3 +1,4 @@
+suggestionbox/*.txt
 TOKEN.py
 TOKEN.pyc
 __pycache__/*.pyc

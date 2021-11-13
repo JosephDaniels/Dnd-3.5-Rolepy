@@ -2,6 +2,9 @@ import discord
 
 import asyncio
 
+import os
+from datetime import date
+
 from TOKEN import TOKEN
 
 from DM_helper import *  # Module for running the game, lets us keep track of characters
@@ -70,7 +73,12 @@ client = discord.Client()
 
 dm = DM_helper()
 
-suggestions = 0
+## This block detects how many suggestions are already found and updates the suggestion counter
+path, dirs, files = next(os.walk("suggestionbox/"))  # walk through the directory waka waka
+file_count = len(files)  # spits out the len of the journey
+print(" suggestions found: %i" % (file_count))
+
+suggestions = file_count
 
 @client.event
 async def on_ready():
@@ -327,18 +335,20 @@ async def on_message(message):
         global suggestions
         await message.author.send("Please type your message to be added to the suggestion box.")
         try:
-            msg = await client.wait_for('message', timeout=12.0, check=None)
+            my_suggestion = await client.wait_for('message', timeout=12.0, check=None)
         except asyncio.TimeoutError:
             await message.author.send("Your suggestion timed out. (60 secs)")
         else:
             suggestions+=1
-            data = msg.content
-            filename = "suggestionbox/suggestion%i" % (suggestions)
+            data = my_suggestion.content
+            today = date.today()
+            data = data+" -- Suggestion written by %s on %s." % (username, today)
+            filename = "suggestionbox/suggestion%i.txt" % (suggestions)
             f = open(filename, mode='w+')
             f.write(data)
             f.close()
-            await message.author.send("Thanks! received suggestion: %s" % (msg.content))
-
+            print ("Suggestion#%i just got saved. Thanks %s!" % (suggestions, username))
+            await message.author.send("Thanks! received suggestion: %s" % (my_suggestion.content))
 
     if message.content.startswith('!greet'):
         channel = message.channel
