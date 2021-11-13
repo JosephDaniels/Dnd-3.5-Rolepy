@@ -1,10 +1,15 @@
 name  = paige
 display_name  = Paige Belmont
 character_class  = rogueLv1,fighterLv1,sorcererLv1
+alignment = lawful neutral
 gender = female
 age = 21
+profile_image = paige.png
 description = a shady looking female vampire hunter
-history = you don't wanna mess with her
+public_history = you don't wanna mess with her
+eye_colour = dark brown
+hair_colour = black
+skin_colour = pale
 size = medium
 total_xp = 6000
 gold_coins = 600

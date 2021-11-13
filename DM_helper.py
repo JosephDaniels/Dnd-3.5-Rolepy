@@ -88,7 +88,7 @@ class DM_helper(object):
     
 
     def do_attack(self, attacker, target, attack_type = "melee"): # defaults to melee attack. change to "ranged" to reference ranged attack bonus.
-        dice_result, dicetype = rolld20()
+        dice_result = rolld(20)
         if attack_type == "melee":
             bab = attacker.get_melee_attack_bonus() ## We need to grab the class base attack bonus and add their strength modifier
         elif attack_type == "ranged":
@@ -153,7 +153,7 @@ It will take their characters, use their initiative bonus and roll initiative fo
         for combatant in combatants:
             initiative_bonus = combatant.get_initiative_bonus(misc_modifier=0)
             print ("%s rolls for initiative! [+%i initiative bonus]" % (combatant.name, initiative_bonus))
-            dice_result, dice_type = rolld20()
+            dice_result = rolld(20)
             initiative_result = dice_result+initiative_bonus
             print ("%s rolled %i. [natural %i + %i init bonus]" % (combatant.name, initiative_result,
                                                                    dice_result, initiative_bonus))
@@ -207,7 +207,7 @@ def test(): # combat test
         attacker = dm.get_character(attacker_name)
         if dm.do_attack(attacker, target):
             ## Everybody is using a short sword
-            damage, dicetype = rolld6()
+            damage, dicetype = rolld(6)
             damage+=attacker.calculate_modifier(attacker.strength) ## add strength mod
             dm.deal_damage(attacker,target,damage)
         else:

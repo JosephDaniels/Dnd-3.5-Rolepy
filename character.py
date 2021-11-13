@@ -133,12 +133,13 @@ a text file. Please see the load for more information.
 
 If an attribute has a value of -1 then it has not been set or was corrupted somehow.
     """
-    def __init__(self, character_name = ""):
+    def __init__(self, character_name = "", picture_caption = "",
+                 profile_image=None):
 
         ## CHARACTER INFO
         self.name = "" ## e.g. Single name like "Conan"
         self.display_name = "" ## e.g. long name like "Conan the Barbarian"
-        self.player_name = "" ## The player's discord username such as Villager#1999
+        self.discord_username = "" ## The player's discord username such as Villager#1999
         self.character_class= [] ## lowercase character class with associated level e.g. ["fighterLv1","rogueLv2"]
         self.alignment = "" ## Lawful <-> Chaotic and Evil <-> Good E.G. "Lawful Good" or "Chaotic Evil" or "True Neutral"
 
@@ -146,7 +147,12 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
         self.age = -1
         self.gender = ""
         self.description = ""
-        self.history = ""
+        self.public_history = ""  # What other players see when they look at your profile
+        self.full_history = ""  # The full back story of your character that only you and the DM know
+        self.eye_colour = ""
+        self.hair_colour = ""
+        self.skin_colour = ""
+        self.profile_image = profile_image ## something like bobby.jpg or something
 
         ## GAME INFO
         self.dying = False
@@ -209,13 +215,13 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
         self.jump = -1
         
         self.knowledge_arcana = -1
-        self.knowledge_architecture_engineering = -1
+        self.knowledge_engineering = -1
         self.knowledge_dungeoneering = -1
         self.knowledge_geography = -1
         self.knowledge_history = -1
         self.knowledge_local = -1
         self.knowledge_nature = -1
-        self.knowledge_nobility_royalty = -1
+        self.knowledge_nobility = -1
         self.knowledge_religion = -1
         self.knowledge_the_planes = -1
 
@@ -285,7 +291,7 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
         self.special_abilities = [] ## special class abilities are added to this list
 
         if character_name:
-            filename = "characters/%s.txt" % (character_name)
+            filename = "characters/%s.txt" % (character_name) ## always the same
             self.load(filename)
 
     def __lt__(self,other):
@@ -362,10 +368,21 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
 
     def get_profile(self):
         """ Returns a string that tells you public information about the character."""
-        picture_status = "TBD"
-        response = "Name: %s\n Age: %i\n Gender: %s\n Description: %s\n History: %s\n Picture: '%s'" %\
-                   (self.display_name, self.age, self.gender, self.description, self.history, picture_status)
-        return response
+        picture_status = ""
+        if self.profile_image == None:
+            picture_status = "TBD"
+        response = "Name: %s\n Age: %i\n Gender: %s\n" \
+                   " Eyes: %s\n" \
+                   " Hair: %s\n" \
+                   " Skin: %s\n" \
+                   " Description: %s\n" \
+                   " History: %s\n" \
+                   " %s " %\
+                   (self.display_name, self.age, self.gender,
+                    self.eye_colour, self.hair_colour, self.skin_colour,
+                    self.description, self.public_history, self.picture_caption)
+        image_file = "images/"+self.profile_image
+        return response, image_file
 
     def get_character_sheet(self, show_all = False):
         lines = []
@@ -440,6 +457,7 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
         return total
 
     def get_saving_throw(self, base_save, misc_modifier=0):
+        """ returns a full saving throw with a target base save. Add the relevant attribute modifier automatically. """
         relevant_attribute = SAVE_KEY_ABILITIES[base_save] # gets an attribute for a save E.G. fortitude > constitution
         attribute_value = self.__dict__[relevant_attribute] ## looks up the exact value of the attribute for the character
         attribute_modifier = Character.calculate_modifier(attribute_value)
@@ -476,11 +494,8 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
         net_worth = 0.01*copper+0.1*silver+gold+10*platinum
         return net_worth
 
-    def set_saving_throws_from_class_levels(self): ## Calculates the total save bonus across all classes for a certain saving throw
-        fort = 0
-        refl = 0
-        will = 0
-        
+    def set_saving_throws_from_class_levels(self):
+        pass
 
     def get_base_feat_count(self):
         level = self.get_level()
@@ -494,17 +509,25 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
         level = self.get_level()
         return (level+3)/2
 
-    def _validate_all_skills(self): ## validates all skills
-        ## Do not use unless you know what you're doing
-        ## Should only be called once during character creation
-
+    def validate_all_skills(self):
+        # Validates all skills that are usable untrained. To be used after a character is filled in.
+        # or just before.
         ### CURRENTLY BREAKS WHEN IT TRIES TO VALIDATE CRAFT KNOWLEDGE PROFESSION PERFORM
-        skills = self.__dict__.keys()
+        skills = self.__dict__.keys() ## a list of all skills available
         skills_usable = SKILL_USABLE_UNTRAINED.keys()
-        for skill in skills:
-            if SKILL_USABLE_UNTRAINED[skill] == True: ## Checks for all usable untrained skills
-                if self.__dict__[skill] == -1: ## If it detects an unvalidated skill
-                    self.__dict__[skill] = 0 ## Then validate it so it can be usable.
+        for skill in skills: ## finds all skills on the character sheet
+            for multiskill in MULTI_AREA_SKILLS: ## for things like "knowledge" "craft, "profession"
+                if multiskill in skill: ## checks if a multi-area skill is detected
+                    pass ## skips these values for validation
+                elif multiskill not in skill:
+                    if skill in skills_usable:
+                        if self.__dict__[skill] >= 0: ## already has ranks, don't change it
+                            pass
+                        elif self.__dict__[skill] == -1: ## invalid detected
+                            self.__dict__[skill] = 0
+                else:
+                    print ("this should never happen!!!")
+
     
 def test_1(): ## Runs a known working character and sees if the methods work
     paige_file = "paige.txt"
@@ -559,8 +582,14 @@ def test_7(): ## testing multiclass functionality
 
 def test_8(): ## make a blank character
     c = Character()
-    c.save("characters/blank.txt", show_all=False)
+    c.save("characters/blank.txt", show_all=True)
+
+def test_9(): ## trying to validate all of ulfric's skills
+    u = Character()
+    u.load("characters/ulfric.txt")
+    u.validate_all_skills()
+    print(u.get_character_sheet())
 
 if __name__ == "__main__":
-    test_8()
+    test_9()
     

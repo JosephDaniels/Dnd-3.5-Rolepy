@@ -41,7 +41,7 @@ Please see the post in the bot development channel!! Thank you!!
 
 USER COMMANDS
 !greet\n !hello\n
-!help\n !help [command]\n
+!help\n !help [command]\n !suggest\n
 !login [username]\n !logout\n
 DICE COMMANDS\n
 !rollwod [num_dice]\n !rollwod9again [num_dice]\n
@@ -50,10 +50,14 @@ DICE COMMANDS\n
 !rolld16\n !rolld20\n !rolld24\n !rolld100\n !rolld1000\n 
 !coinflip\n !rockpaperscissors [sign]\n
 ROLEPLAY COMMANDS\n
-!whois [username]\n !whoami\n !me\n
+!whois [username]\n !whoami\n !me\n !whosloggedin\n
 JUST FOR FUN COMMANDS
 !tableflip\n !fliptable\n !breaktable\n !unfliptable\n 
-!sunglassesfingerguns\n"""
+!sunglassesfingerguns\n
+
+NOT CURRENTLY FUNCTIONAL
+!faq\n
+"""
 
 ADMINS = ['StabbyStabby#1327', 'alanwongis#3590']
 
@@ -117,9 +121,10 @@ def do_login(message):
         return response, nick
     else:  # Truly log their character in and load them in the system
         response = "Successfully logged %s in as the character %s." % (username, target_character)
-        nick = target_character  # for changing their name in discord
         character_sheet = Character(target_character)
+        nick = character_sheet.display_name  # for changing their name in discord
         dm.logged_in_as[username] = character_sheet
+        print ("%s has logged in as %s." % (username, target_character))
         return response, nick
 
 async def do_logout(message):
@@ -189,11 +194,14 @@ async def on_message(message):
     username = str(message.author)
     member = message.author
 
+    ##USER COMMANDS
+
     if message.content.startswith('!login'):
         response, nick = do_login(message)
         if nick != None:  # change their nickname
             if username in ADMINS:
-                pass  ## can't change their name they too powerful
+                print ("tried to change your name but you are too powerful, %s" % (username))
+                return
             else:
                 await member.edit(nick=nick)
         await message.channel.send(response)
@@ -206,6 +214,8 @@ async def on_message(message):
         else:
             await message.channel.send(response)
 
+
+
     ## ROLEPLAY COMMANDS
 
     if message.content == ("!whoami") or message.content == ("!me"):
@@ -214,13 +224,13 @@ async def on_message(message):
         await message.author.send(response)
 
     if message.content.startswith("!whois"):
-        if message.content == "!whoisplaying":
+        if message.content == "!whoisplaying" or message.content == "!whoisloggedin":
             player_list = []
             response = "Characters currently logged in: "
             for key in dm.logged_in_as.keys():  ## grabs all users who are logged in
-                player_list.append(dm.logged_in_as[key].name)  ## appends their current character to a list
+                player_list.append(dm.logged_in_as[key].display_name)  ## appends their current character to a list
             for player in player_list:
-                response = response + player + " "
+                response = response+player+"\n"
             await message.author.send(response)
         else:
             target_character = message.content.split(" ")[1].strip()  ## gets the second parameter which is the target chara
@@ -228,9 +238,8 @@ async def on_message(message):
             for key in dm.logged_in_as.keys():  # A list of usernames
                 if dm.logged_in_as[key].name == target_character:  # check if a username is associated with a certain character
                     char_sheet = dm.logged_in_as[key]  ## Finds their character sheet from theirr discord username
-                    response = char_sheet.get_profile()  # This is a personal version of their character sheet
-                    ## I will have to differentiate between personal and public profile in the future
-                    await message.author.send(response)
+                    response, image_file = char_sheet.get_profile()  # This is their public profile
+                    await message.author.send(response, file=discord.File(image_file))
 
 
     ## BATTLE COMMANDS
@@ -335,12 +344,13 @@ async def on_message(message):
         global suggestions
         await message.author.send("Please type your message to be added to the suggestion box.")
         try:
-            my_suggestion = await client.wait_for('message', timeout=12.0, check=None)
+            msg = await client.wait_for('message', timeout=180.0, check=None)
         except asyncio.TimeoutError:
-            await message.author.send("Your suggestion timed out. (60 secs)")
-        else:
+            await message.author.send("Sorry, your suggestion has timed out. (180 secs or 3 minutes elapsed)")
+            msg = None
+        if msg != None:
             suggestions+=1
-            data = my_suggestion.content
+            data = msg.content
             today = date.today()
             data = data+" -- Suggestion written by %s on %s." % (username, today)
             filename = "suggestionbox/suggestion%i.txt" % (suggestions)
@@ -348,7 +358,7 @@ async def on_message(message):
             f.write(data)
             f.close()
             print ("Suggestion#%i just got saved. Thanks %s!" % (suggestions, username))
-            await message.author.send("Thanks! received suggestion: %s" % (my_suggestion.content))
+            await message.author.send("Thanks! received suggestion: %s" % (msg.content))
 
     if message.content.startswith('!greet'):
         channel = message.channel
