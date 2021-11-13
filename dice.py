@@ -71,6 +71,17 @@ def coinflip():
     elif result == 2:
         return ("Tails")
 
+def rock_paper_scissors():
+    dice_result = random.randint(1,3)
+    response = ""
+    if (dice_result == 1):
+        response = "rock"
+    elif (dice_result == 2):
+        response = "paper"
+    elif (dice_result == 3):
+        response = "scissors"
+    return response
+
 def rolld(n):
     if not n in VALID_DICE:
         raise Error("tried to roll a invalid dice. I'm crashing now lol")
