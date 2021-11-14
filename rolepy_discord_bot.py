@@ -6,58 +6,10 @@ import os
 from datetime import date
 
 from TOKEN import TOKEN
+from rolepy_help import *
 
 from DM_helper import *  # Module for running the game, lets us keep track of characters
 from NPC import *  # non-player character information
-
-help_login_message = """Wondering how to 'login'? Type !help followed by your characters first name.\n
-If your Discord account is associated with that character,
-You will be logged in and able to access your profile.
-After that, you can type !me to view your logged in character,
-or you can type !whois [username] to see a character's profile.
-Type '!help character sheet' to learn more about it.
-Please note that your username is CASE SENSITIVE!"""
-
-help_whois_message = """Wondering how to use 'whois'?: Type !whois followed by a target character's first name.\n
-This command will bring up a character profile, which is a
-version of their character sheet that is intended for others
-to see. This could include their picture, character description,
-character history and public backstory.
-Please note that the username is CASE SENSITIVE!"""
-
-help_general_message = """Need some help using the Roleplay Bot?\n
-I'm here to help. If you have any issues please contact GM Joey for solutions.
-Most commands are in the format of [command] [target] with a space between them.
-Here's a list of available commands. More to come!!!\n
-\n
-Last updated 11/12/2021
-Update Notes:
-Added !rockpaperscissors - you can now play against the bot
-Added !whois - look up people's profiles if they are logged in
-If you want your character added to the database you need to help me out.
-I can do all the back end stuff if you guys add your own characters.
-Please see the post in the bot development channel!! Thank you!!
-
-
-USER COMMANDS
-!greet\n !hello\n
-!help\n !help [command]\n !suggest\n
-!login [username]\n !logout\n
-DICE COMMANDS\n
-!rollwod [num_dice]\n !rollwod9again [num_dice]\n
-!rollwod8again [num_dice]\n !rollchancedie\n
-!rolld3\n !rolld4\n !rolld6\n !rolld8\n !rolld10\n !rolld12\n
-!rolld16\n !rolld20\n !rolld24\n !rolld100\n !rolld1000\n 
-!coinflip\n !rockpaperscissors [sign]\n
-ROLEPLAY COMMANDS\n
-!whois [username]\n !whoami\n !me\n !whosloggedin\n
-JUST FOR FUN COMMANDS
-!tableflip\n !fliptable\n !breaktable\n !unfliptable\n 
-!sunglassesfingerguns\n
-
-NOT CURRENTLY FUNCTIONAL
-!faq\n
-"""
 
 ADMINS = ['StabbyStabby#1327', 'alanwongis#3590']
 
@@ -201,7 +153,6 @@ async def on_message(message):
         if nick != None:  # change their nickname
             if username in ADMINS:
                 print ("tried to change your name but you are too powerful, %s" % (username))
-                return
             else:
                 await member.edit(nick=nick)
         await message.channel.send(response)
@@ -225,14 +176,17 @@ async def on_message(message):
 
     if message.content.startswith("!whois"):
         if message.content == "!whoisplaying" or message.content == "!whoisloggedin":
-            player_list = []
-            response = "Characters currently logged in: "
+            char_name_list = []
             for key in dm.logged_in_as.keys():  ## grabs all users who are logged in
-                player_list.append(dm.logged_in_as[key].display_name)  ## appends their current character to a list
-            for player in player_list:
-                response = response+player+"\n"
+                char_name_list.append(dm.logged_in_as[key].display_name)  ## appends their current character to a list
+            if char_name_list == []:
+                response = "Noone is logged in at the moment."
+            else: #players on the list
+                response = "Characters currently logged in: "
+                for char_name in char_name_list:
+                    response = "%s\n%s\n" % (response,char_name)
             await message.author.send(response)
-        else:
+        else: # typed !whois something
             target_character = message.content.split(" ")[1].strip()  ## gets the second parameter which is the target chara
             char_sheet = None
             for key in dm.logged_in_as.keys():  # A list of usernames
@@ -374,12 +328,12 @@ async def on_message(message):
             await message.author.send("I waited for you to say hello... </3")
 
     if message.content.startswith('!help'):  ## All Help Commands
-        if message.content == ('!help login'):
-            await message.author.send(help_login_message)
-        if message.content.startswith('!help whois'):
-            await message.author.send(help_whois_message)
+        if message.content == '!help login':
+            await message.author.send(HELP_LOGIN_MESSAGE)
+        if message.content == '!help whois':
+            await message.author.send(HELP_WHOIS_MESSAGE)
         if message.content == ('!help'):
-            await message.author.send(help_general_message)
+            await message.author.send(HELP_GENERAL_MESSAGE)
 
 
 client.run(TOKEN)

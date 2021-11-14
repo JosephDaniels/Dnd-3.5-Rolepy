@@ -1,7 +1,7 @@
 name = ulfric
 display_name = Ulfric Northsun Bearmantle
 discord_username = Coruba#1432
-character_class = [barbarianLv2,clericLv11]
+character_class = barbarianLv2,clericLv11
 alignment = chaotic good
 age = 25
 gender = male

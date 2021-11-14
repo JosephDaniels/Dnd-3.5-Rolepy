@@ -1,112 +1,7 @@
-#from dnd35_class import * ## This is Dnd 3.5e SRD Players handbook classes
 
-## Just a bunch of skills related to abilities not much to see here
+from skills import * ## import skill information
 
-SKILL_KEY_ABILITIES = { ## All skills and their related abilities
-    "appraise"          :   "intelligence",
-    "balance"           :   "dexterity",
-    "bluff"             :   "charisma",
-    "climb"             :   "strength",
-    "concentration"     :   "constitution",
-    "craft"             :   "intelligence",
-    "decipher_script"   :   "intelligence",
-    "diplomacy"         :   "charisma",
-    "disable_device"    :   "intelligence",
-    "disguise"          :   "charisma",
-    "escape_artist"     :   "dexterity",
-    "forgery"           :   "intelligence",
-    "gather_information":   "charisma",
-    "handle_animal"     :   "charisma",
-    "heal"              :   "wisdom",
-    "hide"              :   "dexterity",
-    "intimidate"        :   "charisma",
-    "jump"              :   "strength",
-    "knowledge"         :   "intelligence",
-    "listen"            :   "wisdom",
-    "move_silently"     :   "dexterity",
-    "open_lock"         :   "dexterity",
-    "perform"           :   "charisma",
-    "profession"        :   "wisdom",
-    "ride"              :   "dexterity",
-    "search"            :   "intelligence",
-    "sense_motive"      :   "wisdom",
-    "sleight_of_hand"   :   "dexterity",
-    "spellcraft"        :   "intelligence",
-    "spot"              :   "wisdom",
-    "survival"          :   "wisdom",
-    "swim"              :   "strength",
-    "tumble"            :   "dexterity",
-    "use_magic_device"  :   "charisma",
-    "use_rope"          :   "dexterity"
-    }
-
-SKILL_USABLE_UNTRAINED = { ## all skills; are they usable untrained or not?
-    ## True if usable untrained. False if not. 
-    "appraise"          :   True,
-    "balance"           :   True,
-    "bluff"             :   True,
-    "climb"             :   True,
-    "concentration"     :   True,
-    "craft"             :   True,
-    "decipher_script"   :   False,
-    "diplomacy"         :   True,
-    "disable_device"    :   False,
-    "disguise"          :   True,
-    "escape_artist"     :   True,
-    "forgery"           :   True,
-    "gather_information":   True,
-    "handle_animal"     :   False,
-    "heal"              :   True,
-    "hide"              :   True,
-    "intimidate"        :   True,
-    "jump"              :   True,
-    "knowledge"         :   False,
-    "listen"            :   True,
-    "move_silently"     :   True,
-    "open_lock"         :   False,
-    "perform"           :   False,
-    "profession"        :   False,
-    "ride"              :   True,
-    "search"            :   True,
-    "sense_motive"      :   True,
-    "sleight_of_hand"   :   False,
-    "spellcraft"        :   False,
-    "spot"              :   True,
-    "survival"          :   True,
-    "swim"              :   True,
-    "tumble"            :   False,
-    "use_magic_device"  :   True,
-    "use_rope"          :   True
-    }
-
-
-
-## Every level associated with the experience needed to get there.
-## It can easily be calculated with a formula but I have found
-## that life is easier when you type things like this out properly.
-
-XP_CHART = (
-    (1 ,    0),
-    (2 ,    1000),
-    (3 ,    3000),
-    (4 ,    6000),
-    (5 ,    10000),
-    (6 ,    15000),
-    (7 ,    21000),
-    (8 ,    28000),
-    (9 ,    36000),
-    (10,    45000),
-    (11,    55000),
-    (12,    66000),
-    (13,    78000),
-    (14,    91000),
-    (15,    105000),
-    (16,    120000),
-    (17,    136000),
-    (18,    153000),
-    (19,    171000),
-    (20,    190000)
-    )
+from xp import * ## import xp chart
 
 SAVE_KEY_ABILITIES = {
     "base_fortitude"    :   "constitution",
@@ -114,9 +9,6 @@ SAVE_KEY_ABILITIES = {
     "base_will"         :   "wisdom"
     }
 
-# in the txt file that saves attributes for a character, these will have braces in the file
-# eg. knowledge(arcana)
-MULTI_AREA_SKILLS = ["knowledge","profession","craft","perform"]
 
 class Data(object):
     def __init__(self):
@@ -144,14 +36,20 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
         self.alignment = "" ## Lawful <-> Chaotic and Evil <-> Good E.G. "Lawful Good" or "Chaotic Evil" or "True Neutral"
 
         ## PROFILE INFO
+
         self.age = -1
+        self.height = ""
+        self.weight = ""
         self.gender = ""
-        self.description = ""
-        self.public_history = ""  # What other players see when they look at your profile
-        self.full_history = ""  # The full back story of your character that only you and the DM know
         self.eye_colour = ""
         self.hair_colour = ""
         self.skin_colour = ""
+        ## Possible text documents
+        self.description = ""
+        self.public_history = ""  # What other players see when they look at your profile
+        self.full_history = ""  # The full back story of your character that only you and the DM know
+
+
         self.profile_image = profile_image ## something like bobby.jpg or something
 
         ## GAME INFO
@@ -348,56 +246,73 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
                 # The output will be a list of tuples like this:
                 # [ ('cleric', 1), ('druid', 10)]
                 parsed_classes =  []
-                char_classes= value.split(",") # split on comma, will give each class and their associated level
+                char_classes = value.strip('[]').split(",") # split on comma, will give each class and their associated level
                 for raw_char_st in char_classes: ## Alan put this line it handles the full character string such as "fighterLv3" or "rogueLv2"
                     char_class_name, level = raw_char_st.split("Lv") # split between class name and level
-                    try: level = int(level) # Tries to convert to a 
-                    except: print("didn't manage to convert ["+level+"] to an int.")
+                    try:
+                        level = int(level)
+                    except:
+                        pass
                     parsed_classes.append( (char_class_name, level) )
                 value = parsed_classes
             if "(" in key: # detected that the user typed something like knowledge(arcana)
                 main_key, sub_key = key.strip(")").split("(")
                 if main_key in MULTI_AREA_SKILLS:
-                    main_key, sub_key = key.strip(")").split("(")
                     key = main_key+"_"+sub_key ## constructs the key e.g. knowledge_arcana
             else:   
-                try:    value = int(value) ## tries to convert to a number
-                except: pass ## doesn't matter, stays a string
+                try:
+                    value = int(value) ## tries to convert to a number
+                except:
+                    pass ## doesn't matter, stays a string
             profile[key] = value
         self.__dict__.update(profile)
 
     def get_profile(self):
         """ Returns a string that tells you public information about the character."""
         picture_status = ""
+        image_file = "[No Image File Found]"
         if self.profile_image == None:
-            picture_status = "TBD"
+            picture_status = "-No Profile Picture Found-"
         response = "Name: %s\n Age: %i\n Gender: %s\n" \
-                   " Eyes: %s\n" \
-                   " Hair: %s\n" \
-                   " Skin: %s\n" \
+                   " Eye colour: %s\n" \
+                   " Hair colour: %s\n" \
+                   " Skin colour: %s\n" \
+                   " Height: %s\n" \
+                   " Weight: %s\n" \
                    " Description: %s\n" \
                    " History: %s\n" \
-                   " %s " %\
-                   (self.display_name, self.age, self.gender,
-                    self.eye_colour, self.hair_colour, self.skin_colour,
-                    self.description, self.public_history, self.picture_caption)
-        image_file = "images/"+self.profile_image
+                   " Picture: %s " %\
+                   (self.display_name, self.age, self.gender.capitalize(),
+                    self.eye_colour.capitalize(), self.hair_colour.capitalize(), self.skin_colour.capitalize(),
+                    self.height, self.weight,
+                    self.description, self.public_history, picture_status)
+        try:
+            image_file = "images/"+self.profile_image
+        except: ## Image file not found
+            picture_status = "-No Profile Picture Found-"
+            print("Wasn't able to find this image file! : %s" % (image_file))
         return response, image_file
 
     def get_character_sheet(self, show_all = False):
         lines = []
-        for key in self.__dict__.keys(): ## Goes through all the attributes of the character
-            value = self.__dict__[key]
+        for key in self.__dict__.keys(): ## Goes through all the attributes of the character - strength, dex, skills etc
+            value = self.__dict__[key] ## retrieves what the attribute corresponds to - so the value of strength or base_fortitude
             #Depending on the type we'll format it correctly
-            if type(value) == Data:
+            if type(value) == Data:  # got a data object not currently used for anything just yet
                 pass
-            elif type(value) == str:
-                lines.append('%s = "%s"' % (key, value))
+            elif type(value) == int: ## gets a
+                lines.append('%s = %s' % (key, value))
+            elif key == "character_class":
+                char_classes = []
+                for char_class_and_level in value:
+                    char_class, level = char_class_and_level[0],char_class_and_level[1]
+                    char_classes.append("%sLv%i" % (char_class,level))
+                lines.append('%s = %s' % (key, char_classes))
             elif value == -1: ## Non-valid value
                 if show_all == True:
                     lines.append("%s = %s" % (key, value))
-            else:
-                lines.append("%s = %s" % (key, value))
+            else: ## too much flowing through else exception
+                lines.append('%s = %s' % (key, value))
         return "\n".join(lines)
 
     @staticmethod
@@ -528,12 +443,11 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
                 else:
                     print ("this should never happen!!!")
 
-    
+
 def test_1(): ## Runs a known working character and sees if the methods work
-    paige_file = "paige.txt"
+    paige_file = "characters/paige.txt"
     chara = Character()
-    profile = chara.load(paige_file)
-    chara.get_character_sheet()
+    chara.load(paige_file)
     print("Tumble total is ", chara.get_skill_total("tumble", misc_modifier=0))
     print("Fortitude save total is ", chara.get_saving_throw("base_fortitude", misc_modifier=0))
     print("Reflex save total is ", chara.get_saving_throw("base_reflex", misc_modifier=0))
@@ -546,7 +460,7 @@ def test_1(): ## Runs a known working character and sees if the methods work
     print("%s has %i gold, %i silver and %i copper pieces for a total of %i gold."
           % (chara.display_name, gold, silver, copper, character_net_worth))
     print("Base spell save is ", chara.get_spell_save("charisma"))
-    print("Knowledge(Arcana) total is ", chara.get_skill_total("knowledge(arcana)", misc_modifier=0))
+    print("Knowledge(Arcana) total is ", chara.get_skill_total("knowledge_arcana", misc_modifier=0))
 
 def test_2(): ## Runs a basic character sheet and see if it shows up
     c = Character()
@@ -590,6 +504,13 @@ def test_9(): ## trying to validate all of ulfric's skills
     u.validate_all_skills()
     print(u.get_character_sheet())
 
+def test_10(): ## Runs a known working character and sees if the methods work
+    paige_file = "characters/paige.txt"
+    chara = Character()
+    chara.load(paige_file)
+    chara.get_character_sheet()
+    print(chara.get_character_sheet())
+
 if __name__ == "__main__":
-    test_9()
+    test_8()
     
