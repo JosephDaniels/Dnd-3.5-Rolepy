@@ -29,8 +29,8 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
                  profile_image=None):
 
         ## CHARACTER INFO
-        self.name = "" ## e.g. Single name like "Conan"
-        self.display_name = "" ## e.g. long name like "Conan the Barbarian"
+        self.username = "" ## e.g. what they type to !login to the system
+        self.display_name = "" ## e.g. Their long name like "Ulfric Northsun of the Bearmantle Clan"
         self.discord_username = "" ## The player's discord username such as Villager#1999
         self.character_class= [] ## lowercase character class with associated level e.g. ["fighterLv1","rogueLv2"]
         self.alignment = "" ## Lawful <-> Chaotic and Evil <-> Good E.G. "Lawful Good" or "Chaotic Evil" or "True Neutral"
@@ -44,11 +44,11 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
         self.eye_colour = ""
         self.hair_colour = ""
         self.skin_colour = ""
+        self.favorite_weapon = ""
         ## Possible text documents
         self.description = ""
         self.public_history = ""  # What other players see when they look at your profile
-        self.full_history = ""  # The full back story of your character that only you and the DM know
-
+        self.personal_history = ""  # The full back story of your character that only you and the DM know
 
         self.profile_image = profile_image ## something like bobby.jpg or something
 
@@ -192,6 +192,7 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
             filename = "characters/%s.txt" % (character_name) ## always the same
             self.load(filename)
 
+
     def __lt__(self,other):
         return True ## It's a hack so that it sorts properly during initiative
 
@@ -273,7 +274,10 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
         image_file = "[No Image File Found]"
         if self.profile_image == None:
             picture_status = "-No Profile Picture Found-"
-        response = "Name: %s\n Age: %i\n Gender: %s\n" \
+        response = " Username: %s\n" \
+                   " Character Name:" \
+                   " Age: %i\n" \
+                   " Gender: %s\n" \
                    " Eye colour: %s\n" \
                    " Hair colour: %s\n" \
                    " Skin colour: %s\n" \
@@ -283,7 +287,8 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
                    " Description: %s\n" \
                    " History: %s\n" \
                    " Picture: %s " %\
-                   (self.display_name, self.age, self.gender.capitalize(),
+                   (self.username,
+                    self.age, self.gender.capitalize(),
                     self.eye_colour.capitalize(), self.hair_colour.capitalize(), self.skin_colour.capitalize(),
                     self.height, self.weight, self.favorite_weapon,
                     self.description, self.public_history, picture_status)
@@ -351,7 +356,7 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
     def get_skill_total(self, skill, misc_modifier=0):
         total = 0
         if self.__dict__[skill] == -1:
-            print("Character %s doesn't have that skill. skill[%s]" % (self.name, skill))
+            print("Character %s doesn't have that skill. skill[%s]" % (self.username, skill))
         else:
             if "(" in skill: ## Detects a skill like knowledge, craft, profession, perform
                 words = skill.strip(")") ## Removes the trailing bracket knowledge(arcana) -> knowledge(arcana
@@ -467,7 +472,6 @@ def test_2(): ## Runs a basic character sheet and see if it shows up
 
 def test_3(): ## Test the character cheet save functionality
     b = Character()
-    b.name = "Bobby Boy"
     b.gold_coins = 1000000
     b.xp_points = 36000
     b.save("bobby.txt")
@@ -510,6 +514,8 @@ def test_10(): ## Runs a test for character sheet and get profile on a known val
     print(chara.get_character_sheet())
     print(chara.get_profile())
 
-if __name__ == "__main__":
+def test_11():  # test pickling objects
+    pass
 
-    
+if __name__ == "__main__":
+    test_11()

@@ -25,9 +25,13 @@ valid_characters_for = {'StabbyStabby#1327': ['vsevellar', 'zandrius', 'zandria'
                         'baronanansi#2600': ['barda'],
                         'alanwongis#3590': ['bob', 'akbar']}
 
+## START THE ENGINES
+
 client = discord.Client()
 
 dm = DM_helper()
+
+dm.load_last_session()
 
 ## This block detects how many suggestions are already found and updates the suggestion counter
 path, dirs, files = next(os.walk("suggestionbox/"))  # walk through the directory waka waka
@@ -40,11 +44,9 @@ suggestions = file_count
 async def on_ready():
     print('We have logged in as {0.user}'.format(client))
 
-
 def do_roll(command_line, username):
     dice_total, num_dice, results, dice_type, modifier = parse_dice_command(command_line)  # Pulls the
     return "%s rolled a %i on a %i%s. Results: %s%s" % (username, dice_total, num_dice, dice_type, results, modifier)
-
 
 def do_login(message):
     nick = None
@@ -74,8 +76,9 @@ def do_login(message):
     else:  # Truly log their character in and load them in the system
         response = "Successfully logged %s in as the character %s." % (username, target_character)
         character_sheet = Character(target_character)
-        nick = character_sheet.display_name  # for changing their name in discord
-        dm.logged_in_as[username] = character_sheet
+        nick = character_sheet.username  # for changing their name in discord
+        dm.logged_in_as[username] = character_sheet  #Associates a given username with a character sheet
+        dm.add_character(character_sheet)
         print ("%s has logged in as %s." % (username, target_character))
         return response, nick
 

@@ -7,31 +7,65 @@ DND35PH_CLASSES = ["bard","barbarian","cleric","druid","fighter","monk","paladin
 class DM_helper(object):
     def __init__(self, debug = True):
         debug = debug ## special variable for debugging purposes, change it to false if you don't want a lot of print statements.
-        ## Anyone who's not a player character is controlled by the DM system.
+
+        ## All characters are controlled by the DM system.
         self.dnd_class_tables = {} ## all dnd classes indexed by their names
         self.logged_in_as = {} ## players actual discord name followed by their actual character sheet
+        self.characters = {} ## Character names associated with the actual character object
         
         # for combat
         self.in_combat = False # in combat state or not
         self.combatants = []   # all players and npcs in the current battle
         self.battle_order = [] ## after intiative phase, holds a sorted list of tuples of (combatant, initiative value)
+        self.temp_battle_order = [] ## used for switching back and forth between changing battle orders
         self.current_round = -1 ## The current round of combat, used for keeping of duration. defaults to -1 if no combat started.
         self.current_combatant = -1 #  used to track the current combatant
 
-      
         self.load_dnd_classes()
+
+    def ready_for_combat(self):
+        """ Tells all the current playing characters to ready for combat.
+        Players can then ready up and once everyone has the combat will begin."""
+        pass
+
+    def start_combat(self, combatants):
+        self.in_combat = True
+        self.current_round = 1
+        self.current_combatant = 0
+        self.temp_battle_order = []
+        for combatant in combatants:
+            initiative_result = self.roll_initiative(combatant)
+            self.temp_battle_order.append((initiative_result, combatant))  ## Combatant name associated with a
+            self.temp_battle_order.sort()
+            self.temp_battle_order.reverse()
+        self.battle_order = self.temp_battle_order
+
+    def roll_initiative(self, initiator):
+        initiative_bonus = initiator.get_initiative_bonus()
+        print("%s rolls for initiative! [+%i initiative bonus]" % (initiator.name, initiative_bonus))
+        dice_result = rolld(20)
+        initiative_result = dice_result + initiative_bonus
+        print("%s rolled %i. [natural %i + %i init bonus]" % (initiator.name, initiative_result,
+                                                              dice_result, initiative_bonus))
+        return initiative_result
+
+    def save_all_characters(self):
+        for character in self.characters:
+            pass
+
+    def load_all_characters(self):
+        for character in self.characters:
+            pass
+
+    def load_last_session(self):
+        self.load_all_characters()
 
     def load_dnd_classes(self):
         for classname in DND35PH_CLASSES:
             self.dnd_class_tables[classname] = Dnd_class(classname)
 
-    def add_character(self, character_name):
-        ## creates a character that doesn't exist
-        c = Character(character_name)
-
-    def use_character(self, character):
-        pass
-        ## character received is a character object that contains their character sheet
+    def add_character(self, character_sheet):
+        self.characters[character_sheet.name] = character_sheet ## Only add character sheet objects to this list
 
     def get_character(self,character_name=""):
         return self.characters[character_name]
@@ -46,7 +80,7 @@ class DM_helper(object):
         self.current_combatant = -1 #  used to track the current combatant
     
     def add_to_combat(self, char_or_npc):
-        self.combat_order.append(char_or_npc)
+        self.battle_order.append(char_or_npc)
 
     def remove_from_combat(self,character_name=""):
         ## Used when someone retreats from the battle successfully and basically is a coward
@@ -85,8 +119,6 @@ class DM_helper(object):
         ## sets distance between two enemies
         pass
 
-    
-
     def do_attack(self, attacker, target, attack_type = "melee"): # defaults to melee attack. change to "ranged" to reference ranged attack bonus.
         dice_result = rolld(20)
         if attack_type == "melee":
@@ -94,7 +126,7 @@ class DM_helper(object):
         elif attack_type == "ranged":
             bab = attacker.get_ranged_attack_bonus() ## We need to grab the class base attack bonus and add their dexterity modifier
         else:
-            raise Error("this should never occur. Attack type was neither melee or ranged. Are you testing magic??")
+            raise ("this should never occur. Attack type was neither melee or ranged. Are you testing magic??")
         roll_total = bab+dice_result
         if roll_total > target.armor_class:
             print ("%s hit %s with a total of %i. (AC=%i) [Natural %s+%i]" % (attacker.name,
@@ -105,8 +137,8 @@ class DM_helper(object):
                                                                               bab))
             return True ## Attack successful, proceed to damage
         else:
-            print("%s missed their attack on %s with a total of %i. (AC=%i) [natural %i + %i]" %
-                  (attacker.name, roll_total, target.armor_class, dice_result,bab))
+            print("%s missed their attack on %s with a total roll of %i. (AC=%i) [natural %i + %i]" %
+                  (attacker.name, target.name, roll_total, target.armor_class, dice_result,bab))
             return False
         
     def deal_damage(self,attacker,victim,damage):
@@ -131,6 +163,17 @@ class DM_helper(object):
         _effective_armor_class = defender.armor_class+2
         _effective_attack_bonus = defender.total_attack_bonus-4
         return (_effective_armor_class, _effective_attack_bonus)
+
+    def load_valid_characters(self, valid_characters_list):
+        for character in valid_characters_list.values():
+            pass
+
+
+    def get_logged_in_info(self):
+        return self.logged_in_as
+
+    def save_logins(self):
+        pass
 
     def end_combat(self):
         if len(self.battle_order) > 1:
@@ -163,19 +206,17 @@ It will take their characters, use their initiative bonus and roll initiative fo
         self.battle_order = temp_list
         self.combat_active = True
 
-    
-
 
 def test(): # combat test
     
     dm = DM_helper()
     
-    paige_file = "paige.txt"
+    paige_file = "characters/paige.txt"
     paige = Character()
     paige.load(paige_file)
     dm.add_character(paige)
     
-    bandit_file = "bandit.txt"
+    bandit_file = "npcs/bandit.txt"
     bandit = Character()
     bandit.load(bandit_file)
     dm.add_character(bandit)
@@ -194,7 +235,7 @@ def test(): # combat test
 
     print("It's your turn, " +attacker_name+".")
 
-    while dm.combat_active == True:
+    while dm.in_combat == True:
         attacker_name = dm.whose_turn_isit() ## returns the name of the current turn holder
         while True:
             try:
@@ -205,15 +246,15 @@ def test(): # combat test
             except:
                 print("Don't know who that is!! Try again. =]")
         attacker = dm.get_character(attacker_name)
-        if dm.do_attack(attacker, target):
+        if dm.do_attack(attacker, target): ## returns true if hit succeeds
             ## Everybody is using a short sword
-            damage, dicetype = rolld(6)
+            damage = rolld(6)
             damage+=attacker.calculate_modifier(attacker.strength) ## add strength mod
             dm.deal_damage(attacker,target,damage)
         else:
             pass
         print("%s's turn is over!" % attacker.name)
-        dm.next_turn()
+        dm.do_next_turn()
         print("It's now %s's turn!" % dm.whose_turn_isit())
 
 def test_2(): # 
