@@ -279,12 +279,13 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
                    " Skin colour: %s\n" \
                    " Height: %s\n" \
                    " Weight: %s\n" \
+                   " Preferred Weapon, if any: %s\n" \
                    " Description: %s\n" \
                    " History: %s\n" \
                    " Picture: %s " %\
                    (self.display_name, self.age, self.gender.capitalize(),
                     self.eye_colour.capitalize(), self.hair_colour.capitalize(), self.skin_colour.capitalize(),
-                    self.height, self.weight,
+                    self.height, self.weight, self.favorite_weapon,
                     self.description, self.public_history, picture_status)
         try:
             image_file = "images/"+self.profile_image
@@ -300,8 +301,6 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
             #Depending on the type we'll format it correctly
             if type(value) == Data:  # got a data object not currently used for anything just yet
                 pass
-            elif type(value) == int: ## gets a
-                lines.append('%s = %s' % (key, value))
             elif key == "character_class":
                 char_classes = []
                 for char_class_and_level in value:
@@ -336,7 +335,7 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
         attack_value = self.base_attack_bonus+attribute_modifier+misc_modifier
         return attack_value
 
-    def get_spell_save(self, casting_attribute, spell_level=0,misc_modifier=0):
+    def get_spell_save(self, casting_attribute, spell_level=0, misc_modifier=0):
         attribute_value = self.__dict__[casting_attribute] ## looks up the exact value of the attribute for the character
         attribute_modifier = Character.calculate_modifier(attribute_value)
         spell_save = 10+attribute_modifier+spell_level+misc_modifier
@@ -501,16 +500,16 @@ def test_8(): ## make a blank character
 def test_9(): ## trying to validate all of ulfric's skills
     u = Character()
     u.load("characters/ulfric.txt")
-    u.validate_all_skills()
-    print(u.get_character_sheet())
+    print(u.get_character_sheet(show_all=True))
 
-def test_10(): ## Runs a known working character and sees if the methods work
+def test_10(): ## Runs a test for character sheet and get profile on a known valid character
     paige_file = "characters/paige.txt"
     chara = Character()
     chara.load(paige_file)
-    chara.get_character_sheet()
+    #chara.get_character_sheet()
     print(chara.get_character_sheet())
+    print(chara.get_profile())
 
 if __name__ == "__main__":
-    test_8()
+
     

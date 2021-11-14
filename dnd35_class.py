@@ -14,6 +14,9 @@ rogue_progression_file = "character_class_progression_rogue.csv"
 sorcerer_progression_file = "character_class_progression_sorcerer.csv"
 wizard_progression_file = "character_class_progression_wizard.csv"
 
+## Prestige classes
+
+
 CLASS_SKILL_DICTIONARY = {
     "barbarian" : ["climb", "craft", "handle_animal",
                    "intimidate", "jump", "listen",
