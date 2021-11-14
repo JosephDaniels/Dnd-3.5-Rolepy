@@ -338,5 +338,4 @@ async def on_message(message):
         if message.content == ('!help'):
             await message.author.send(HELP_GENERAL_MESSAGE)
 
-
 client.run(TOKEN)

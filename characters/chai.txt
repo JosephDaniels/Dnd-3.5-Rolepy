@@ -1,4 +1,4 @@
-name = chai
+username = chai
 display_name = Chailaine Leorique
 discord_username = Mystia#2889
 character_class = [sorcererLv11,wizardLv1,warmageLv1]

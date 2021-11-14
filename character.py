@@ -293,7 +293,7 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
                     self.height, self.weight, self.favorite_weapon,
                     self.description, self.public_history, picture_status)
         try:
-            image_file = "images/"+self.profile_image
+            image_file = "character_portraits/"+self.profile_image
         except: ## Image file not found
             picture_status = "-No Profile Picture Found-"
             print("Wasn't able to find this image file! : %s" % (image_file))

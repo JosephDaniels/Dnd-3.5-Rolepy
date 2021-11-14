@@ -1,50 +1,58 @@
-
-inventory_body = 
-
 Inventory(object):
     def __init__(self):
         ## All inventory slots expect an item object of type wearable
         ## see equip_item() for more details
+        self.inventory_items = []
+        self.carrying_capacity = 0 # Maximum defined by character strength and limited by what your bags can hold
         self.underwear = {
-            self.chest = None, # bra for example
-            self.crotch = None, # panties for example
-            self.feet = None
+            chest = None, # bra for example
+            crotch = None, # panties for example
+            feet = None
             }
         self.wear = { ## Long dresses and robes might take up both torso and pants slot
-            self.eyes = None, # glasses for example
-            self.face = None, # masks only
-            self.head = None, # hats only
-            self.neck = None, # scarves and necklaces
-            self.chest = None, # shirts and dresses
-            self.waist = None, # belt slot
-            self.wrist = None, # bracelets
-            self.legs = None, # pantaloons
-            self.feet = None, # shoes, boots, slippers
-            self.hands = None # gloves
-            self.ring_1 = None
-            self.ring_2 = None
+            eyes = None, # glasses for example
+            face = None, # masks only
+            head = None, # hats only
+            neck = None, # scarves and necklaces
+            chest = None, # shirts and dresses
+            waist = None, # belt slot
+            wrist = None, # bracelets
+            legs = None, # pantaloons
+            feet = None, # shoes, boots, slippers
+            hands = None # gloves
+            ring_1 = None
+            ring_2 = None
             }
         self.overwear = {
-            self.chest = None, # jackets and coats
-            self.back = None, # capes and cloaks
+            chest = None, # jackets and coats
+            back = None, # capes and cloaks
             }
         self.armour = {
-            self.head = None, # helmet
-            self.neck = None, # gorget
-            self.shoulders = None, # pauldrons
-            self.chest = None, # breast plate or chain mail
-            self.arms = None, # arm plate and bracers
-            self.legs = None, # leg plate
-            self.feet = None, # armored footwear, replaces shoes
-            self.hands = None # gauntlets
+            head = None, # helmet
+            neck = None, # gorget
+            shoulders = None, # pauldrons
+            chest = None, # breast plate or chain mail
+            arms = None, # arm plate and bracers
+            legs = None, # leg plate
+            feet = None, # armored footwear, replaces shoes
+            hands = None # gauntlets
             }
         self.weapon_loadout = {
-            self.right_hand = None,
-            self.left_hand = None,
-            self.sheath = None,
-            self.2nd_sheath = None
-            self.quiver = None
+            right_hand = None,
+            left_hand = None,
+            sheath = None,
+            2nd_sheath = None
+            quiver = None
             }
 
-    def equip_item(self, item, equip_location):
-        
+    def equip_item(self, item, item_layer, equip_location):
+        if item in self.inventory_items:  # You physically have the item
+            if item.valid_equip_location == equip_location:
+                self.item_layer[equip_location] = item
+            self.inventory_items.pop(item)
+
+def test():
+    pass
+
+if __name__ == "__main__":
+    test()
