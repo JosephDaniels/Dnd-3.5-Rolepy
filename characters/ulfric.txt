@@ -3,6 +3,7 @@ display_name = Ulfric Northsun of the Bearmantle clan
 discord_username = Coruba#1432
 character_class = barbarianLv2,clericLv11
 alignment = chaotic good
+race = human
 age = 25
 gender = male
 self.favorite_weapon = The Sunsword

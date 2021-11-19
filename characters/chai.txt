@@ -4,6 +4,7 @@ discord_username = Mystia#2889
 character_class = [sorcererLv11,wizardLv1,warmageLv1]
 profile_image = chai.jpg
 age = 87
+race = elven
 gender = female
 eye_colour = blue
 hair_colour = blonde

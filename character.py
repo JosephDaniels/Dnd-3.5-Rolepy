@@ -34,6 +34,7 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
         self.discord_username = "" ## The player's discord username such as Villager#1999
         self.character_class= [] ## lowercase character class with associated level e.g. ["fighterLv1","rogueLv2"]
         self.alignment = "" ## Lawful <-> Chaotic and Evil <-> Good E.G. "Lawful Good" or "Chaotic Evil" or "True Neutral"
+        self.race = ""
 
         ## PROFILE INFO
 
@@ -275,7 +276,8 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
         if self.profile_image == None:
             picture_status = "-No Profile Picture Found-"
         response = " Username: %s\n" \
-                   " Character Name:" \
+                   " Character Name: %s\n"\
+                   " Race: %s\n" \
                    " Age: %i\n" \
                    " Gender: %s\n" \
                    " Eye colour: %s\n" \
@@ -287,7 +289,7 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
                    " Description: %s\n" \
                    " History: %s\n" \
                    " Picture: %s " %\
-                   (self.username,
+                   (self.username, self.display_name, self.race,
                     self.age, self.gender.capitalize(),
                     self.eye_colour.capitalize(), self.hair_colour.capitalize(), self.skin_colour.capitalize(),
                     self.height, self.weight, self.favorite_weapon,
