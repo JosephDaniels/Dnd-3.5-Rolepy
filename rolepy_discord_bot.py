@@ -13,11 +13,11 @@ from NPC import *  # non-player character information
 
 ADMINS = ['StabbyStabby#1327', 'alanwongis#3590']
 
-dnd_players = ['StabbyStabby#1327', 'Coruba#1432', 'mystia#2889',
+DND_PLAYERS = ['StabbyStabby#1327', 'Coruba#1432', 'mystia#2889',
                'Frail Faintheart#5181', 'Magromancer#6352', 'NormL75#0235',
                'baronanansi#2600', 'alanwongis#3590']
 
-valid_characters_for = {'StabbyStabby#1327': ['vsevellar', 'zandrius', 'zandria', 'thaddeus', 'paige'],
+VALID_CHARACTERS_FOR = {'StabbyStabby#1327': ['vsevellar', 'zandrius', 'zandria', 'thaddeus', 'paige'],
                         'Coruba#1432': ['ulfric', 'barco', 'tebbo'],
                         'mystia#2889': ['chai', 'manda'],
                         'Magromancer#6352': ['cymancer'],
@@ -53,7 +53,7 @@ def do_login(message):
     username = str(message.author)
     command_line = message.content
     # Error Check 1 - You're not one of my friends
-    if username not in dnd_players:
+    if username not in DND_PLAYERS:
         response = "You are not allowed to play DnD. Please contact DM Joey for permission."
         return response, nick
     try:
@@ -64,7 +64,7 @@ def do_login(message):
         return response, nick
 
     # Error Check 2 - Don't try to steal my character!!!
-    if target_character not in valid_characters_for[username]:  # checks if the target character is valid for the user
+    if target_character not in VALID_CHARACTERS_FOR[username]:  # checks if the target character is valid for the user
         response = "You cannot login as %s, %s is not your character." % (target_character, target_character)
         return response, nick
 

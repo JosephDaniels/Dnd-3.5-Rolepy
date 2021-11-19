@@ -88,6 +88,28 @@ def rolld(n):
     else:
         return random.randint(1,n)
 
+def roll_with_advantage():
+    """ Rolls two twenty sided dice and returns the higher number.
+     Used for DnD 5E."""
+    low_roll, high_roll = 0, 0
+    roll_1, roll_2 = random.randint(1,20), random.randint(1, 20)
+    if roll_1 >= roll_2:
+        low_roll, high_roll = roll_2, roll_1
+    elif roll_2 > roll_1:
+        low_roll, high_roll = roll_1, roll_2
+    return low_roll, high_roll
+
+def roll_with_disadvantage():
+    """ Rolls two twenty sided dice and returns the higher number.
+     Used for DnD 5E."""
+    low_roll, high_roll = 0,0
+    roll_1, roll_2 = random.randint(1, 20), random.randint(1, 20)
+    if roll_1 <= roll_2:
+        low_roll, high_roll = roll_1, roll_2
+    elif roll_2 < roll_1:
+        low_roll, high_roll = roll_2, roll_1
+    return low_roll, high_roll
+
 def roll_wod_dice(dice_pool, eight_again=False, nine_again=False):
     
     success_values = [8,9,10]
@@ -123,6 +145,13 @@ def roll_wod_dice(dice_pool, eight_again=False, nine_again=False):
         rerolls += 1
         
     return rolled_dice, successes, rerolls
-            
+
+
+def test_1():  # testing advantage and disadvantage rolls
+    low_roll, high_roll = roll_with_advantage()
+    print ("Rolled with advantage! Rolled %s! (low roll was %s)" % (high_roll, low_roll))
+    low_roll, high_roll = roll_with_disadvantage()
+    print ("Rolled with disadvantage! Rolled %s! (high roll was %s)" % (low_roll, high_roll))
+
 if __name__ == "__main__":
-    print(parse_dice_command("roll3d8+1"))
+    test_1()
