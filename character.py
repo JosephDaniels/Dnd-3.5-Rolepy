@@ -351,14 +351,14 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
             print("Character doesn't have that skill. skill[%s]" % skill)
         else:
             skill_ranks = self.__dict__[skill] ##Looks up the number of ranks you have in a certain skill
-            return skill_ranks
+            return int(skill_ranks)
 
     def get_skill_total(self, skill, misc_modifier=0):
         total = 0
         if self.__dict__[skill] == -1:
             print("Character %s doesn't have that skill. skill[%s]" % (self.username, skill))
         else:
-            if "(" in skill: ## Detects a skill like knowledge, craft, profession, perform
+            if "(" in skill:  # Case handling for someone typing something like knowledge(arcana)"
                 words = skill.strip(")") ## Removes the trailing bracket knowledge(arcana) -> knowledge(arcana
                 words = words.split("(") ## Splits the argument between the first bracket e.g. "knowledge", "arcana"
                 multi_area_skill, area_of_expertise = words[0], words[1] ## Puts them into a human sounding variable
@@ -367,12 +367,16 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
                 attribute_modifier = Character.calculate_modifier(attribute_value)
                 skill_ranks = self.get_skill_ranks(skill) ## Looks up how many ranks you put on your character sheet
                 total = skill_ranks+attribute_modifier+misc_modifier ## adds the skill ranks to the attribute modifier
+            for skill_category in MULTI_AREA_SKILLS: # grabs stuff like knowledge, perform, profession
+                if skill_category in skill:
+                    relevant_attribute = SKILL_KEY_ABILITIES[skill_category]  ## gets a attribute for a skill E.G. spellcraft > intelligence
+                    break
             else:
                 relevant_attribute = SKILL_KEY_ABILITIES[skill] ## gets a attribute for a skill E.G. spellcraft > intelligence
-                attribute_value = self.__dict__[relevant_attribute] ## looks up the exact value of the attribute for the character
-                attribute_modifier = Character.calculate_modifier(attribute_value)
-                skill_ranks = self.get_skill_ranks(skill) ## Looks up how many ranks you put on your character sheet
-                total = skill_ranks+attribute_modifier+misc_modifier ## adds the skill ranks to the attribute modifier
+            attribute_value = self.__dict__[relevant_attribute] ## looks up the exact value of the attribute for the character
+            attribute_modifier = Character.calculate_modifier(attribute_value)
+            skill_ranks = self.get_skill_ranks(skill) ## Looks up how many ranks you put on your character sheet
+            total = skill_ranks+attribute_modifier+misc_modifier ## adds the skill ranks to the attribute modifier
         return total
 
     def get_saving_throw(self, base_save, misc_modifier=0):
@@ -444,8 +448,6 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
                             pass
                         elif self.__dict__[skill] == -1: ## invalid detected
                             self.__dict__[skill] = 0
-                else:
-                    print ("this should never happen!!!")
 
 
 def test_1(): ## Runs a known working character and sees if the methods work
@@ -514,8 +516,5 @@ def test_10(): ## Runs a test for character sheet and get profile on a known val
     print(chara.get_character_sheet())
     print(chara.get_profile())
 
-def test_11():  # test pickling objects
-    pass
-
 if __name__ == "__main__":
-    test_11()
+    test_1()
