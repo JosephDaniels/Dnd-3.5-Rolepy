@@ -322,7 +322,7 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
         return "\n".join(lines)
 
     @staticmethod
-    def calculate_modifier(value):
+    def _calculate_modifier(value):
         if value%2 == 1: ## Test if the attribute divides nicely
             value = value-1 ## If not, remove one to make it even
         modifier = int((value-10)/2) ## Attribute-1/2 is modifier formula
@@ -331,20 +331,20 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
     def get_melee_attack_bonus(self,misc_modifier=0):
         relevant_attribute = "strength"
         attribute_value = self.__dict__[relevant_attribute] ## looks up the exact value of the attribute for the character
-        attribute_modifier = Character.calculate_modifier(attribute_value)
+        attribute_modifier = Character._calculate_modifier(attribute_value)
         attack_value = self.base_attack_bonus+attribute_modifier+misc_modifier
         return attack_value
 
     def get_ranged_attack_bonus(self,misc_modifier=0):
         relevant_attribute = "dexterity"
         attribute_value = self.__dict__[relevant_attribute] ## looks up the exact value of the attribute for the character
-        attribute_modifier = Character.calculate_modifier(attribute_value)
+        attribute_modifier = Character._calculate_modifier(attribute_value)
         attack_value = self.base_attack_bonus+attribute_modifier+misc_modifier
         return attack_value
 
     def get_spell_save(self, casting_attribute, spell_level=0, misc_modifier=0):
         attribute_value = self.__dict__[casting_attribute] ## looks up the exact value of the attribute for the character
-        attribute_modifier = Character.calculate_modifier(attribute_value)
+        attribute_modifier = Character._calculate_modifier(attribute_value)
         spell_save = 10+attribute_modifier+spell_level+misc_modifier
         return spell_save
 
@@ -366,7 +366,7 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
                 multi_area_skill, area_of_expertise = words[0], words[1] ## Puts them into a human sounding variable
                 relevant_attribute = SKILL_KEY_ABILITIES[multi_area_skill] ## gets a attribute for a skill E.G. spellcraft > intelligence
                 attribute_value = self.__dict__[relevant_attribute] ## looks up the exact value of the attribute for the character
-                attribute_modifier = Character.calculate_modifier(attribute_value)
+                attribute_modifier = Character._calculate_modifier(attribute_value)
                 skill_ranks = self.get_skill_ranks(skill) ## Looks up how many ranks you put on your character sheet
                 total = skill_ranks+attribute_modifier+misc_modifier ## adds the skill ranks to the attribute modifier
             for skill_category in MULTI_AREA_SKILLS: # grabs stuff like knowledge, perform, profession
@@ -376,7 +376,7 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
             else:
                 relevant_attribute = SKILL_KEY_ABILITIES[skill] ## gets a attribute for a skill E.G. spellcraft > intelligence
             attribute_value = self.__dict__[relevant_attribute] ## looks up the exact value of the attribute for the character
-            attribute_modifier = Character.calculate_modifier(attribute_value)
+            attribute_modifier = Character._calculate_modifier(attribute_value)
             skill_ranks = self.get_skill_ranks(skill) ## Looks up how many ranks you put on your character sheet
             total = skill_ranks+attribute_modifier+misc_modifier ## adds the skill ranks to the attribute modifier
         return total
@@ -385,7 +385,7 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
         """ returns a full saving throw with a target base save. Add the relevant attribute modifier automatically. """
         relevant_attribute = SAVE_KEY_ABILITIES[base_save] # gets an attribute for a save E.G. fortitude > constitution
         attribute_value = self.__dict__[relevant_attribute] ## looks up the exact value of the attribute for the character
-        attribute_modifier = Character.calculate_modifier(attribute_value)
+        attribute_modifier = Character._calculate_modifier(attribute_value)
         saving_throw = self.__dict__[base_save]
         saving_throw_total = saving_throw+attribute_modifier+misc_modifier ## adds the skill ranks to the attribute modifier
         return saving_throw_total
@@ -393,7 +393,7 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
     def get_initiative_bonus(self, misc_modifier=0):
         relevant_attribute = "dexterity"
         attribute_value = self.__dict__[relevant_attribute] ## looks up the exact value of the attribute for the character
-        attribute_modifier = Character.calculate_modifier(attribute_value)
+        attribute_modifier = Character._calculate_modifier(attribute_value)
         initiative_bonus = attribute_modifier+misc_modifier
         return initiative_bonus
 
