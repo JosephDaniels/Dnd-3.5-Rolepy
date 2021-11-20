@@ -9,9 +9,10 @@ import random
 
 from functools import partial
 
+from character import Character
+
 import tkinter as tk
 from tkinter import ttk, messagebox
-
 
 ## Label followed by the internal key name
 CHARACTER_PROFILE_ENTRIES = [("Full Name","display_name"),
@@ -80,13 +81,43 @@ class Character_Creation_Window(tk.Toplevel):
             self.attribute_stringvars[key].set(str(self.attribute_data[key]))
         self.available_attribute_points_stringvar.set(str(self.available_attribute_points))
 
+    def open_profile_window(self):
+        profile_window = Profile_Creation_Window(self.master) ## passes root as master
+
+    def do_accept_attributes(self):
+        answer = messagebox.askyesno("Do you accept?", "Do you accept these stats?")
+        if answer:
+            print ("You're stuck sucka")
+            for key in self.attribute_data.keys():
+                print (key, self.attribute_data[key])
+            self.destroy()
+            self.open_profile_window()
+        elif answer == False:
+            print ("Ooh should've saved those stats, they were good!")
+        else:  #cancel
+            print ("You cancelled me!! oppressor!!")
+
+    def do_cancel_attributes(self):
+        self.roll_attribute_window.destroy()
+
+    def get_character_attributes(self):
+        for attrib_tuple in self.attribute_data:
+            return attrib_tuple
+
+    def do_character_save(self):
+        self.master.do_save(self)
+        self.destroy()
+
 class Profile_Creation_Window(tk.Toplevel):
     def __init__(self,master):
         super().__init__(master)
-        self.master = master
+        self.master = master  # root window
+
+        self.master.profile_window = self
 
         # actual data for the character
         self.profile_data = {}  # display_name = "dude", hair_colour = black" etc
+
         # UI stuff for the profile window
         self.profile_labels = []
         self.profile_entries = []
@@ -95,45 +126,61 @@ class Profile_Creation_Window(tk.Toplevel):
         for label, key in CHARACTER_PROFILE_ENTRIES:
             self.profile_stringvars[label] = tk.StringVar()
 
+        self.create_widgets()
+
     def _convert_profile_for_display(self):
         ## iterates through all the actual values and stick them into the stringvars for display
         for key in self.profile_data.keys():
             self.profile_stringvars[key].set(str(self.profile_data[key]))
 
+    def clear_data(self):
+        self.profile_entries = []
+        self.profile_stringvars = {}
+        self.profile_data = {}
+        for label, key in CHARACTER_PROFILE_ENTRIES:
+            self.profile_stringvars[label] = tk.StringVar()
+
     def do_accept_character_profile(self):
-        answer = messagebox.askyesno("Accept?", "Do you accept?")
+        answer = messagebox.askyesno("Do you accept?", "Is everything to your satisfaction?")
         if answer:
             for label, key in CHARACTER_PROFILE_ENTRIES:
                 self.profile_data[key] = self.profile_stringvars[label].get()
-            username = self.profile_data["display_name"].split(" ")[
-                0].lower()  ## cuts off the first name and lowercases it
+            ## cuts off the first name and lowercases it
+            username = self.profile_data["display_name"].split(" ")[0].lower()
             self.profile_data["username"] = username
-            print("Your data has been saved.")
-            print(self.profile_data)
+
+            ## Actually do some sort of saving
+            self.do_character_save()
+            ## For now we're going to save, in the future we continue with profile creation
+
         elif answer == False:
-            print ("Ooh should've saved those stats, they were good!")
+            answer = messagebox.askyesno("Save Changes?", "Would you like to save your changes so far? \n"
+                                                          "You need at least a name to save.")
+            if answer:
+                self.do_character_save()
+            elif answer == False:
+                self.destroy()
+                self.clear_data()
 
     def do_cancel_character_profile(self):
         print("Are you sure you want to quit? [insert save prompt here]")
         pass
 
     def create_widgets(self):
-        self.player_info_window = tk.Toplevel(self)
-
         new_character_message_2 = "Please fill out the personal character identity information fields below."
 
         row = 0
 
-        self.info_message_2 = tk.Label(self.player_info_window,
+        self.info_message_2 = tk.Label(self,
                                        text = new_character_message_2)
         self.info_message_2.grid(column=0, row = row)
         row = row + 1
 
         for label, key in CHARACTER_PROFILE_ENTRIES:
-            new_label = tk.Label(self.player_info_window, text=label)
+            new_label = tk.Label(self, text=label)
             new_label.grid(column=0, row=row)
 
-            new_entry = tk.Entry(self.player_info_window,
+            new_entry = tk.Entry(self,
                                  textvariable = self.profile_stringvars[label])
             new_entry.grid(column=1, row=row)
             self.profile_labels.append(new_label)
@@ -141,11 +188,22 @@ class Profile_Creation_Window(tk.Toplevel):
             row = row + 1
         self._convert_profile_for_display()
 
-        self.accept_player_info_button = tk.Button(self.player_info_window,
+        self.accept_player_info_button = tk.Button(self,
                                                    text='Accept All',
                                                    command=self.do_accept_character_profile)
         self.accept_player_info_button.grid(column=1, row=row)
         row = row + 1
+
+    def get_profile(self):
+        charsheet_lines = []
+        for dataline in self.profile_data:
+            charsheet_lines.append(charsheet_lines)
+        return charsheet_lines
+
+    def do_character_save(self):
+        self.master.profile_window = self
+        self.master.do_save()
+        self.destroy()
 
 class Point_Buy_Window(Character_Creation_Window):
     def __init__(self, master):
@@ -157,6 +215,7 @@ class Point_Buy_Window(Character_Creation_Window):
         for key in self.attribute_data.keys():
             print(key, self.attribute_data[key])
         self.destroy()
+        self.do_accept_attributes() ## Callback inside of the base class object
 
     def do_cancel_point_buy_attributes(self):
         self.destroy()
@@ -185,6 +244,8 @@ class Point_Buy_Window(Character_Creation_Window):
         self._convert_attributes_for_display()
 
     def do_power_level_option(self, option):
+        for name in CHARACTER_ATTRIBUTE_ENTRIES:
+            self.attribute_data[name] = 8
         power_level_name = option
         power_level_points = POWER_LEVEL_OPTIONS_LIST[power_level_name]
         self.available_attribute_points = power_level_points
@@ -192,7 +253,7 @@ class Point_Buy_Window(Character_Creation_Window):
 
     def create_widgets(self):
         print("creating widgets")
-        self.available_attribute_points = 25
+        self.available_attribute_points = 0
         row = 0
 
         for name in CHARACTER_ATTRIBUTE_ENTRIES:
@@ -291,22 +352,6 @@ class Roll_Attributes_Window(Character_Creation_Window):
             dice_results = []
             self._convert_attributes_for_display()
 
-    def do_accept_roll_attributes(self):
-        answer = messagebox.askyesno("Do you accept?", "Do you accept these stats?")
-        if answer:
-            print ("You're stuck sucka")
-            for key in self.attribute_data.keys():
-                print (key, self.attribute_data[key])
-            self.destroy()
-            self.open_personal_data_entry_window()
-        elif answer == False:
-            print ("Ooh should've saved those stats, they were good!")
-        else:  #cancel
-            print ("You cancelled me!! oppressor!!")
-
-    def do_cancel_roll_attributes(self):
-        self.roll_attribute_window.destroy()
-
     def create_widgets(self):
         new_character_message = "Hi there! Please press the button below to roll\n" \
                                 "up your stats. (Roll 4d4 and drop the lowest)"
@@ -344,13 +389,13 @@ class Roll_Attributes_Window(Character_Creation_Window):
 
         self.accept_attributes_button = tk.Button(self,
                                                   text='Accept All',
-                                                  command=self.do_accept_roll_attributes)
+                                                  command=self.do_accept_attributes)
         self.accept_attributes_button.grid(column=1, row=row)
         row = row + 1
 
         self.cancel_attributes_button = tk.Button(self,
                                                   text='Cancel',
-                                                  command=self.do_cancel_roll_attributes)
+                                                  command=self.do_cancel_attributes)
         self.cancel_attributes_button.grid(column=1, row=row)
         row = row + 1
 
@@ -363,6 +408,12 @@ class Character_Helper_App(tk.Frame):
         self.new_chara_button = tk.Button(self.frame, text="New Character", command=self.make_new_character).grid(column=1, row=3)
         self.character_editor_button = tk.Button(self.frame, text="Character Editor", command=self.open_character_editor).grid(column=1, row=4)
         self.quit_button = tk.Button(self.frame, text="Quit", command=master.destroy).grid(column=1, row=6)
+
+        ## Holder variables
+        self.profile_window = None
+        self.profile_data = {}  # populated by get_profile_data()
+        self.attribute_window = None
+        self.attribute_data = {}  # populated by get_attribute_data()
 
     def make_new_character(self):
         self.do_roll_or_point_buy_prompt()
@@ -401,14 +452,29 @@ class Character_Helper_App(tk.Frame):
 
     def open_roll_attributes_window(self):
         roll_attributes_window = Roll_Attributes_Window(self)
+        self.attribute_window = roll_attributes_window
 
+    def get_attribute_data(self):
+        self.attribute_data =  self.attribute_window.attribute_data
 
-def test_1():
+    def get_profile_data(self):
+        self.profile_data = self.profile_window.profile_data
+
+    def do_save(self):
+    # Called by character or profile window instances shutting down
+        #populate teh data
+        data = {}
+        if self.attribute_window:
+            self.get_attribute_data()  # populates self.attribute_data
+        if self.profile_window:  # Not equal to None
+            self.get_profile_data()  # populates self.profile_data
+
+def test_1():  # testing one component to see if it works
     root = tk.Tk()
     myapp = Point_Buy_Window(root)
     myapp.mainloop()
 
-def test_2(): ## Trying to get everything working together, #Did not work
+def test_2():  # testing the whole thing together
     root = tk.Tk()
     frame = ttk.Frame(root, padding=10)
     frame.grid()
