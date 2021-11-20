@@ -92,7 +92,7 @@ class Character_Creation_Window(tk.Toplevel):
             self.attribute_stringvars[key].set(str(self.attribute_data[key]))
         self.available_attribute_points_stringvar.set(str(self.available_attribute_points))
         for key in self.modifiers.keys():
-            self.modifier_stringvars[key].set(self.modifiers[key]))
+            self.modifier_stringvars[key].set(self.modifiers[key])
 
     def open_profile_window(self):
         profile_window = Profile_Creation_Window(self.master) ## passes root as master
@@ -376,7 +376,7 @@ class Roll_Attributes_Window(Character_Creation_Window):
             if self.attribute_data == {}: ## Nothing has been rolled yet
                 _modifier = 0
             else:
-                _modifier = self._calculate_modifier(self.attribute_data[name])) ## add something
+                _modifier = self._calculate_modifier(self.attribute_data[name]) ## add something
             self.modifiers
             modifier_entry = tk.Entry(self,
                                       textvariable=self.modifier_stringvars[name])
