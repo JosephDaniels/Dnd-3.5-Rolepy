@@ -167,7 +167,7 @@ class Dnd_class(object):
         if dnd_classname == "":
             print ("made an instance of DnD class with no class name!?")
         else: ## detected some sort of dnd class name
-            self.table = {
+            table = {
                 } ## nested table within a table. Indexed first by level then by parameter 
             ## So let's load it up
             filename = ("dnd35srd_character_class_progression_"+dnd_classname+".csv")
@@ -175,10 +175,10 @@ class Dnd_class(object):
                 reader = csv.DictReader(csvfile,dialect='excel')
                 for row in reader:
                     level_num = int(row['level'])
-                    self.table[level_num] = row
+                    table[level_num] = row
 
     def get(self, level, parameter_name):
-        return self.table[level][parameter_name]
+        return table[level][parameter_name]
 
 def test(): ## initial csv test
     return_class_csv("cleric")

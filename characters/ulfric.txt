@@ -1,12 +1,13 @@
 username = ulfric
 display_name = Ulfric Northsun of the Bearmantle clan
 discord_username = Coruba#1432
+player_name = Colin Barker
 character_class = barbarianLv2,clericLv11
 alignment = chaotic good
 race = human
 age = 25
 gender = male
-self.favorite_weapon = The Sunsword
+favorite_weapon = The Sunsword
 description = A tall barrel chested man with fair hair and ice blue eyes. A jagged scar mars his right cheek, and there are more signs of battles fought across his body. He seems warm and friendly despite it.
 public_history = A well traveled wanderer originally from the frigid tundras to the north. He champions the cause of Kord, the god of brawlers and athletes.
 full_history = His home tribe is an exiled Werebear people. He is a genetic mutation that skipped the curse, and so was exiled to wander the land. He studied religion and wrestling at a warrior monastary for some years after leaving home. He found purpose in following the ways of Kord, and so became an adventuring warrior cleric.

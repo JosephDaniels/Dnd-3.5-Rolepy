@@ -15,31 +15,31 @@ class Charactersheet(object):
         if not character_file:
             print ("Character file not found.")
         else: ## Character file found
-            data = self.load(character_file)
-            self.__dict__.update(data)
-            for key in self.__dict__.keys():
+            data = load(character_file)
+            __dict__.update(data)
+            for key in __dict__.keys():
                 if key in TITLE_INFO or key in CHARACTER_DETAILS: ## These are all strings
                     print (key+" was loaded succesfully.")
-                    self.__dict__[key] = str(self.__dict__[key])
+                    __dict__[key] = str(__dict__[key])
                 elif key in ATTRIBUTES or key in STATS: ## These are all integers
                     print (key+" was loaded succesfully.")
-                    self.__dict__[key] = int(self.__dict__[key])
+                    __dict__[key] = int(__dict__[key])
                 else:
                     print ("attempted to load "+key+ " but failed.")
                     
-        self.weapon_righthand = {}
-        self.weapon_lefthand = {}
-        self.inventory = []
-        self.alive = True
-        self.level = 1
-        self.next_level_exp_requirement = 1000
-        self.exp_bonus_increment = 1000
-        self.calc_level()
+        weapon_righthand = {}
+        weapon_lefthand = {}
+        inventory = []
+        alive = True
+        level = 1
+        next_level_exp_requirement = 1000
+        exp_bonus_increment = 1000
+        calc_level()
 
     # example of using a property declaration
     # in usage it looks like a regular property, but it's really calculated
     def _initiative_getter(self):
-        return self.calc_modifier(self.dexterity)
+        return calc_modifier(dexterity)
 
     initiative = property(_initiative_getter, None)
 
@@ -62,43 +62,43 @@ class Charactersheet(object):
         """ copy atrributes from the profile into our class """
         attribs = ["name", "experience", "strength", "dexterity", "constitution"]
         for key in attribs:
-            self.__dict__[key] = profile.__dict__.get(key)
+            __dict__[key] = profile.__dict__.get(key)
 
     def add_experience(self, value):
-        self.experience+=int(value)
-        self.try_lvl_up()
+        experience+=int(value)
+        try_lvl_up()
 
     def try_lvl_up(self):
-        if self.experience >= self.next_level_exp_requirement: ## Try to level once
+        if experience >= next_level_exp_requirement: ## Try to level once
             print ("You've Leveled Up!") 
-            self.level+=1
-            self.exp_bonus_increment = self.exp_bonus_increment+1000
-            self.next_level_exp_requirement += self.exp_bonus_increment
+            level+=1
+            exp_bonus_increment = exp_bonus_increment+1000
+            next_level_exp_requirement += exp_bonus_increment
         else:
-            left = self.next_level_exp_requirement-self.experience
-            print ("You have %i experience points and need %i more experience points to become stronger." % (self.experience,left))
+            left = next_level_exp_requirement-experience
+            print ("You have %i experience points and need %i more experience points to become stronger." % (experience,left))
 
     def calc_level(self, debug=False):
         while True: ## Keep leveling up until at the correct current level
-            if self.experience >= self.next_level_exp_requirement:
-                self.level+=1
-                self.exp_bonus_increment = self.exp_bonus_increment+1000
-                self.next_level_exp_requirement += self.exp_bonus_increment
+            if experience >= next_level_exp_requirement:
+                level+=1
+                exp_bonus_increment = exp_bonus_increment+1000
+                next_level_exp_requirement += exp_bonus_increment
             else:
                 break
-        print ("A level %i %s %s named %s has been initialized." % (self.level, self.race, self.character_class, self.name))
+        print ("A level %i %s %s named %s has been initialized." % (level, race, character_class, name))
 
     def add_gold(self, val):
-        self.gold+=val
-        self.dump_gold_info()
+        gold+=val
+        dump_gold_info()
 
     def add_currency(self, val, money_type):
         """ Automatically converts all currency into gold and tells you net worth."""
         conversion_factor = money_dictionary[money_type]
-        self.currency+=value*conversion_factor
+        currency+=value*conversion_factor
 
     def dump_gold_info(self):
-        print ("%s has a pouch containing %i gold pieces!." % (self.name, self.gold))
+        print ("%s has a pouch containing %i gold pieces!." % (name, gold))
             
     def load(self, filename):
         """reads a text file and reads the data, turning it into names, experience etc."""
@@ -118,17 +118,17 @@ class Charactersheet(object):
     def save(self, filename):
         """saves data about this level system to a text file for later reading."""
         dest = open(filename, 'w')
-        for key in self.__dict__.keys():
-            dest.write('\n%s %s' % (key, self.__dict__[key]))
+        for key in __dict__.keys():
+            dest.write('\n%s %s' % (key, __dict__[key]))
         dest.close()
         print ("Saved.")
 
     def quick_save(self):
-        self.save(testfile)
+        save(testfile)
 
     def tell_me_about(self):
-        print ("%s is a level %s %s %s with %s experience points. They have %s gold." % (self.name, self.level, self.race, self.character_class, self.experience, self.gold))
-        print ("Strength:%s\nDexterity:%s\nConstitution:%s\nIntelligence:%s\nWisdom:%s\nCharisma:%s\n" % (self.strength, self.dexterity, self.constitution, self.intelligence, self.wisdom, self.charisma))
+        print ("%s is a level %s %s %s with %s experience points. They have %s gold." % (name, level, race, character_class, experience, gold))
+        print ("Strength:%s\nDexterity:%s\nConstitution:%s\nIntelligence:%s\nWisdom:%s\nCharisma:%s\n" % (strength, dexterity, constitution, intelligence, wisdom, charisma))
         
 def test_functionality():
     

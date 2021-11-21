@@ -2,6 +2,7 @@ username = chai
 display_name = Chailaine Leorique
 discord_username = Mystia#2889
 character_class = [sorcererLv11,wizardLv1,warmageLv1]
+player_name = Care Elise
 profile_image = chai.jpg
 age = 87
 race = elven
@@ -18,7 +19,7 @@ dexterity = 18
 constitution = 10
 intelligence = 18
 wisdom = 14
-charisma = -16
+charisma6
 maximum_health = 48
 current_health = 48
 armor_class = 18
@@ -37,20 +38,20 @@ balance = 0
 bluff = 0
 climb = 0
 concentration = 6
-craft_alchemy = -1
+craft_alchemy
 craft_brewing = 11
 craft_cooking = 7
 craft_needlework = 7
-craft_weaponsmithing = -1
-craft_armoursmithing = -1
-craft_masonry = -1
-craft_carpentry = -1
-craft_poison = -1
-craft_trap = -1
-craft_culinary = -1
-craft_musical_composition = -1
-craft_written_composition = -1
-decipher_script = -1
+craft_weaponsmithing
+craft_armoursmithing
+craft_masonry
+craft_carpentry
+craft_poison
+craft_trap
+craft_culinary
+craft_musical_composition
+craft_written_composition
+decipher_script
 diplomacy = 6
 disable_device = 2
 disguise = 0
@@ -59,75 +60,75 @@ forgery = 0
 gather_information = 1
 handle_animal = 3
 heal = 3
-hide = -1
+hide
 intimidate = 7
 jump = 0
 knowledge_arcana = 7
-knowledge_engineering = -1
-knowledge_dungeoneering = -1
-knowledge_geography = -1
-knowledge_history = -1
-knowledge_local = -1
+knowledge_engineering
+knowledge_dungeoneering
+knowledge_geography
+knowledge_history
+knowledge_local
 knowledge_legal = 4
-knowledge_nature = -1
+knowledge_nature
 knowledge_nobility = 4
 knowledge_religion = 1
-knowledge_the_planes = -1
-listen = -1
-move_silently = -1
-open_lock = -1
-perform_act = -1
-perform_comedy = -1
-perform_dance = -1
-perform_keyboard = -1
-perform_oratory = -1
-perform_percussion = -1
-perform_stringed = -1
-perform_wind = -1
-perform_sing = -1
-profession_academic = -1
-profession_apothecary = -1
-profession_celebrity = -1
-profession_military = -1
-profession_criminal = -1
-profession_doctor = -1
-profession_entrepreneur = -1
-profession_investigator = -1
-profession_scavenger = -1
-profession_religious = -1
-profession_transporter = -1
-profession_engineer = -1
-profession_alchemist = -1
-profession_monster_hunter = -1
+knowledge_the_planes
+listen
+move_silently
+open_lock
+perform_act
+perform_comedy
+perform_dance
+perform_keyboard
+perform_oratory
+perform_percussion
+perform_stringed
+perform_wind
+perform_sing
+profession_academic
+profession_apothecary
+profession_celebrity
+profession_military
+profession_criminal
+profession_doctor
+profession_entrepreneur
+profession_investigator
+profession_scavenger
+profession_religious
+profession_transporter
+profession_engineer
+profession_alchemist
+profession_monster_hunter
 profession_princess = 6
 ride = 0
 search = 1
 sense_motive = 3
-sleight_of_hand = -1
-speak_language_abyssal = -1
-speak_language_aquan = -1
-speak_language_auran = -1
-speak_language_celestial = -1
-speak_language_common = -1
-speak_language_draconic = -1
-speak_language_druidic = -1
-speak_language_dwarven = -1
-speak_language_elven = -1
-speak_language_giant = -1
-speak_language_gnome = -1
-speak_language_goblin = -1
-speak_language_gnoll = -1
-speak_language_halfling = -1
-speak_language_ignan = -1
-speak_language_orcish = -1
-speak_language_sylvan = -1
-speak_language_terran = -1
-speak_language_undercommon = -1
+sleight_of_hand
+speak_language_abyssal
+speak_language_aquan
+speak_language_auran
+speak_language_celestial
+speak_language_common
+speak_language_draconic
+speak_language_druidic
+speak_language_dwarven
+speak_language_elven
+speak_language_giant
+speak_language_gnome
+speak_language_goblin
+speak_language_gnoll
+speak_language_halfling
+speak_language_ignan
+speak_language_orcish
+speak_language_sylvan
+speak_language_terran
+speak_language_undercommon
 spellcraft = 10
 spot = 0
 survival = 0
 swim = 3
-tumble = -1
+tumble
 use_magic_device = 8
 use_rope = 0
 feats = [magical_aptitude, eschew_materials, brew_potion, craft_wondrous_item, bone_art, scribe_scroll]

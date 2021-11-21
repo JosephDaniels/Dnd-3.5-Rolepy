@@ -2,6 +2,7 @@ username  = paige
 display_name  = Paige Belmont
 character_class  = [rogueLv1,fighterLv1,sorcererLv1]
 discord_username = StabbyStabby#1327
+player_name = Jordan Vo
 alignment = lawful neutral
 gender = female
 age = 21

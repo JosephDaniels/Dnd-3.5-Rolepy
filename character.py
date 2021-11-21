@@ -46,9 +46,10 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
         self.username = "" ## e.g. what they type to !login to the system
         self.display_name = "" ## e.g. Their long name like "Ulfric Northsun of the Bearmantle Clan"
         self.discord_username = "" ## The player's discord username such as Villager#1999
+        self.player_name = "" ## The actual name of the person who the character belongs to e.g. John A. Macdonald
         self.character_class= [] ## lowercase character class with associated level e.g. ["fighterLv1","rogueLv2"]
         self.alignment = "" ## Lawful <-> Chaotic and Evil <-> Good E.G. "Lawful Good" or "Chaotic Evil" or "True Neutral"
-        self.race = ""
+        self.race = "" ## the name of their race in lowercase letters.
 
         ## PROFILE INFO
 
@@ -60,6 +61,7 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
         self.hair_colour = ""
         self.skin_colour = ""
         self.favorite_weapon = ""
+
         ## Possible text documents
         self.description = ""
         self.public_history = ""  # What other players see when they look at your profile
@@ -97,108 +99,7 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
         self.base_will = -1
 
         ## SKILLS
-        self.appraise = -1
-        self.balance = -1
-        self.bluff = -1
-        self.climb = -1
-        self.concentration = -1
-        
-        self.craft_alchemy = -1
-        self.craft_weaponsmithing = -1
-        self.craft_armoursmithing = -1
-        self.craft_masonry = -1
-        self.craft_carpentry = -1
-        self.craft_poison = -1
-        self.craft_trap = -1
-        self.craft_culinary = -1
-        self.craft_musical_composition = -1
-        self.craft_written_composition = -1
-        
-        self.decipher_script = -1
-        self.diplomacy = -1
-        self.disable_device = -1
-        self.disguise = -1
-        self.escape_artist = -1
-        self.forgery = -1
-        self.gather_information = -1
-        self.handle_animal = -1
-        self.heal = -1
-        self.hide = -1
-        self.intimidate = -1
-        self.jump = -1
-        
-        self.knowledge_arcana = -1
-        self.knowledge_engineering = -1
-        self.knowledge_dungeoneering = -1
-        self.knowledge_geography = -1
-        self.knowledge_history = -1
-        self.knowledge_local = -1
-        self.knowledge_nature = -1
-        self.knowledge_nobility = -1
-        self.knowledge_religion = -1
-        self.knowledge_the_planes = -1
-
-        self.listen = -1
-        self.move_silently = -1
-        self.open_lock = -1
-
-        self.perform_act = -1
-        self.perform_comedy = -1
-        self.perform_dance = -1
-        self.perform_keyboard = -1
-        self.perform_oratory = -1
-        self.perform_percussion = -1
-        self.perform_stringed = -1
-        self.perform_wind = -1
-        self.perform_sing = -1
-        
-        self.profession_academic = -1
-        self.profession_apothecary = -1
-        self.profession_celebrity = -1
-        self.profession_military = -1
-        self.profession_criminal = -1
-        self.profession_doctor = -1
-        self.profession_entrepreneur = -1
-        self.profession_investigator = -1
-        self.profession_scavenger = -1
-        self.profession_religious = -1
-        self.profession_transporter = -1
-        self.profession_engineer = -1
-        self.profession_alchemist = -1
-        self.profession_monster_hunter = -1
-
-        self.ride = -1
-        self.search = -1
-        self.sense_motive = -1
-        self.sleight_of_hand = -1
-        
-        self.speak_language_abyssal = -1 ## Demon and evil creatures written in Infernal
-        self.speak_language_aquan = -1 ## Water based creatures written in elven
-        self.speak_language_auran = -1 ## Air based creatures written in draconic
-        self.speak_language_celestial = -1 ## Good outsiders written in celestial
-        self.speak_language_common = -1
-        self.speak_language_draconic = -1 # Kobolds, Troglodytes, Lizardfolk and Dragons
-        self.speak_language_druidic = -1 # Druids ONLY!!!
-        self.speak_language_dwarven = -1
-        self.speak_language_elven = -1
-        self.speak_language_giant = -1 # Ogres and giants
-        self.speak_language_gnome = -1
-        self.speak_language_goblin = -1 # Goblins, hobgoblins and bugbears
-        self.speak_language_gnoll = -1
-        self.speak_language_halfling = -1
-        self.speak_language_ignan = -1 #Fire based creatures written in infernal
-        self.speak_language_orcish = -1 #Written in Orcish
-        self.speak_language_sylvan = -1 #Dryads, brownies, leprechauns written in elven
-        self.speak_language_terran = -1 #Xorns and earth based creatures written in dwarven
-        self.speak_language_undercommon = -1 #Drow written in elven
-
-        self.spellcraft = -1
-        self.spot = -1
-        self.survival = -1
-        self.swim = -1
-        self.tumble = -1
-        self.use_magic_device = -1
-        self.use_rope = -1
+        self.init_all_skills() ## Initializes all skills at -1 before they are overridden properly
 
         self.feats = [] ## feats will get added to this list
         self.special_abilities = [] ## special class abilities are added to this list
@@ -207,6 +108,9 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
             filename = "characters/%s.txt" % (character_name) ## always the same
             self.load(filename)
 
+    def init_all_skills(self):
+        for skill in ALL_STANDARD_SKILLS:
+            self.skill = -1
 
     def __lt__(self,other):
         return True ## It's a hack so that it sorts properly during initiative
@@ -273,7 +177,7 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
                 value = parsed_classes
             if "(" in key: # detected that the user typed something like knowledge(arcana)
                 main_key, sub_key = key.strip(")").split("(")
-                if main_key in MULTI_AREA_SKILLS:
+                if main_key in MULTIAREA_SKILL_CATEGORIES:
                     key = main_key+"_"+sub_key ## constructs the key e.g. knowledge_arcana
             else:   
                 try:
@@ -286,7 +190,7 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
     def get_profile(self):
         """ Returns a string that tells you public information about the character."""
         picture_status = ""
-        image_file = "[No Image File Found]"
+        image_file = ""
         if self.profile_image == None:
             picture_status = "-No Profile Picture Found-"
         response = " Username: %s\n" \
@@ -304,15 +208,17 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
                    " History: %s\n" \
                    " Picture: %s " %\
                    (self.username, self.display_name, self.race,
-                    self.age, self.gender.capitalize(),
-                    self.eye_colour.capitalize(), self.hair_colour.capitalize(), self.skin_colour.capitalize(),
+                    self.age, self.gender,
+                    self.eye_colour.capitalize(),
+                    self.hair_colour.capitalize(),
+                    self.skin_colour.capitalize(),
                     self.height, self.weight, self.favorite_weapon,
                     self.description, self.public_history, picture_status)
         try:
             image_file = "character_portraits/"+self.profile_image
         except: ## Image file not found
             picture_status = "-No Profile Picture Found-"
-            print("Wasn't able to find this image file! : %s" % (image_file))
+            print("Wasn't able to find this image file! : %s" % (self.profile_image))
         return response, image_file
 
     def get_character_sheet(self, show_all = False):
@@ -383,7 +289,7 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
                 attribute_modifier = Character._calculate_modifier(attribute_value)
                 skill_ranks = self.get_skill_ranks(skill) ## Looks up how many ranks you put on your character sheet
                 total = skill_ranks+attribute_modifier+misc_modifier ## adds the skill ranks to the attribute modifier
-            for skill_category in MULTI_AREA_SKILLS: # grabs stuff like knowledge, perform, profession
+            for skill_category in MULTIAREA_SKILL_CATEGORIES: # grabs stuff like knowledge, perform, profession
                 if skill_category in skill:
                     relevant_attribute = SKILL_KEY_ABILITIES[skill_category]  ## gets a attribute for a skill E.G. spellcraft > intelligence
                     break
@@ -420,16 +326,14 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
                 return level
 
     def get_coins(self):
-        copper = self.copper_coins  #10 copper to a silver
-        silver = self.silver_coins  #10 silver to a gold
-        gold = self.gold_coins      #10 gold to a platinum
-        return gold, silver, copper
+        copper = self.copper_coins      #10 copper to a silver
+        silver = self.silver_coins      #10 silver to a gold
+        gold = self.gold_coins
+        platinum = self.platinum_coins  #10 gold to a platinum
+        return gold, silver, copper, platinum
 
     def get_net_worth(self):
-        copper = self.copper_coins  #10 copper to a silver
-        silver = self.silver_coins  #10 silver to a gold
-        gold = self.gold_coins      #10 gold to a platinum
-        platinum = self.platinum_coins
+        copper, silver, gold, platinum = self.get_coins()
         net_worth = 0.01*copper+0.1*silver+gold+10*platinum
         return net_worth
 
@@ -455,7 +359,7 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
         skills = self.__dict__.keys() ## a list of all skills available
         skills_usable = SKILL_USABLE_UNTRAINED.keys()
         for skill in skills: ## finds all skills on the character sheet
-            for multiskill in MULTI_AREA_SKILLS: ## for things like "knowledge" "craft, "profession"
+            for multiskill in MULTIAREA_SKILLS: ## for things like "knowledge" "craft, "profession"
                 if multiskill in skill: ## checks if a multi-area skill is detected
                     pass ## skips these values for validation
                 elif multiskill not in skill:
@@ -477,7 +381,7 @@ def test_1(): ## Runs a known working character and sees if the methods work
     print("Ranged attack bonus is ", chara.get_ranged_attack_bonus(misc_modifier=0))
     print("Initiative bonus is ", chara.get_initiative_bonus(misc_modifier=0))
     print("Current level is ", chara.get_level())
-    gold, silver, copper = chara.get_coins()
+    gold, silver, copper, platinum = chara.get_coins()
     character_net_worth = chara.get_net_worth()
     print("%s has %i gold, %i silver and %i copper pieces for a total of %i gold."
           % (chara.display_name, gold, silver, copper, character_net_worth))

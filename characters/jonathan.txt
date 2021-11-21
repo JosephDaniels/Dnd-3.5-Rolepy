@@ -1,0 +1,15 @@
+display_name = Jonathan Gribbs
+age = 32
+gender = male
+eye_colour = brown
+hair_colour = brown
+skin_colour = pale
+height = 5"9
+weight = 266
+username = jonathan
+strength = 13
+dexterity = 16
+constitution = 16
+intelligence = 17
+wisdom = 16
+charisma = 11

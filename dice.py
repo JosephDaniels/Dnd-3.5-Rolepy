@@ -29,7 +29,7 @@ on EVERY dice roll. Not sure what to call that one yet.
         modifier_type = +1
         dice_type, modifier = rest_of_line.split('+')
     elif '-' in command_line:
-        modifier_type = -1
+        modifier_type
         dice_type, modifier = rest_of_line.split('-')
     else: # modifier equals zero if none specified
         modifier_type = ""
