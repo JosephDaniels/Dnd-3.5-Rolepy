@@ -9,6 +9,20 @@ SAVE_KEY_ABILITIES = {
     "base_will"         :   "wisdom"
     }
 
+STANDARD_CHARACTER_RACES = ['human', 'dwarf', 'half-orc', 'gnome', 'halfling', 'elf']  # the standard elf is technically a moon elf.
+
+ELVEN_RACES = ['moon elf', 'sun elf', 'night elf', 'wood elf', 'blood elf', 'high elf']
+
+NONSTANDARD_CHARACTER_RACES = ['dragonborn', 'tiefling', 'tabaxi']
+
+EVIL_CHARACTER_RACES = ['drow', 'orc', 'goblin', 'gnoll', 'kobold', 'demon', 'vampire']
+
+ALL_NONEVIL_CHARACTER_RACES = STANDARD_CHARACTER_RACES+ELVEN_RACES+NONSTANDARD_CHARACTER_RACES
+
+ALL_CHARACTER_RACES = STANDARD_CHARACTER_RACES+\
+                      ELVEN_RACES+\
+                      NONSTANDARD_CHARACTER_RACES+\
+                      EVIL_CHARACTER_RACES
 
 class Data(object):
     def __init__(self):
