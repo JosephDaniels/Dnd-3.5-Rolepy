@@ -3,26 +3,13 @@ from skills import * ## import skill information
 
 from xp import * ## import xp chart
 
+from race import * ## import race data
+
 SAVE_KEY_ABILITIES = {
     "base_fortitude"    :   "constitution",
     "base_reflex"       :   "dexterity",
     "base_will"         :   "wisdom"
     }
-
-STANDARD_CHARACTER_RACES = ['human', 'dwarf', 'half-orc', 'gnome', 'halfling', 'elf']  # the standard elf is technically a moon elf.
-
-ELVEN_RACES = ['moon elf', 'sun elf', 'night elf', 'wood elf', 'blood elf', 'high elf']
-
-NONSTANDARD_CHARACTER_RACES = ['dragonborn', 'tiefling', 'tabaxi']
-
-EVIL_CHARACTER_RACES = ['drow', 'orc', 'goblin', 'gnoll', 'kobold', 'demon', 'vampire']
-
-ALL_NONEVIL_CHARACTER_RACES = STANDARD_CHARACTER_RACES+ELVEN_RACES+NONSTANDARD_CHARACTER_RACES
-
-ALL_CHARACTER_RACES = STANDARD_CHARACTER_RACES+\
-                      ELVEN_RACES+\
-                      NONSTANDARD_CHARACTER_RACES+\
-                      EVIL_CHARACTER_RACES
 
 class Data(object):
     def __init__(self):
@@ -246,7 +233,7 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
         if value%2 == 1: ## Test if the attribute divides nicely
             value = value-1 ## If not, remove one to make it even
         modifier = int((value-10)/2) ## Attribute-1/2 is modifier formula
-        return modifier
+        return modifier2
 
     def get_melee_attack_bonus(self,misc_modifier=0):
         relevant_attribute = "strength"
@@ -342,6 +329,9 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
 
     def get_base_feat_count(self):
         level = self.get_level()
+        if level%3: ## get the remainder after divide by 3
+            remainder = level%3  # Remove the remainder
+            level = level-remainder
         return level/3+1
 
     def get_max_class_skill_ranks(self):
@@ -350,6 +340,9 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
 
     def get_max_cross_class_skill_ranks(self):
         level = self.get_level()
+        if (level+3)%2:
+            remainder = (level+3)%2
+            level = level - remainder
         return (level+3)/2
 
     def validate_all_skills(self):
