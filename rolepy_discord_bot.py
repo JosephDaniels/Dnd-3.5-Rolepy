@@ -144,10 +144,10 @@ def do_rock_paper_scissors(message):
     response = "Rock! Paper! Scissors. . .  %s!!! %s" % (bot_throw, bonus_message)
     return response
 
+
 @client.event
 async def on_message(message):
-    username = str(message.author)
-    member = message.author
+    username = message.author
 
     ##USER COMMANDS
 

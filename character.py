@@ -233,7 +233,7 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
         if value%2 == 1: ## Test if the attribute divides nicely
             value = value-1 ## If not, remove one to make it even
         modifier = int((value-10)/2) ## Attribute-1/2 is modifier formula
-        return modifier2
+        return modifier
 
     def get_melee_attack_bonus(self,misc_modifier=0):
         relevant_attribute = "strength"
