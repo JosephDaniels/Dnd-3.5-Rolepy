@@ -147,6 +147,7 @@ def do_rock_paper_scissors(message):
 
 @client.event
 async def on_message(message):
+    member = message.author
     username = message.author
 
     ##USER COMMANDS
@@ -167,8 +168,6 @@ async def on_message(message):
             return
         else:
             await message.channel.send(response)
-
-
 
     ## ROLEPLAY COMMANDS
 
@@ -198,7 +197,6 @@ async def on_message(message):
                     response, image_file = char_sheet.get_profile()  # This is their public profile
                     await message.author.send(response, file=discord.File(image_file))
 
-
     ## BATTLE COMMANDS
 
     if message.content.startswith('!addcombatant'):
@@ -215,6 +213,15 @@ async def on_message(message):
             dm.add_to_combat(enemy)
 
     ## DICE COMMANDS
+
+    if message.content.startswith('!roll'):
+        cmd = message.content
+        response = do_roll(cmd, username)
+        await message.channel.send(response)
+
+    if message.content.startswith('!coinflip') or message.content.startswith('!flipcoin') or message.content.startswith('!cointoss'):
+        result = coinflip()
+        await message.channel.send("%s flips a coin! Result is %s." % (username,result))
 
     if message.content.startswith('!rollwod'):
         try:
@@ -242,15 +249,6 @@ async def on_message(message):
         else:
             await message.channel.send(
                 username + " rolled a chance die and failed. [Rolled " + str(dice_result) + " on a d10]")
-
-    if message.content.startswith('!roll'):
-        cmd = message.content
-        response = do_roll(cmd, username)
-        await message.channel.send(response)
-
-    if message.content.startswith('!coinflip'):
-        result = coinflip()
-        await message.channel.send(username + " flips a coin! Result is " + result)
 
     if message.content.startswith('!rockpaperscissors'):
         response = do_rock_paper_scissors(message)
