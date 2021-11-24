@@ -1,7 +1,7 @@
-StabbyStabby#1327 = 1000
-Coruba#1432 = 1000
-mystia#2889 = 1000
-Magromancer#6352 = 1000
-NormL75#0235 = 1000
-baronanansi#2600 = 1000
-alanwongis#3590 = 1000
+StabbyStabby#1327 = 2000
+Coruba#1432 = 2000
+mystia#2889 = 2000
+Magromancer#6352 = 2000
+NormL75#0235 = 2000
+baronanansi#2600 = 2000
+alanwongis#3590 = 2000

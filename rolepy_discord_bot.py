@@ -35,6 +35,9 @@ dm = DM_helper()
 
 dm.load_last_session()
 
+## POKER STUFF
+dealer = Poker_Card_Dealer()
+
 ## This block detects how many suggestions are already found and updates the suggestion counter
 path, dirs, files = next(os.walk("suggestionbox/"))  # walk through the directory waka waka
 file_count = len(files)  # spits out the len of the journey
@@ -100,12 +103,10 @@ def do_roll_wod(message, dice_pool, eight_again=False, nine_again=False):
     dice_results, successes, rerolls = roll_wod_dice(dice_pool, eight_again, nine_again)
     print(dice_results, dice_pool, successes, rerolls)
     extra_text = ""
-
     if eight_again == True:
         extra_text = " with eight-again"
     elif nine_again == True:
         extra_text = " with nine-again"
-
     if successes == 0:
         return "%s rolled %i dice and failed their roll%s. Dice Results: %s" % (
         username, dice_pool, extra_text, dice_results)
@@ -147,8 +148,9 @@ def do_rock_paper_scissors(message):
 async def do_poker_game(message):
     member = message.author
     username = "%s#%s" % (member.name, member.discriminator)
-    chips = POKER_CHIPS[username]
-    bet = 0 #Chips
+    chips = dealer.poker_chips[username]
+    min_bet = dealer.MIN_MAX_BET_AMOUNT[dealer.betting_level][0]
+    max_bet = dealer.MIN_MAX_BET_AMOUNT[dealer.betting_level][1]
     waiting_for_bet = True
     while waiting_for_bet == True:
         await member.send("%s, you currently have %i poker chips to bet with. How many would you like to bet?" % (member.name, chips))
@@ -162,43 +164,28 @@ async def do_poker_game(message):
                 await member.send('%s, you do not have enough chips to bet %s.'
                                   ' Please try again. [You have %i chips.]' % (username, bet, chips))
             elif bet <= chips:
-                if bet < MAX_BET_AMOUNT:
+                if bet < max_bet:
                     await member.send('%s, you have successfully bet %i chips.' % (username, bet))
                     waiting_for_bet = False
-                elif bet > MAX_BET_AMOUNT:
+                    dealer.ready_player(username)
+                elif bet > max_bet:
                     await member.send('Sorry %s, you cannot bet more than the maximum bet. [Max bet:%s]' % (username, MAX_BET_AMOUNT))
         except asyncio.TimeoutError:
             await message.author.send("I waited for you to place a bet! [Timeout 60 seconds]")
             waiting_for_bet = False
-
-def load_poker_chips():
-    filename = "data/poker_chips.txt"
-    poker_chip_file = open(filename, encoding="latin-1").read()
-    poker_chip_file = poker_chip_file.split("\n")
-    for line in poker_chip_file:
-        player, chips = line.split("=")
-        player, chips = player.strip(), chips.strip()
-        POKER_CHIPS[player] = int(chips)
-
-def save_current_poker_chips():
-    _lines = []
-    _str = ""
-    for player in VALID_CHARACTERS.keys():
-        POKER_CHIPS[player] = 1000
-        _str = "%s = %i" % (player, POKER_CHIPS[player])
-        _lines.append(_str)
-    _lines = "\n".join(_lines)
-    filename = "data/poker_chips.txt"
-    f = open(filename, mode='w+')
-    f.write(_lines)
-    f.close()
-
-## POKER STUFF
-MAX_BET_AMOUNT = 200
-
-## POKER STUFF
-POKER_CHIPS = {} ## A list of usernames along with an integer of poker chips to their name
-load_poker_chips()
+        for player in dealer.ready_players:
+            if player: ## Player is ready
+                dealer.game_in_progress = True
+        # Poker Game Loop
+        while dealer.game_in_progress == True:
+            turn_player = dealer.get_turn_player()
+            await message.author.response("It's %s's turn to play."
+                                          " (Player %s's cards:%s"
+                                          % (turn_player.player_name,
+                                             turn_player.player_name,
+                                             turn_player.cards_in_hand))
+            response = input("Which cards which you like to trade this turn?"
+                             " [You can trade 3 cards at most.]")
 
 @client.event
 async def on_message(message):

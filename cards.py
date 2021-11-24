@@ -222,7 +222,7 @@ class Poker_Card_Dealer(Card_Dealer):
         self.load_poker_chip_amounts() ## Populates the poker chip amounts based off of data/poker_chips.txt
         self.betting_level = 1
         self.MIX_MAX_BET_AMOUNTS = {
-        # Max Bet Amounts, rising by level
+            # Max Bet Amounts, rising by level
             1   :   (5, 100),
             2   :   (10, 200),
             3   :   (25, 500),
@@ -245,13 +245,19 @@ class Poker_Card_Dealer(Card_Dealer):
         self.max_turn_count = 2
         for shuffles in range(7):
             self.shuffle_deck()
+        ## Player Settings
+        self.ready_players = {}  # A dictionary associating names to bet amounts, ready status boolean.
+
+    def add_ready(self, player):
+        if player in self.players:
+            self.ready_players[player] = (-1, False)
 
     def save_poker_chips(self):
         _lines = []
         _str = ""
-        for player in VALID_CHARACTERS.keys():
-            POKER_CHIPS[player] = 1000
-            _str = "%s = %i" % (player, POKER_CHIPS[player])
+        for player in self.players:
+            chips = self.poker_chips[player]
+            _str = "%s = %i" % (player, chips)
             _lines.append(_str)
         _lines = "\n".join(_lines)
         filename = "data/poker_chips.txt"
@@ -377,13 +383,12 @@ class Poker_Card_Dealer(Card_Dealer):
         self.game_in_progress = True
         self.deal_cards()
 
-
 def test_1():  # Just make a deck dagnabbit
     d = Deck()
     print(d.get_deck())
 
 def test_2():  # Test a hand of poker 1v1
-    deck = Playing_Cards()
+    deck = Deck()
     deck.shuffle()
     players = ["joey", "care"]
     joeys_hand = []
@@ -454,18 +459,6 @@ def test_4():  # Working with Poker Hand Rankings
     hand_result = HAND_RANKINGS[dealer.check_hand(hand)]
     print ("Your hand is: %s. Best Hand: [%s]" % (hand,hand_result))
 
-def test_5():
-    dealer = Poker_Card_Dealer()
-    joey = Card_Player(player_name="Joey")
-    care = Card_Player(player_name="Care")
-    dealer.add_player(joey)
-    dealer.add_player(care)
-    dealer.start_game()
-    while dealer.game_in_progress == True:
-        turn_player = dealer.get_turn_player()
-        print("It's %s's turn to play. (Player %s's cards:%s" % (turn_player.player_name,
-                                                                 turn_player.player_name,
-                                                                 turn_player.cards_in_hand))
 
 if __name__ == "__main__":
     test_4()
