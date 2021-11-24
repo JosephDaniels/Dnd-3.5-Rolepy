@@ -11,19 +11,21 @@ from rolepy_help import *
 from DM_helper import *  # Module for running the game, lets us keep track of characters
 from NPC import *  # non-player character information
 
+from cards import *
+
 ADMINS = ['StabbyStabby#1327', 'alanwongis#3590']
 
 DND_PLAYERS = ['StabbyStabby#1327', 'Coruba#1432', 'mystia#2889',
                'Frail Faintheart#5181', 'Magromancer#6352', 'NormL75#0235',
                'baronanansi#2600', 'alanwongis#3590']
 
-VALID_CHARACTERS_FOR = {'StabbyStabby#1327': ['vsevellar', 'zandrius', 'zandria', 'thaddeus', 'paige'],
-                        'Coruba#1432': ['ulfric', 'barco', 'tebbo'],
-                        'mystia#2889': ['chai', 'manda'],
-                        'Magromancer#6352': ['cymancer'],
-                        'NormL75#0235': ['kaelyn'],
-                        'baronanansi#2600': ['barda'],
-                        'alanwongis#3590': ['bob', 'akbar']}
+VALID_CHARACTERS = {'StabbyStabby#1327' : ['vsevellar', 'zandrius', 'zandria', 'thaddeus', 'paige'],
+                    'Coruba#1432' : ['ulfric', 'barco', 'tebbo'],
+                    'mystia#2889' : ['chai', 'manda'],
+                    'Magromancer#6352' : ['cymancer'],
+                    'NormL75#0235' : ['kaelyn'],
+                    'baronanansi#2600' : ['barda'],
+                    'alanwongis#3590' : ['bob', 'akbar']}
 
 ## START THE ENGINES
 
@@ -50,7 +52,7 @@ def do_roll(command_line, username):
 
 def do_login(message):
     nick = None
-    username = str(message.author)
+    username = "%s#%s" % (message.author.name, message.author.discriminator)
     command_line = message.content
     # Error Check 1 - You're not one of my friends
     if username not in DND_PLAYERS:
@@ -64,7 +66,7 @@ def do_login(message):
         return response, nick
 
     # Error Check 2 - Don't try to steal my character!!!
-    if target_character not in VALID_CHARACTERS_FOR[username]:  # checks if the target character is valid for the user
+    if target_character not in VALID_CHARACTERS[username]:  # checks if the target character is valid for the user
         response = "You cannot login as %s, %s is not your character." % (target_character, target_character)
         return response, nick
 
@@ -84,7 +86,7 @@ def do_login(message):
 
 async def do_logout(message):
     member = message.author
-    username = str(message.author)
+    username = "%s#%s" % (member.name, member.discriminator)
     if username in dm.logged_in_as.keys():  # checks if the username is in the logged_in_as dictionary keys ie Bobby#2451
         character = dm.logged_in_as[username]  # retrieves the the character they are logged in as
         dm.logged_in_as.pop(username)  # remove them from the logged in
@@ -92,10 +94,9 @@ async def do_logout(message):
     else:
         return "You're not logged in!"
 
-
 def do_roll_wod(message, dice_pool, eight_again=False, nine_again=False):
     dice_pool = int(dice_pool)
-    username = str(message.author)
+    username = message.author
     dice_results, successes, rerolls = roll_wod_dice(dice_pool, eight_again, nine_again)
     print(dice_results, dice_pool, successes, rerolls)
     extra_text = ""
@@ -106,16 +107,15 @@ def do_roll_wod(message, dice_pool, eight_again=False, nine_again=False):
         extra_text = " with nine-again"
 
     if successes == 0:
-        return "%s rolled %i dice and failed their roll %s. Dice Results: %s" % (
-        username, dice_pool, extra_text, str(dice_results))
+        return "%s rolled %i dice and failed their roll%s. Dice Results: %s" % (
+        username, dice_pool, extra_text, dice_results)
     elif successes > 0:
         if rerolls > 0:
-            return "%s rolled %i dice and received %i successes %s. They had %i rererolled dice. Dice Results: %s" % (
-            username, dice_pool, successes, extra_text, rerolls, str(dice_results))
+            return "%s rolled %i dice and received %i successes%s. They had %i rerolled dice. Dice Results: %s" % (
+            username, dice_pool, successes, extra_text, rerolls, dice_results)
         else:
-            return "%s rolled %i dice and had %i successes %s. Dice Results: %s" % (
-            username, dice_pool, successes, extra_text, str(dice_results))
-
+            return "%s rolled %i dice and had %i successes%s. Dice Results: %s" % (
+            username, dice_pool, successes, extra_text, dice_results)
 
 def do_rock_paper_scissors(message):
     """ Gives a random result, rock, paper or scissors.
@@ -144,13 +144,88 @@ def do_rock_paper_scissors(message):
     response = "Rock! Paper! Scissors. . .  %s!!! %s" % (bot_throw, bonus_message)
     return response
 
+## POKER STUFF
+MAX_BET_AMOUNT = 200
+
+async def do_poker_game(message):
+    member = message.author
+    username = "%s#%s" % (member.name, member.discriminator)
+    chips = get_poker_chips(username)
+    bet = 0 #Chips
+    waiting_for_bet = True
+    while waiting_for_bet == True:
+        await member.send("%s, you currently have %i poker chips to bet with. How many would you like to bet?" % (member.name, chips))
+        try:
+            msg = await client.wait_for('message', timeout=30.0)
+            try:
+                bet = int(msg.content)
+            except ValueError:
+                await member.send("I did not get a valid amount. [You said: %s] Please try again." % (msg.content))
+            if bet > chips:
+                await member.send('%s, you do not have enough chips to bet %s.'
+                                  ' Please try again. [You have %i chips.]' % (username, bet, chips))
+            elif bet <= chips:
+                if bet < MAX_BET_AMOUNT:
+                    await member.send('%s, you have successfully bet %i chips.' % (username, bet))
+                    waiting_for_bet = False
+                elif bet > MAX_BET_AMOUNT:
+                    await member.send('Sorry %s, you cannot bet more than the maximum bet. [Max bet:%s]' % (username, MAX_BET_AMOUNT))
+        except asyncio.TimeoutError:
+            await message.author.send("I waited for you to place a bet! [Timeout 60 seconds]")
+            waiting_for_bet = False
+
+def get_poker_chips(username):
+    chips = POKER_CHIPS[username]
+    return chips
+
+def load_poker_chips():
+    filename = "data/poker_chips.txt"
+    poker_chip_file = open(filename, encoding="latin-1").read()
+    poker_chip_file = poker_chip_file.split("\n")
+    for line in poker_chip_file:
+        player, chips = line.split("=")
+        player, chips = player.strip(), chips.strip()
+        POKER_CHIPS[player] = int(chips)
+
+def save_current_poker_chips():
+    _lines = []
+    _str = ""
+    for player in VALID_CHARACTERS.keys():
+        POKER_CHIPS[player] = 1000
+        _str = "%s = %i" % (player, POKER_CHIPS[player])
+        _lines.append(_str)
+    _lines = "\n".join(_lines)
+    filename = "data/poker_chips.txt"
+    f = open(filename, mode='w+')
+    f.write(_lines)
+    f.close()
+
+## POKER STUFF
+POKER_CHIPS = {} ## A list of usernames along with an integer of poker chips to their name
+load_poker_chips()
 
 @client.event
 async def on_message(message):
     member = message.author
-    username = message.author
+    username = "%s#%s" % (member.name, member.discriminator)
 
     ##USER COMMANDS
+
+    if message.content.startswith('!hello'):
+        msg = "Hello, welcome to The Joey DnD RP Server, %s." % (username)
+        await message.author.send(msg, file=discord.File('images/BaldursGate2Enhanced.jpg'))
+
+    if message.content == ('!greet'):
+        channel = message.channel
+        await channel.send('Say hello!')
+        def check(m):
+            return m.content == 'hello' and m.channel == channel
+        try:
+            msg = await client.wait_for('message', timeout=30.0, check=check)
+            await channel.send('Hello {.author}!'.format(msg))
+        except asyncio.TimeoutError:
+            await message.author.send("I waited for you to say hello... </3")
+
 
     if message.content.startswith('!login'):
         response, nick = do_login(message)
@@ -199,6 +274,11 @@ async def on_message(message):
 
     ## BATTLE COMMANDS
 
+    if message.content == ("!begincombat") or message.content == ("!startcombat"):
+        ## Start Combat
+        ## Switch to combat mode
+        pass
+
     if message.content.startswith('!addcombatant'):
         ## Check if they have DM power
         if not (str(message.author) in ADMINS):
@@ -214,7 +294,7 @@ async def on_message(message):
 
     ## DICE COMMANDS
 
-    if message.content.startswith('!roll'):
+    if message.content.startswith('!rolld'):
         cmd = message.content
         response = do_roll(cmd, username)
         await message.channel.send(response)
@@ -240,20 +320,23 @@ async def on_message(message):
             await message.channel.send(response)
 
     if message.content.startswith('!rollchancedie'):
-        dice_result = parse_dice_command("rolld10")
+        dice_result = rolld(10)
         if dice_result == 1:
-            await message.channel.send(
-                username + " rolled a chance die and suffered a dramatic failure. [Rolled 1 on a d10]")
+            await message.channel.send("%s rolled a chance die and suffered a dramatic failure. [Rolled 1 on a d10]" % (username))
         elif dice_result == 10:
-            await message.channel.send(username + " rolled a chance die and managed to succeed. [Rolled 10 on a d10]")
+            await message.channel.send("%s rolled a chance die and managed to succeed. [Rolled 10 on a d10]"% (username))
         else:
-            await message.channel.send(
-                username + " rolled a chance die and failed. [Rolled " + str(dice_result) + " on a d10]")
+            await message.channel.send("%s rolled a chance die and failed. [Rolled %s on a d10]" % (username, dice_result))
 
     if message.content.startswith('!rockpaperscissors'):
         response = do_rock_paper_scissors(message)
         await message.channel.send(response)
 
+    ## GAME COMMANDS
+
+    if message.content == ("!play poker"):
+        await message.author.send ("Starting a 1 on 1 game of poker versus yours truly, Mr.Rolepy.")
+        await do_poker_game(message)
 
     ## JUST FOR FUN COMMANDS
 
@@ -291,10 +374,6 @@ async def on_message(message):
             username, username))
 
     ## HELP AND SUGGESTION COMMANDS
-    if message.content.startswith('!hello'):
-        msg = "Hello, welcome to The Joey DnD RP Server, %s." % (username)
-        await message.author.send(msg, file=discord.File('images/BaldursGate2Enhanced.jpg'))
-
     if message.content.startswith('!suggest'):
         global suggestions
         await message.author.send("Please type your message to be added to the suggestion box.")
@@ -314,19 +393,6 @@ async def on_message(message):
             f.close()
             print ("Suggestion#%i just got saved. Thanks %s!" % (suggestions, username))
             await message.author.send("Thanks! received suggestion: %s" % (msg.content))
-
-    if message.content.startswith('!greet'):
-        channel = message.channel
-        await channel.send('Say hello!')
-
-        def check(m):
-            return m.content == 'hello' and m.channel == channel
-
-        try:
-            msg = await client.wait_for('message', timeout=30.0, check=check)
-            await channel.send('Hello {.author}!'.format(msg))
-        except asyncio.TimeoutError:
-            await message.author.send("I waited for you to say hello... </3")
 
     if message.content.startswith('!help'):  ## All Help Commands
         if message.content == '!help login':

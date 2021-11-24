@@ -25,11 +25,13 @@ on EVERY dice roll. Not sure what to call that one yet.
     '''
     command_line = command_line.strip("!roll") ## Remove leading exclamation
     num_dice, rest_of_line = command_line.split('d') ## Splits number dice and dice type
+    dice_total = 0
+    results = []
     if '+' in rest_of_line:
         modifier_type = +1
         dice_type, modifier = rest_of_line.split('+')
     elif '-' in command_line:
-        modifier_type
+        modifier_type = -1
         dice_type, modifier = rest_of_line.split('-')
     else: # modifier equals zero if none specified
         modifier_type = ""
@@ -43,26 +45,27 @@ on EVERY dice roll. Not sure what to call that one yet.
     dice_type, modifier = int(dice_type), int(modifier)
 
     ## Do all of the actual dice rolls
-    results = [] ## Results of all dice rolled
     for dice in range(num_dice):
-        results.append(rolld(dice_type))
-
+        dice_results.append(rolld(dice_type))
     if modifier_type == "":
         modifier = +0
     else:
         modifier = modifier_type * modifier
-    dice_total = sum(results)+modifier ## add results together
+    if sum(results)+modifier <= 0:
+        dice_total = 1
+    elif sum(dice_results)+modifier > 1:
+        dice_total = sum(dice_results)+modifier ## add results together
 
-    ## Formattin the modifier as feedback to the player
+    ## Formatting the modifier as feedback to the player
     if modifier_type == +1:
         modifier = "+"+str(modifier)
 
     elif modifier_type == -1:
-        modifier = "-"+str(modifier)
+        modifier = str(modifier)
     else: #modifier type is ""
         modifier = ""
     dice_type = "d"+str(dice_type) ## add the d back in
-    return dice_total, num_dice, results, dice_type, modifier
+    return dice_total, num_dice, dice_results, dice_type, modifier
 
 def coinflip():
     result = random.randint(1,2)
