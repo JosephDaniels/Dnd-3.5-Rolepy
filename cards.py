@@ -125,8 +125,10 @@ class Deck(object):
     def get_deck(self):
         return str(self.cards)
 
-    def shuffle(self):
+    def shuffle(self, debug=False):
         random.shuffle(self.cards)
+        if debug == True:
+            print (self.cards)
 
     def draw_a_card(self):
         """ Pulls a card from the top of the deck. """
@@ -216,17 +218,55 @@ class Poker_Card_Dealer(Card_Dealer):
         """ Defaults to standard Poker Rules.
          I made the check hand functions using Brian Caffey's code."""
         super().__init__()
-
+        self.poker_chips = {} ## Usernames associated with the amount of chips that they have.
+        self.load_poker_chip_amounts() ## Populates the poker chip amounts based off of data/poker_chips.txt
+        self.betting_level = 1
+        self.MIX_MAX_BET_AMOUNTS = {
+        # Max Bet Amounts, rising by level
+            1   :   (5, 100),
+            2   :   (10, 200),
+            3   :   (25, 500),
+            4   :   (50, 1000),
+            5   :   (100, 2500),
+            6   :   (250, 5000),
+            7   :   (500, 10000),
+            8   :   (1000, 25000),
+            9   :   (2500, 100000),
+            10  :   (5000, 250000),
+            11  :   (10000, 500000), #Five Hundred Thousand
+            12  :   (25000, 1000000), #One Million
+            13  :   (100000, 2000000), #Two Million
+            14  :   (250000, 5000000), #Five Million
+            15  :   (500000, 10000000) #Ten Million
+        }
         ## Poker Settings
         self.hand_size = 5
-
         self.turn_count = 0
-        self.max_turn_count = 3
-
+        self.max_turn_count = 2
         for shuffles in range(7):
             self.shuffle_deck()
 
-        print (self.deck)
+    def save_poker_chips(self):
+        _lines = []
+        _str = ""
+        for player in VALID_CHARACTERS.keys():
+            POKER_CHIPS[player] = 1000
+            _str = "%s = %i" % (player, POKER_CHIPS[player])
+            _lines.append(_str)
+        _lines = "\n".join(_lines)
+        filename = "data/poker_chips.txt"
+        f = open(filename, mode='w+')
+        f.write(_lines)
+        f.close()
+
+    def load_poker_chips(self):
+        filename = "data/poker_chips.txt"
+        poker_chip_file = open(filename, encoding="latin-1").read()
+        poker_chip_file = poker_chip_file.split("\n")
+        for line in poker_chip_file:
+            player, chips = line.split("=")
+            player, chips = player.strip(), chips.strip()
+            self.poker_chips[player] = int(chips)
 
     def check_royal_flush(self, hand):
         if self.check_flush(hand) and self.check_straight(hand):
@@ -339,9 +379,8 @@ class Poker_Card_Dealer(Card_Dealer):
 
 
 def test_1():  # Just make a deck dagnabbit
-    d = Playing_Cards()
+    d = Deck()
     print(d.get_deck())
-
 
 def test_2():  # Test a hand of poker 1v1
     deck = Playing_Cards()
@@ -357,12 +396,9 @@ def test_2():  # Test a hand of poker 1v1
                 joeys_hand.append(card)
             elif player == "care":
                 cares_hand.append(card)
-
     print("Joey's hand: " + str(joeys_hand))
     print("Care's hand: " + str(cares_hand))
-
     ## GAME LOOP
-
     turns = 3
 
     game_is_running = True
@@ -407,7 +443,6 @@ def test_3():  # Poker with new Poker Card Dealer object
                                                                  turn_player.cards_in_hand))
         break
 
-
 def test_4():  # Working with Poker Hand Rankings
     d = Deck(new_deck_order=False)
     dealer = Poker_Card_Dealer()
@@ -418,6 +453,19 @@ def test_4():  # Working with Poker Hand Rankings
         hand.append(card)
     hand_result = HAND_RANKINGS[dealer.check_hand(hand)]
     print ("Your hand is: %s. Best Hand: [%s]" % (hand,hand_result))
+
+def test_5():
+    dealer = Poker_Card_Dealer()
+    joey = Card_Player(player_name="Joey")
+    care = Card_Player(player_name="Care")
+    dealer.add_player(joey)
+    dealer.add_player(care)
+    dealer.start_game()
+    while dealer.game_in_progress == True:
+        turn_player = dealer.get_turn_player()
+        print("It's %s's turn to play. (Player %s's cards:%s" % (turn_player.player_name,
+                                                                 turn_player.player_name,
+                                                                 turn_player.cards_in_hand))
 
 if __name__ == "__main__":
     test_4()

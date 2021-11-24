@@ -144,13 +144,10 @@ def do_rock_paper_scissors(message):
     response = "Rock! Paper! Scissors. . .  %s!!! %s" % (bot_throw, bonus_message)
     return response
 
-## POKER STUFF
-MAX_BET_AMOUNT = 200
-
 async def do_poker_game(message):
     member = message.author
     username = "%s#%s" % (member.name, member.discriminator)
-    chips = get_poker_chips(username)
+    chips = POKER_CHIPS[username]
     bet = 0 #Chips
     waiting_for_bet = True
     while waiting_for_bet == True:
@@ -174,10 +171,6 @@ async def do_poker_game(message):
             await message.author.send("I waited for you to place a bet! [Timeout 60 seconds]")
             waiting_for_bet = False
 
-def get_poker_chips(username):
-    chips = POKER_CHIPS[username]
-    return chips
-
 def load_poker_chips():
     filename = "data/poker_chips.txt"
     poker_chip_file = open(filename, encoding="latin-1").read()
@@ -199,6 +192,9 @@ def save_current_poker_chips():
     f = open(filename, mode='w+')
     f.write(_lines)
     f.close()
+
+## POKER STUFF
+MAX_BET_AMOUNT = 200
 
 ## POKER STUFF
 POKER_CHIPS = {} ## A list of usernames along with an integer of poker chips to their name
