@@ -36,7 +36,7 @@ dm = DM_helper()
 dm.load_last_session()
 
 ## POKER STUFF
-dealer = Poker_Card_Dealer()
+# dealer = Poker_Card_Dealer()
 
 ## This block detects how many suggestions are already found and updates the suggestion counter
 path, dirs, files = next(os.walk("suggestionbox/"))  # walk through the directory waka waka
@@ -145,47 +145,47 @@ def do_rock_paper_scissors(message):
     response = "Rock! Paper! Scissors. . .  %s!!! %s" % (bot_throw, bonus_message)
     return response
 
-async def do_poker_game(message):
-    member = message.author
-    username = "%s#%s" % (member.name, member.discriminator)
-    chips = dealer.poker_chips[username]
-    min_bet = dealer.MIN_MAX_BET_AMOUNT[dealer.betting_level][0]
-    max_bet = dealer.MIN_MAX_BET_AMOUNT[dealer.betting_level][1]
-    waiting_for_bet = True
-    while waiting_for_bet == True:
-        await member.send("%s, you currently have %i poker chips to bet with. How many would you like to bet?" % (member.name, chips))
-        try:
-            msg = await client.wait_for('message', timeout=30.0)
-            try:
-                bet = int(msg.content)
-            except ValueError:
-                await member.send("I did not get a valid amount. [You said: %s] Please try again." % (msg.content))
-            if bet > chips:
-                await member.send('%s, you do not have enough chips to bet %s.'
-                                  ' Please try again. [You have %i chips.]' % (username, bet, chips))
-            elif bet <= chips:
-                if bet < max_bet:
-                    await member.send('%s, you have successfully bet %i chips.' % (username, bet))
-                    waiting_for_bet = False
-                    dealer.ready_player(username)
-                elif bet > max_bet:
-                    await member.send('Sorry %s, you cannot bet more than the maximum bet. [Max bet:%s]' % (username, MAX_BET_AMOUNT))
-        except asyncio.TimeoutError:
-            await message.author.send("I waited for you to place a bet! [Timeout 60 seconds]")
-            waiting_for_bet = False
-        for player in dealer.ready_players:
-            if player: ## Player is ready
-                dealer.game_in_progress = True
-        # Poker Game Loop
-        while dealer.game_in_progress == True:
-            turn_player = dealer.get_turn_player()
-            await message.author.response("It's %s's turn to play."
-                                          " (Player %s's cards:%s"
-                                          % (turn_player.player_name,
-                                             turn_player.player_name,
-                                             turn_player.cards_in_hand))
-            response = input("Which cards which you like to trade this turn?"
-                             " [You can trade 3 cards at most.]")
+# async def do_poker_game(message):
+#     member = message.author
+#     username = "%s#%s" % (member.name, member.discriminator)
+#     chips = dealer.poker_chips[username]
+#     min_bet = dealer.MIX_MAX_BET_AMOUNTS[dealer.betting_level][0]
+#     max_bet = dealer.MIX_MAX_BET_AMOUNTS[dealer.betting_level][1]
+#     waiting_for_bet = True
+#     while waiting_for_bet == True:
+#         await member.send("%s, you currently have %i poker chips to bet with. How many would you like to bet?" % (member.name, chips))
+#         try:
+#             msg = await client.wait_for('message', timeout=30.0)
+#             try:
+#                 bet = int(msg.content)
+#             except ValueError:
+#                 await member.send("I did not get a valid amount. [You said: %s] Please try again." % (msg.content))
+#             if bet > chips:
+#                 await member.send('%s, you do not have enough chips to bet %s.'
+#                                   ' Please try again. [You have %i chips.]' % (username, bet, chips))
+#             elif bet <= chips:
+#                 if bet < max_bet:
+#                     await member.send('%s, you have successfully bet %i chips.' % (username, bet))
+#                     waiting_for_bet = False
+#                     dealer.ready_player(username)
+#                 elif bet > max_bet:
+#                     await member.send('Sorry %s, you cannot bet more than the maximum bet. [Max bet:%s]' % (username, max_bet))
+#         except asyncio.TimeoutError:
+#             await message.author.send("I waited for you to place a bet! [Timeout 60 seconds]")
+#             waiting_for_bet = False
+#         for player in dealer.ready_players:
+#             if player: ## Player is ready
+#                 dealer.game_in_progress = True
+#         # Poker Game Loop
+#         while dealer.game_in_progress == True:
+#             turn_player = dealer.get_turn_player()
+#             await message.author.response("It's %s's turn to play."
+#                                           " (Player %s's cards:%s"
+#                                           % (turn_player.player_name,
+#                                              turn_player.player_name,
+#                                              turn_player.cards_in_hand))
+#             response = input("Which cards which you like to trade this turn?"
+#                              " [You can trade 3 cards at most.]")
 
 @client.event
 async def on_message(message):

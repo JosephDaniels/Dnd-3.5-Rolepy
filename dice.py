@@ -26,7 +26,7 @@ on EVERY dice roll. Not sure what to call that one yet.
     command_line = command_line.strip("!roll") ## Remove leading exclamation
     num_dice, rest_of_line = command_line.split('d') ## Splits number dice and dice type
     dice_total = 0
-    results = []
+    dice_results = []
     if '+' in rest_of_line:
         modifier_type = +1
         dice_type, modifier = rest_of_line.split('+')
@@ -43,7 +43,6 @@ on EVERY dice roll. Not sure what to call that one yet.
     else:
         num_dice = int(num_dice)
     dice_type, modifier = int(dice_type), int(modifier)
-
     ## Do all of the actual dice rolls
     for dice in range(num_dice):
         dice_results.append(rolld(dice_type))
@@ -51,7 +50,7 @@ on EVERY dice roll. Not sure what to call that one yet.
         modifier = +0
     else:
         modifier = modifier_type * modifier
-    if sum(results)+modifier <= 0:
+    if sum(dice_results)+modifier <= 0:
         dice_total = 1
     elif sum(dice_results)+modifier > 1:
         dice_total = sum(dice_results)+modifier ## add results together
@@ -87,7 +86,7 @@ def rock_paper_scissors():
 
 def rolld(n):
     if not n in VALID_DICE:
-        raise Error("tried to roll a invalid dice. I'm crashing now lol")
+        raise ValueError("tried to roll a invalid dice. I'm crashing now lol")
     else:
         return random.randint(1,n)
 
