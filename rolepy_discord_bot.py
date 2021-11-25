@@ -11,7 +11,7 @@ from rolepy_help import *
 from DM_helper import *  # Module for running the game, lets us keep track of characters
 from NPC import *  # non-player character information
 
-from cards import *
+# from cards import *
 
 ADMINS = ['StabbyStabby#1327', 'alanwongis#3590']
 
@@ -36,7 +36,7 @@ dm = DM_helper()
 dm.load_last_session()
 
 ## POKER STUFF
-# dealer = Poker_Card_Dealer()
+#dealer = Poker_Card_Dealer()
 
 ## This block detects how many suggestions are already found and updates the suggestion counter
 path, dirs, files = next(os.walk("suggestionbox/"))  # walk through the directory waka waka
@@ -148,6 +148,7 @@ def do_rock_paper_scissors(message):
 # async def do_poker_game(message):
 #     member = message.author
 #     username = "%s#%s" % (member.name, member.discriminator)
+#     bet = 0
 #     chips = dealer.poker_chips[username]
 #     min_bet = dealer.MIX_MAX_BET_AMOUNTS[dealer.betting_level][0]
 #     max_bet = dealer.MIX_MAX_BET_AMOUNTS[dealer.betting_level][1]
@@ -167,7 +168,7 @@ def do_rock_paper_scissors(message):
 #                 if bet < max_bet:
 #                     await member.send('%s, you have successfully bet %i chips.' % (username, bet))
 #                     waiting_for_bet = False
-#                     dealer.ready_player(username)
+#                     dealer.add_player(username)
 #                 elif bet > max_bet:
 #                     await member.send('Sorry %s, you cannot bet more than the maximum bet. [Max bet:%s]' % (username, max_bet))
 #         except asyncio.TimeoutError:
@@ -319,7 +320,7 @@ async def on_message(message):
 
     if message.content == ("!play poker"):
         await message.author.send ("Starting a 1 on 1 game of poker versus yours truly, Mr.Rolepy.")
-        await do_poker_game(message)
+        # await do_poker_game(message)
 
     ## JUST FOR FUN COMMANDS
 

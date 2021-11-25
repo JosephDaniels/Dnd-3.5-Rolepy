@@ -248,9 +248,16 @@ class Poker_Card_Dealer(Card_Dealer):
         ## Player Settings
         self.ready_players = {}  # A dictionary associating names to bet amounts, ready status boolean.
 
-    def add_ready(self, player):
+    def add_player(self, player):
+        if player not in self.players:
+            self.players.append(player)
         if player in self.players:
-            self.ready_players[player] = (-1, False)
+            self.ready_players[player] = (-1, False) # Initialization bet_amt, ready_status
+
+    def ready_up(self, player):
+        if player in self.players:
+            self.ready_players[player] = (player.bet, True)
+            pass
 
     def save_poker_chips(self):
         _lines = []
