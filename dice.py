@@ -52,13 +52,12 @@ on EVERY dice roll. Not sure what to call that one yet.
         modifier = modifier_type * modifier
     if sum(dice_results)+modifier <= 0:
         dice_total = 1
-    elif sum(dice_results)+modifier > 1:
+    elif sum(dice_results)+modifier >= 1:
         dice_total = sum(dice_results)+modifier ## add results together
 
     ## Formatting the modifier as feedback to the player
     if modifier_type == +1:
         modifier = "+"+str(modifier)
-
     elif modifier_type == -1:
         modifier = str(modifier)
     else: #modifier type is ""
@@ -148,12 +147,15 @@ def roll_wod_dice(dice_pool, eight_again=False, nine_again=False):
         
     return rolled_dice, successes, rerolls
 
-
 def test_1():  # testing advantage and disadvantage rolls
     low_roll, high_roll = roll_with_advantage()
     print ("Rolled with advantage! Rolled %s! (low roll was %s)" % (high_roll, low_roll))
     low_roll, high_roll = roll_with_disadvantage()
     print ("Rolled with disadvantage! Rolled %s! (high roll was %s)" % (low_roll, high_roll))
 
+def test_2():
+    command = "roll3d8"
+    print(parse_dice_command(command))
+
 if __name__ == "__main__":
-    test_1()
+    test_2()

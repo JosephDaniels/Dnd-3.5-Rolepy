@@ -1,0 +1,12 @@
+lumbering
+skinny
+curvy
+slender
+chunky
+plump
+fat
+obese
+muscular
+shapely
+large
+massive

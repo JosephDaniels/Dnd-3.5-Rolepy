@@ -1,0 +1,22 @@
+brass
+copper
+gold
+dull birch
+sandstone
+antique brass
+old brick
+sunbaked clay
+smoke
+butter rum
+dark ale
+beer
+coal
+earthen brown
+brick red
+sierra
+maize
+clay brown
+rich chocolate
+harvest brown
+ginger
+walnut

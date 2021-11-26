@@ -1,0 +1,5 @@
+ner
+ry
+spinner
+weaver
+aster

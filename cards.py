@@ -219,7 +219,7 @@ class Poker_Card_Dealer(Card_Dealer):
          I made the check hand functions using Brian Caffey's code."""
         super().__init__()
         self.poker_chips = {} ## Usernames associated with the amount of chips that they have.
-        self.load_poker_chip_amounts() ## Populates the poker chip amounts based off of data/poker_chips.txt
+        self.load_poker_chips() ## Populates the poker chip amounts based off of data/poker_chips.txt
         self.betting_level = 1
         self.MIX_MAX_BET_AMOUNTS = {
             # Max Bet Amounts, rising by level
@@ -268,8 +268,12 @@ class Poker_Card_Dealer(Card_Dealer):
             _lines.append(_str)
         _lines = "\n".join(_lines)
         filename = "data/poker_chips.txt"
+        self.save(filename, _lines)
+
+    def save(self, filename, data):
+        filename = filename
         f = open(filename, mode='w+')
-        f.write(_lines)
+        f.write(data)
         f.close()
 
     def load_poker_chips(self):
