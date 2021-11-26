@@ -1,0 +1,13 @@
+gnome baby = 0 - 2
+gnome toddler = 3 - 6
+gnome very young = 7 - 10
+gnome child = 11 - 14
+gnome pre-teen = 15 - 19
+gnome young teen = 20 - 24
+gnome teen = 25 - 31
+gnome young adult = 32 - 39
+gnome adult = 40 - 99
+gnome middle aged = 100 - 149
+gnome over the hill = 150 - 199
+gnome senior = 200 - 299
+gnome geriatric = 300 - 400

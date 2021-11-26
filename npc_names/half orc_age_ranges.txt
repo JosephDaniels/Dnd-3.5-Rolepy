@@ -1,0 +1,13 @@
+half orc baby = 0 - 1
+half orc toddler = 2 - 3
+half orc very young = 4 - 6
+half orc child = 7 - 9
+half orc pre-teen = 10 - 11
+half orc young teen = 12 - 14
+half orc teen = 15 - 17
+half orc young adult = 18 - 19
+half orc adult = 20 - 29
+half orc middle aged = 30 - 44
+half orc over the hill = 45 - 59
+half orc senior = 60 - 79
+half orc geriatric = 80 - 90

@@ -1,0 +1,13 @@
+halfling baby = 0 - 2
+halfling toddler = 3 - 5
+halfling very young = 6 - 8
+halfling child = 9 - 11
+halfling pre-teen = 12 - 14
+halfling young teen = 15 - 18
+halfling teen = 19 - 23
+halfling young adult = 24 - 29
+halfling adult = 30 - 49
+halfling middle aged = 50 - 74
+halfling over the hill = 75 - 99
+halfling senior = 100 - 149
+halfling geriatric = 150 - 175

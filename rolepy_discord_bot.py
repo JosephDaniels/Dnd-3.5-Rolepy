@@ -150,9 +150,9 @@ async def do_poker_game(message):
     username = "%s#%s" % (member.name, member.discriminator)
     bet = 0
     chips = dealer.poker_chips[username]
-    min_bet = dealer.MIN_MAX_BET_AMOUNTS[dealer.betting_level][0]
-    max_bet = dealer.MIN_MAX_BET_AMOUNTS[dealer.betting_level][1]
+    min_bet, max_bet = dealer.MIN_MAX_BET_AMOUNTS[dealer.betting_level]
     waiting_for_bet = True
+    await message.author.send("Starting a 1 on 1 game of poker.")
     while waiting_for_bet == True:
         await member.send("%s, you currently have %i poker chips to bet with. How many would you like to bet?" % (member.name, chips))
         try:
@@ -161,32 +161,44 @@ async def do_poker_game(message):
                 bet = int(msg.content)
             except ValueError:
                 await member.send("I did not get a valid amount. [You said: %s] Please try again." % (msg.content))
+                continue
             if bet > chips:
                 await member.send('%s, you do not have enough chips to bet %s.'
                                   ' Please try again. [You have %i chips.]' % (username, bet, chips))
             elif bet <= chips:
-                if bet < max_bet:
+                if bet <= max_bet and bet >= min_bet:
                     await member.send('%s, you have successfully bet %i chips.' % (username, bet))
                     waiting_for_bet = False
-                    dealer.add_player(username)
+                    player = Card_Player(username)
+                    dealer.add_player(player)
+                    dealer.add_bet(username, bet)
+                    dealer.start_game()
+                elif bet < min_bet:
+                    await member.send('Sorry %s, you cannot bet less than the minimum bet. [Min bet:%s]' % (username, max_bet))
                 elif bet > max_bet:
                     await member.send('Sorry %s, you cannot bet more than the maximum bet. [Max bet:%s]' % (username, max_bet))
         except asyncio.TimeoutError:
-            await message.author.send("I waited for you to place a bet! [Timeout 60 seconds]")
+            await message.author.send("I waited for you to place a bet! [Timeout 30 seconds]")
             waiting_for_bet = False
-        for player in dealer.ready_players:
-            if player: ## Player is ready
-                dealer.game_in_progress = True
-        # Poker Game Loop
-        while dealer.game_in_progress == True:
-            turn_player = dealer.get_turn_player()
-            await message.author.response("It's %s's turn to play."
-                                          " (Player %s's cards:%s"
-                                          % (turn_player.player_name,
-                                             turn_player.player_name,
-                                             turn_player.cards_in_hand))
-            response = input("Which cards which you like to trade this turn?"
-                             " [You can trade 3 cards at most.]")
+
+    ###      Poker Game Loop     ###
+    while dealer.game_in_progress == True:
+        turn_player = dealer.get_turn_player()
+        name = turn_player.player_name
+        cards_in_hand = turn_player.print_hand()
+        await message.author.send("It's %s's turn!" % (name))
+        await message.author.send("Your cards are:\n %s"
+                    "Which cards which you like to trade this turn?\n"
+                          "[You can trade 3 cards at most.]" % (cards_in_hand))
+        try:
+            msg = await client.wait_for('message', timeout=10.0)
+            if msg:
+                print (msg.content)
+        except asyncio.TimeoutError:
+            await message.author.send("It's your turn! Which cards would you like to trade? [30 seconds left]")
+            msg = await client.wait_for('message', timeout=10.0)
+            dealer.next_player()
+            await message.author.send("Your turn is now over! [60 seconds has elapsed]")
 
 @client.event
 async def on_message(message):
@@ -322,8 +334,7 @@ async def on_message(message):
     ## GAME COMMANDS
 
     if message.content == ("!play poker"):
-        await message.author.send ("Starting a 1 on 1 game of poker versus yours truly, Mr.Rolepy.")
-        # await do_poker_game(message)
+        await do_poker_game(message)
 
     ## JUST FOR FUN COMMANDS
 

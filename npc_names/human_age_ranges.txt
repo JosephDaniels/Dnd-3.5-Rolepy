@@ -1,0 +1,13 @@
+human baby = 0 - 1
+human toddler = 2 - 3
+human very young = 4 - 6
+human child = 7 - 10
+human pre-teen = 11 - 12
+human young teen = 13 - 15
+human teen = 16 - 18
+human young adult = 19 - 24
+human adult = 25 - 35
+human middle aged = 36 - 49
+human over the hill = 50 - 64
+human senior = 65 - 79
+human geriatric = 80 - 120

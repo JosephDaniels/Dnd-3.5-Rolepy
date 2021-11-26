@@ -1,0 +1,13 @@
+elf baby = 0 - 5
+elf toddler = 6 - 10
+elf very young = 11 - 19
+elf child = 20 - 29
+elf pre-teen = 30 - 39
+elf young teen = 40 - 55
+elf teen = 56 - 74
+elf young adult = 75 - 109
+elf adult = 110 - 174
+elf middle aged = 175 - 262
+elf over the hill = 263 - 349
+elf senior = 350 - 449
+elf geriatric = 450 - 750

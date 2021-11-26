@@ -1901,7 +1901,12 @@ def save_all_age_ranges():
     for race in race_list:
         race = race.lower()
         for age_range in age_ranges[race]:
-
+            lower_range, upper_range = age_ranges[race][age_range]
+            _str = "%s %s = %i - %i\n" % (race, age_range, lower_range, upper_range)
+            _data = _data+_str
+        filename = "npc_names/%s_age_ranges.txt" % (race)
+        save(filename, _data)
+        _data = ""
 
 
 def test_1():
@@ -1925,11 +1930,11 @@ def test_6():
 def test_7():
     save_all_eye_colours()
 
-def test_8()
-    save_all_age_ranges():
+def test_8():
+    save_all_age_ranges()
 
 if __name__ == "__main__":
-    test_7()
+    test_8()
 
 
 

@@ -1,0 +1,13 @@
+dwarf baby = 0 - 3
+dwarf toddler = 4 - 7
+dwarf very young = 8 - 12
+dwarf child = 13 - 18
+dwarf pre-teen = 19 - 23
+dwarf young teen = 24 - 28
+dwarf teen = 29 - 33
+dwarf young adult = 34 - 39
+dwarf adult = 40 - 124
+dwarf middle aged = 125 - 187
+dwarf over the hill = 188 - 249
+dwarf senior = 250 - 349
+dwarf geriatric = 350 - 450

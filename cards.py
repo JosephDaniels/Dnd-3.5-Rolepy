@@ -71,8 +71,16 @@ class Card_Player(object):
     def sort_hand(self):
         self.cards_in_hand.sort()
 
-    def cards_in_hand(self):
+    def get_hand(self):
         return str(self.cards_in_hand)
+
+    def print_hand(self):
+        cards = ""
+        for card in self.cards_in_hand:
+            value, suit, = card
+            _str = ("(%s) %s of %s\n" % (card, CARD_VALUE_NAMES[value], CARD_SUIT_NAMES[suit]))
+            cards = cards+_str
+        return cards
 
 class Deck(object):
     def __init__(self, new_deck_order = True):
@@ -185,25 +193,25 @@ class Card_Dealer(object):
         if player in self.players:
             self.players.remove(player)
 
-    def deal_a_card_to(self,player):
+    def deal_a_card_to(self, player, debug = False):
         card = self.deck.draw_a_card()
 
-        card_suit = card.strip("A2345678910JQK")
+
+        card_suit = card.strip("A23456789TJQK")
+        ## Gets the fancy full name
         card_suit = CARD_SUIT_NAMES[card_suit]
 
         card_value = card.strip("CHSD")
         card_value = CARD_VALUE_NAMES[card_value]
 
         player.add_to_hand(card)
-        print ("%s of %s was dealt to player %s" % (card_value, card_suit, player.player_name))
+        if debug == True:
+            print ("%s of %s was dealt to player %s" % (card_value, card_suit, player.player_name))
 
     def deal_cards(self):
         for card in range(self.hand_size):
             for player in self.players:
                 self.deal_a_card_to(player)
-
-    def show_hand(self, player):
-        return player.cards_in_hand
 
     def get_turn_player(self):
         return self.players[self.current_player]
@@ -213,6 +221,123 @@ class Card_Dealer(object):
         if self.current_player >= len(self.players):
             self.current_player = 0
 
+class Poker_Player(Card_Player):
+    def __init__(self,name):
+        super().__init__(Card_Player)
+        self.player_name = name
+
+    def get_high_card(self):
+        """ Gets the highest of the cards of 'non-winning' cards """
+        pass
+
+    def check_royal_flush(self):
+        if self.check_flush() and self.check_straight():
+            for card in self.cards_in_hand:
+                if card in ROYAL_FLUSH:
+                    return True
+        else:
+            return False
+
+    def check_straight_flush(self):
+        if self.check_flush() and self.check_straight():
+            return True
+        else:
+            return False
+
+    def check_four_of_a_kind(self):
+        values = [i[0] for i in self.cards_in_hand]
+        value_counts = defaultdict(lambda: 0)
+        for v in values:
+            value_counts[v] += 1
+        if sorted(value_counts.values()) == [1, 4]:
+            return True
+        return False
+
+    def check_full_house(self):
+        values = [i[0] for i in self.cards_in_hand]
+        value_counts = defaultdict(lambda: 0)
+        for v in values:
+            value_counts[v] += 1
+        if sorted(value_counts.values()) == [2, 3]:
+            return True
+        return False
+
+    def check_flush(self):
+        suits = [i[1] for i in self.cards_in_hand]
+        if len(set(suits)) == 1:
+            return True
+        else:
+            return False
+
+    def check_straight(self):
+        values = [i[0] for i in self.cards_in_hand]
+        value_counts = defaultdict(lambda: 0)
+        for v in values:
+            value_counts[v] += 1
+        rank_values = [CARD_ORDER_DICT[i] for i in values]
+        value_range = max(rank_values) - min(rank_values)
+        if len(set(value_counts.values())) == 1 and (value_range == 4):
+            return True
+        else:
+            # check straight with low Ace
+            if set(values) == set(["A", "2", "3", "4", "5"]):
+                return True
+            return False
+
+    def check_three_of_a_kind(self):
+        values = [i[0] for i in self.cards_in_hand]
+        value_counts = defaultdict(lambda: 0)
+        for v in values:
+            value_counts[v] += 1
+        if set(value_counts.values()) == set([3, 1]):
+            return True
+        else:
+            return False
+
+    def check_two_pair(self):
+        values = [i[0] for i in self.cards_in_hand]
+        value_counts = defaultdict(lambda: 0)
+        for v in values:
+            value_counts[v] += 1
+        if sorted(value_counts.values()) == [1, 2, 2]:
+            return True
+        else:
+            return False
+
+    def check_one_pair(self):
+        values = [i[0] for i in self.cards_in_hand]
+        value_counts = defaultdict(lambda: 0)
+        for v in values:
+            value_counts[v] += 1
+        if 2 in value_counts.values():
+            return True
+        else:
+            return False
+
+    def get_hand_ranking(self):
+        """ Gets the highest score of the hand.
+        10 = Royal Flush,
+        9 = Straight Flush, Etc."""
+        if self.check_royal_flush():
+            return 10
+        if self.check_straight_flush():
+            return 9
+        if self.check_four_of_a_kind():
+            return 8
+        if self.check_full_house():
+            return 7
+        if self.check_flush():
+            return 6
+        if self.check_straight():
+            return 5
+        if self.check_three_of_a_kind():
+            return 4
+        if self.check_two_pair():
+            return 3
+        if self.check_one_pair():
+            return 2
+        return 1
+
 class Poker_Card_Dealer(Card_Dealer):
     def __init__(self):
         """ Defaults to standard Poker Rules.
@@ -221,7 +346,7 @@ class Poker_Card_Dealer(Card_Dealer):
         self.poker_chips = {} ## Usernames associated with the amount of chips that they have.
         self.load_poker_chips() ## Populates the poker chip amounts based off of data/poker_chips.txt
         self.betting_level = 1
-        self.MIX_MAX_BET_AMOUNTS = {
+        self.MIN_MAX_BET_AMOUNTS = {
             # Max Bet Amounts, rising by level
             1   :   (5, 100),
             2   :   (10, 200),
@@ -246,18 +371,11 @@ class Poker_Card_Dealer(Card_Dealer):
         for shuffles in range(7):
             self.shuffle_deck()
         ## Player Settings
-        self.ready_players = {}  # A dictionary associating names to bet amounts, ready status boolean.
+        self.betting_players = {}  # A dictionary associating names to bet amounts.
 
-    def add_player(self, player):
-        if player not in self.players:
-            self.players.append(player)
+    def add_bet(self, player, bet_amount):
         if player in self.players:
-            self.ready_players[player] = (-1, False) # Initialization bet_amt, ready_status
-
-    def ready_up(self, player):
-        if player in self.players:
-            self.ready_players[player] = (player.bet, True)
-            pass
+            self.betting_players[player] = int(bet_amount)
 
     def save_poker_chips(self):
         _lines = []
@@ -284,111 +402,6 @@ class Poker_Card_Dealer(Card_Dealer):
             player, chips = line.split("=")
             player, chips = player.strip(), chips.strip()
             self.poker_chips[player] = int(chips)
-
-    def check_royal_flush(self, hand):
-        if self.check_flush(hand) and self.check_straight(hand):
-            for card in hand:
-                if card in ROYAL_FLUSH:
-                    return True
-        else:
-            return False
-
-    def check_straight_flush(self, hand):
-        if self.check_flush(hand) and self.check_straight(hand):
-            return True
-        else:
-            return False
-
-    def check_four_of_a_kind(self, hand):
-        values = [i[0] for i in hand]
-        value_counts = defaultdict(lambda: 0)
-        for v in values:
-            value_counts[v] += 1
-        if sorted(value_counts.values()) == [1, 4]:
-            return True
-        return False
-
-    def check_full_house(self, hand):
-        values = [i[0] for i in hand]
-        value_counts = defaultdict(lambda: 0)
-        for v in values:
-            value_counts[v] += 1
-        if sorted(value_counts.values()) == [2, 3]:
-            return True
-        return False
-
-    def check_flush(self, hand):
-        suits = [i[1] for i in hand]
-        if len(set(suits)) == 1:
-            return True
-        else:
-            return False
-
-    def check_straight(self, hand):
-        values = [i[0] for i in hand]
-        value_counts = defaultdict(lambda: 0)
-        for v in values:
-            value_counts[v] += 1
-        rank_values = [CARD_ORDER_DICT[i] for i in values]
-        value_range = max(rank_values) - min(rank_values)
-        if len(set(value_counts.values())) == 1 and (value_range == 4):
-            return True
-        else:
-            # check straight with low Ace
-            if set(values) == set(["A", "2", "3", "4", "5"]):
-                return True
-            return False
-
-    def check_three_of_a_kind(self, hand):
-        values = [i[0] for i in hand]
-        value_counts = defaultdict(lambda: 0)
-        for v in values:
-            value_counts[v] += 1
-        if set(value_counts.values()) == set([3, 1]):
-            return True
-        else:
-            return False
-
-    def check_two_pair(self, hand):
-        values = [i[0] for i in hand]
-        value_counts = defaultdict(lambda: 0)
-        for v in values:
-            value_counts[v] += 1
-        if sorted(value_counts.values()) == [1, 2, 2]:
-            return True
-        else:
-            return False
-
-    def check_one_pair(self, hand):
-        values = [i[0] for i in hand]
-        value_counts = defaultdict(lambda: 0)
-        for v in values:
-            value_counts[v] += 1
-        if 2 in value_counts.values():
-            return True
-        else:
-            return False
-
-    def check_hand(self, hand):
-        if self.check_royal_flush(hand):
-            return 10
-        if self.check_straight_flush(hand):
-            return 9
-        if self.check_four_of_a_kind(hand):
-            return 8
-        if self.check_full_house(hand):
-            return 7
-        if self.check_flush(hand):
-            return 6
-        if self.check_straight(hand):
-            return 5
-        if self.check_three_of_a_kind(hand):
-            return 4
-        if self.check_two_pair(hand):
-            return 3
-        if self.check_one_pair(hand):
-            return 2
-        return 1
 
     def start_game(self):
         self.game_in_progress = True
@@ -444,7 +457,6 @@ def test_2():  # Test a hand of poker 1v1
     print("Joey's hand: " + str(joeys_hand))
     print("Care's hand: " + str(cares_hand))
 
-
 def test_3():  # Poker with new Poker Card Dealer object
     dealer = Poker_Card_Dealer()
     joey = Card_Player(player_name="Joey")
@@ -470,6 +482,42 @@ def test_4():  # Working with Poker Hand Rankings
     hand_result = HAND_RANKINGS[dealer.check_hand(hand)]
     print ("Your hand is: %s. Best Hand: [%s]" % (hand,hand_result))
 
+def test_5(): ## testing print hand functionality
+    d = Deck(new_deck_order=False)
+    dealer = Poker_Card_Dealer()
+    p = Card_Player("Joey")
+    hand_size = 5
+    for x in range(hand_size):
+        card = dealer.deck.draw_a_card()
+        p.add_to_hand(card)
+    p.print_hand()
+
+def test_6():  # Working with Poker Hand Rankings
+    d = Deck(new_deck_order=False)
+    dealer = Poker_Card_Dealer()
+    players = []
+    names = ["ed", "edd", "eddy", "bob", "alan"]
+    for name in names:
+        p = Poker_Player(name)
+        players.append(p)
+    hand_size = 5
+    for c in range(hand_size):
+        for player in players:
+            card = dealer.deck.draw_a_card()
+            player.add_to_hand(card)
+
+    winner = players[0]
+    for player in players[1:]:
+        if player.get_hand_ranking() > winner.get_hand_ranking():
+            winner = player
+
+    hand_type = HAND_RANKINGS[winner.get_hand_ranking()]
+    print ("Player %s has the best hand with a %s: [%s]" % (winner.player_name,
+                                                            hand_type,
+                                                            winner.print_hand()))
+    for player in players:
+        if player != winner:
+            print ("Player %s had %s." % (player.player_name, player.print_hand()))
 
 if __name__ == "__main__":
-    test_4()
+    test_6()

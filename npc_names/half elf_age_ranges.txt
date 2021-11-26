@@ -1,0 +1,13 @@
+half elf baby = 0 - 3
+half elf toddler = 4 - 5
+half elf very young = 6 - 8
+half elf child = 9 - 12
+half elf pre-teen = 13 - 16
+half elf young teen = 17 - 21
+half elf teen = 22 - 27
+half elf young adult = 28 - 34
+half elf adult = 35 - 61
+half elf middle aged = 62 - 92
+half elf over the hill = 93 - 124
+half elf senior = 125 - 184
+half elf geriatric = 185 - 200
