@@ -9,7 +9,7 @@ https://briancaffey.github.io/2018/01/02/checking-poker-hands-with-python.html/
 
 import random
 
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 
 ROYAL_FLUSH = ["AS", "JS", "QS", "KS", "TS"]
 
@@ -51,36 +51,20 @@ HAND_RANKINGS = {
     1   :   "High Card"
 }
 
-class Card_Player(object):
-    def __init__(self, player_name = ""):
-        self.player_name = player_name
-        self.cards_in_hand = []
+# def compare(card_1,card_2):
+#     if card_1.value > card_2.value:
+#         return card_1
+#     elif card_2.value > card_1.value:
+#         return card_2
+#     else:
+#         if card_1.
 
-    def add_to_hand(self, card):
-        self.cards_in_hand.append(card)
 
-    def remove_from_hand(self, card):
-        self.cards_in_hand.remove(card)
-        return card
-
-    def toss_hand(self):
-        cards = self.cards_in_hand
-        self.cards_in_hand = []
-        return cards
-
-    def sort_hand(self):
-        self.cards_in_hand.sort()
-
-    def get_hand(self):
-        return str(self.cards_in_hand)
-
-    def print_hand(self):
-        cards = ""
-        for card in self.cards_in_hand:
-            value, suit, = card
-            _str = ("(%s) %s of %s\n" % (card, CARD_VALUE_NAMES[value], CARD_SUIT_NAMES[suit]))
-            cards = cards+_str
-        return cards
+class Card(object):
+    def __init__(self, name):
+        self.name = name
+        self.value = int(name[0])
+        self.suit = name[1]
 
 class Deck(object):
     def __init__(self, new_deck_order = True):
@@ -168,6 +152,37 @@ class Deck(object):
     def set_new_deck_order(self):
         pass
 
+class Card_Player(object):
+    def __init__(self, player_name = ""):
+        self.player_name = player_name
+        self.cards_in_hand = []
+
+    def add_to_hand(self, card):
+        self.cards_in_hand.append(card)
+
+    def remove_from_hand(self, card):
+        self.cards_in_hand.remove(card)
+        return card
+
+    def toss_hand(self):
+        cards = self.cards_in_hand
+        self.cards_in_hand = []
+        return cards
+
+    def sort_hand(self):
+        self.cards_in_hand.sort()
+
+    def get_hand(self):
+        return str(self.cards_in_hand)
+
+    def print_hand(self):
+        cards = ""
+        for card in self.cards_in_hand:
+            value, suit, = card
+            _str = ("(%s) %s of %s\n" % (card, CARD_VALUE_NAMES[value], CARD_SUIT_NAMES[suit]))
+            cards = cards+_str
+        return cards
+
 class Card_Dealer(object):
     def __init__(self):
         """ A class that can handle card games."""
@@ -225,6 +240,7 @@ class Poker_Player(Card_Player):
     def __init__(self,name):
         super().__init__(Card_Player)
         self.player_name = name
+        self.highest_card = None
 
     def get_high_card(self):
         """ Gets the highest of the cards of 'non-winning' cards """
@@ -244,27 +260,49 @@ class Poker_Player(Card_Player):
         else:
             return False
 
+    def count_same_valued_cards(self):
+        same_cards = defaultdict(lambda: [])
+        for card in self.cards_in_hand:
+            value = card[0]  # Card value is the first element e.g. [K] S
+            same_cards[value].append(card)  # Associates the value with the card
+        ## Group non zero counts with their list of cards
+        count_list = []
+        for value in same_cards:
+            count_list.append((len(same_cards[value]), same_cards[value]))
+        count_list.sort()
+        count_list.reverse()
+        return count_list
+
+    def count_same_suited_cards(self):
+        same_cards = defaultdict(lambda: [])
+        for card in self.cards_in_hand:
+            suit = card[1]  # Card value is the first element e.g. [K] S
+            same_cards[suit].append(card)  # Associates the value with the card
+        ## Group non zero counts with their list of cards
+        count_list = []
+        for value in same_cards:
+            count_list.append((len(same_cards[value]), same_cards[value]))
+        count_list.sort()
+        count_list.reverse()
+        return count_list
+
     def check_four_of_a_kind(self):
-        values = [i[0] for i in self.cards_in_hand]
-        value_counts = defaultdict(lambda: 0)
-        for v in values:
-            value_counts[v] += 1
-        if sorted(value_counts.values()) == [1, 4]:
+        count_list = self.count_same_valued_cards()
+        if count_list[0][0] == 4: ## Four of a kind
+            self.highest_card = count_list[-1][1]
             return True
         return False
 
     def check_full_house(self):
-        values = [i[0] for i in self.cards_in_hand]
-        value_counts = defaultdict(lambda: 0)
-        for v in values:
-            value_counts[v] += 1
-        if sorted(value_counts.values()) == [2, 3]:
+        count_list = self.count_same_valued_cards()
+        if count_list[0][0] == 3 and count_list[1][0] == 2:
+            self.highest_card = count_list[0][0]
             return True
         return False
 
     def check_flush(self):
-        suits = [i[1] for i in self.cards_in_hand]
-        if len(set(suits)) == 1:
+        count_list = self.count_same_suited_cards()
+        if count_list[0][0] == 5:
             return True
         else:
             return False
@@ -474,13 +512,17 @@ def test_3():  # Poker with new Poker Card Dealer object
 def test_4():  # Working with Poker Hand Rankings
     d = Deck(new_deck_order=False)
     dealer = Poker_Card_Dealer()
-    hand = []
-    hand_size = 5
-    for x in range(hand_size):
-        card = dealer.deck.draw_a_card()
-        hand.append(card)
-    hand_result = HAND_RANKINGS[dealer.check_hand(hand)]
-    print ("Your hand is: %s. Best Hand: [%s]" % (hand,hand_result))
+    hand = ["2S","KS","KC","KH","KD"]
+    # hand_size = 5
+    # for x in range(hand_size):
+    #     card = dealer.deck.draw_a_card()
+    #     hand.append(card)
+    p = Poker_Player("Bob")
+    for card in hand:
+        p.add_to_hand(card)
+    hand_result = HAND_RANKINGS[p.get_hand_ranking()]
+    print ("Your hand is: %s. Best Hand: [%s]" % (hand, hand_result))
+    print ("High Card: %s" % (p.highest_card))
 
 def test_5(): ## testing print hand functionality
     d = Deck(new_deck_order=False)
@@ -510,6 +552,8 @@ def test_6():  # Working with Poker Hand Rankings
     for player in players[1:]:
         if player.get_hand_ranking() > winner.get_hand_ranking():
             winner = player
+        if player.get_hand_ranking() == winner.get_hand_ranking():
+            pass
 
     hand_type = HAND_RANKINGS[winner.get_hand_ranking()]
     print ("Player %s has the best hand with a %s: [%s]" % (winner.player_name,
@@ -520,4 +564,4 @@ def test_6():  # Working with Poker Hand Rankings
             print ("Player %s had %s." % (player.player_name, player.print_hand()))
 
 if __name__ == "__main__":
-    test_6()
+    test_4()
