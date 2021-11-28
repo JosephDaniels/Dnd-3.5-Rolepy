@@ -411,6 +411,29 @@ class Poker_Card_Dealer(Card_Dealer):
         ## Player Settings
         self.betting_players = {}  # A dictionary associating names to bet amounts.
 
+    def trade_cards(self, cards_to_trade, player):
+        """ Swaps a string of cards out of the player's hand,
+        and replaces them with new cards until they have a full hand again.
+        (Determined by the hand size)"""
+
+        _str = cards_to_trade  ## Example "TSKSTC"
+        cards = []  ## A list of cards that are seperated
+        while _str:
+            cards.append(_str[:2])
+            _str = _str[2:]
+        for card in cards:
+            if card in player.cards_in_hand:
+                player.cards_in_hand.pop(card)
+        num_cards = self.hand_size-player.cards_in_hand
+        cards_received = []
+        for card in num_cards:
+            card = dealer.draw_a_card()
+            player.add_to_hand(card)
+            cards_received.append(card)
+        return cards_received
+
+
+
     def add_bet(self, player, bet_amount):
         if player in self.players:
             self.betting_players[player] = int(bet_amount)

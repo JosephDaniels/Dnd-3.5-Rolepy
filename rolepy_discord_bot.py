@@ -193,7 +193,10 @@ async def do_poker_game(message):
         try:
             msg = await client.wait_for('message', timeout=10.0)
             if msg:
-                print (msg.content)
+                cards_received = dealer.trade_in_cards(msg, turn_player)
+                await message.author.send("You traded (%s) and got (%s) back."
+                                          % msg, cards_received)
+                dealer.next_player()
         except asyncio.TimeoutError:
             await message.author.send("It's your turn! Which cards would you like to trade? [30 seconds left]")
             msg = await client.wait_for('message', timeout=10.0)
