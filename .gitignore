@@ -4,6 +4,8 @@ TOKEN.pyc
 __pycache__/*.pyc
 *.pyc
 /.idea/.gitignore
+/venv/Lib/*
+/venv/Include/*
 /venv/Lib/site-packages/pip/_vendor/packaging/__about__.py
 /venv/Lib/site-packages/pkg_resources/_vendor/packaging/__about__.py
 /venv/Lib/site-packages/setuptools/_vendor/packaging/__about__.py
