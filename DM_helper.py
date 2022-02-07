@@ -1,6 +1,6 @@
 from character import *
 from dnd35_class import *
-from dice import *
+from rolepy_dice import *
 
 DND35PH_CLASSES = ["bard","barbarian","cleric","druid","fighter","monk","paladin","ranger","rogue","sorcerer","wizard"] ## All the base classes from the DND 3.5e Player's handbook
 

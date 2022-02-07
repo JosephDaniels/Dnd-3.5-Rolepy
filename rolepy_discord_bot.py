@@ -11,7 +11,7 @@ from rolepy_help import *
 from DM_helper import *  # Module for running the game, lets us keep track of characters
 from NPC import *  # non-player character information
 
-from card_games import play_poker_game
+# from card_games import play_poker_game
 
 ADMINS = ['StabbyStabby#1327', 'alanwongis#3590']
 
@@ -100,21 +100,22 @@ async def do_logout(message):
         return "You're not logged in!"
 
 async def do_poker_game(message):
-    play_poker_game(message)
+    await play_poker_game(message)
 
 def do_roll_wod(message, dice_pool, eight_again=False, nine_again=False):
     dice_pool = int(dice_pool)
     username = message.author
-    dice_results, successes, rerolls = roll_wod_dice(dice_pool, eight_again, nine_again)
-    print(dice_results, dice_pool, successes, rerolls)
+    dice_results, successes, rerolls =  roll_wod_dice(dice_pool, eight_again, nine_again)
+
     extra_text = ""
     if eight_again == True:
         extra_text = " with eight-again"
     elif nine_again == True:
         extra_text = " with nine-again"
+
     if successes == 0:
         return "%s rolled %i dice and failed their roll%s. Dice Results: %s" % (
-        username, dice_pool, extra_text, dice_results)
+            username, dice_pool, extra_text, dice_results)
     elif successes > 0:
         if rerolls > 0:
             return "%s rolled %i dice and received %i successes%s. They had %i rerolled dice. Dice Results: %s" % (
@@ -172,7 +173,6 @@ async def on_message(message):
         except asyncio.TimeoutError:
             await message.author.send("I waited for you to say hello... </3")
 
-
     if message.content.startswith('!login'):
         response, nick = do_login(message)
         if nick != None:  # change their nickname
@@ -220,28 +220,33 @@ async def on_message(message):
 
     ## BATTLE COMMANDS
 
-    if message.content == ("!begincombat") or message.content == ("!startcombat"):
-        ## Start Combat
-        ## Switch to combat mode
-        pass
-
-    if message.content.startswith('!addcombatant'):
-        ## Check if they have DM power
-        if not (str(message.author) in ADMINS):
-            await message.author.send("Hey!! You're not allowed to add combatants to the initiative. Nice try. Chump.")
-
-        else:
-            combatant_name = message.content.split(" ")[1].strip()  ## grabs the second element and removes whitespace
-            if combatant_name in dm.logged_in_as.values():
-                pass
-                ## to do, during the login by the user, retrieve all their info
-            enemy = NPC(combatant_name)  ## tries to make an npc of the type specified
-            dm.add_to_combat(enemy)
+    # if message.content == ("!begincombat") or message.content == ("!startcombat"):
+    #     ## Start Combat
+    #     ## Switch to combat mode
+    #     pass
+    #
+    # if message.content.startswith('!addcombatant'):
+    #     ## Check if they have DM power
+    #     if not (str(message.author) in ADMINS):
+    #         await message.author.send("Hey!! You're not allowed to add combatants to the initiative. Nice try, chump.")
+    #
+    #     else:
+    #         combatant_name = message.content.split(" ")[1].strip()  ## grabs the second element and removes whitespace
+    #         if combatant_name in dm.logged_in_as.values():
+    #             pass
+    #             ## to do, during the login by the user, retrieve all their info
+    #         enemy = NPC(combatant_name)  ## tries to make an npc of the type specified
+    #         dm.add_to_combat(enemy)
 
     ## DICE COMMANDS
 
     if message.content.startswith('!roll'):
-        if message.content.startswith('!rollwod'):
+        if message.content.startswith('!rolld'):
+            cmd = message.content
+            response = do_roll(cmd, username)
+            await message.channel.send(response)
+
+        elif message.content.startswith('!rollwod'):
             try:
                 command, dice_pool = message.content.split(" ")
             except ValueError:
@@ -257,7 +262,7 @@ async def on_message(message):
                 response = do_roll_wod(message, dice_pool, nine_again=True)
                 await message.channel.send(response)
 
-        if message.content.startswith('!rollchancedie'):
+        elif message.content.startswith('!rollchancedie'):
             dice_result = rolld(10)
             if dice_result == 1:
                 await message.channel.send(
@@ -268,10 +273,6 @@ async def on_message(message):
             else:
                 await message.channel.send(
                     "%s rolled a chance die and failed. [Rolled %s on a d10]" % (username, dice_result))
-        else:
-            cmd = message.content
-            response = do_roll(cmd, username)
-            await message.channel.send(response)
 
     if message.content.startswith('!coinflip') or message.content.startswith('!flipcoin') or message.content.startswith('!cointoss'):
         result = coinflip()

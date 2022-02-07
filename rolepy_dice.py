@@ -2,9 +2,7 @@ import random
 
 VALID_DICE = [2,3,4,6,8,10,12,16,20,24,30,100,1000]
 
-
 """
-
 This script is an extension of the random module that lets you invoke
 specific dice and then re-roll them.
 
@@ -112,7 +110,7 @@ def roll_with_disadvantage():
     return low_roll, high_roll
 
 def roll_wod_dice(dice_pool, eight_again=False, nine_again=False):
-    
+    """ Takes a dice roll command and returns a completed message. """
     success_values = [8,9,10]
     successes = 0
     rolled_dice = []
@@ -157,5 +155,9 @@ def test_2():
     command = "roll3d8"
     print(parse_dice_command(command))
 
+def test_3():
+    dice_pool = 10
+    print(roll_wod_dice(dice_pool))
+
 if __name__ == "__main__":
-    test_2()
+    test_3()

@@ -1,5 +1,5 @@
 from character import *
-from dice import *
+from rolepy_dice import *
 
 class NPC(Character):
     def __init__(self, npc_name = ""):
