@@ -100,7 +100,7 @@ async def do_logout(message):
         return "You're not logged in!"
 
 async def do_poker_game(message):
-    play_poker_game()
+    play_poker_game(message)
 
 def do_roll_wod(message, dice_pool, eight_again=False, nine_again=False):
     dice_pool = int(dice_pool)

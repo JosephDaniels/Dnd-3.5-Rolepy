@@ -5,7 +5,7 @@ from cards import *
 Originally intended for poker game use with Jordan Vo's Rolepy system.
 """
 
-def play_poker_game(message):
+async def play_poker_game(message):
     member = message.author
     username = "%s#%s" % (member.name, member.discriminator)
     bet = 0

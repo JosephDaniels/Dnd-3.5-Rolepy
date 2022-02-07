@@ -1,10 +1,5 @@
 """
 Rewritten by Jordan Vo for use in his Roleplay Discord Bot
-
-Card Hand code was written by Brian Caffey
-
-You can check out his github here:
-https://briancaffey.github.io/2018/01/02/checking-poker-hands-with-python.html/
 """
 
 import random
