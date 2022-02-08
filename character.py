@@ -174,6 +174,57 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
             profile[key] = value
         self.__dict__.update(profile)
 
+    def get_full_profile(self):
+        """ Returns a string that tells you ALL information about the character.
+        CAREFUL! This might contain secret character information."""
+        picture_status = ""
+        image_file = ""
+        if self.profile_image == None:
+            picture_status = "-No Profile Picture Found-"
+        response = " Username: %s\n" \
+                   " Character Name: %s\n"\
+                   " Race: %s\n" \
+                   " Age: %i\n" \
+                   " Gender: %s\n" \
+                   " Eye colour: %s\n" \
+                   " Hair colour: %s\n" \
+                   " Skin colour: %s\n" \
+                   " Strength: %s\n" \
+                   " Dexterity: %s\n" \
+                   " Constitution: %s\n" \
+                   " Intelligence: %s\n" \
+                   " Wisdom: %s\n" \
+                   " Charisma: %s\n" \
+                   " Max Health: %s\n" \
+                   " Current Health: %s\n" \
+                   " Height: %s\n" \
+                   " Weight: %s\n" \
+                   " Preferred Weapon, if any: %s\n" \
+                   " Description: %s\n" \
+                   " History: %s\n" \
+                   " Picture: %s " %\
+                   (self.username, self.display_name, self.race,
+                    self.age, self.gender,
+                    self.eye_colour.capitalize(),
+                    self.hair_colour.capitalize(),
+                    self.skin_colour.capitalize(),
+                    self.strength,
+                    self.dexterity,
+                    self.constitution,
+                    self.intelligence,
+                    self.wisdom,
+                    self.charisma,
+                    self.maximum_health,
+                    self.current_health,
+                    self.height, self.weight, self.favorite_weapon,
+                    self.description, self.public_history, picture_status)
+        try:
+            image_file = "character_portraits/"+self.profile_image
+        except: ## Image file not found
+            picture_status = "-No Profile Picture Found-"
+            print("Wasn't able to find this image file! : %s" % (self.profile_image))
+        return response, image_file
+
     def get_profile(self):
         """ Returns a string that tells you public information about the character."""
         picture_status = ""

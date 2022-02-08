@@ -95,12 +95,12 @@ async def do_logout(message):
     if username in dm.logged_in_as.keys():  # checks if the username is in the logged_in_as dictionary keys ie Bobby#2451
         character = dm.logged_in_as[username]  # retrieves the the character they are logged in as
         dm.logged_in_as.pop(username)  # remove them from the logged in
-        return "%s, your character %s has been logged out." % (username, character.name)
+        return "%s, your character %s has been logged out." % (username, character.username)
     else:
         return "You're not logged in!"
 
-async def do_poker_game(message):
-    await play_poker_game(message)
+# async def do_poker_game(message):
+#     await play_poker_game(message)
 
 def do_roll_wod(message, dice_pool, eight_again=False, nine_again=False):
     dice_pool = int(dice_pool)
@@ -194,8 +194,8 @@ async def on_message(message):
 
     if message.content == ("!whoami") or message.content == ("!me"):
         char_sheet = dm.logged_in_as[username]  ## Finds your character sheet from your discord username
-        response = "You are playing %s, AKA %s" % (char_sheet.display_name, char_sheet.name)
-        await message.author.send(response)
+        response, image_file = char_sheet.get_full_profile()  # This is their FULL profile
+        await message.author.send(response, file=discord.File(image_file))
 
     if message.content.startswith("!whois"):
         if message.content == "!whoisplaying" or message.content == "!whoisloggedin":
@@ -213,30 +213,30 @@ async def on_message(message):
             target_character = message.content.split(" ")[1].strip()  ## gets the second parameter which is the target chara
             char_sheet = None
             for key in dm.logged_in_as.keys():  # A list of usernames
-                if dm.logged_in_as[key].name == target_character:  # check if a username is associated with a certain character
+                if dm.logged_in_as[key].username == target_character:  # check if a username is associated with a certain character
                     char_sheet = dm.logged_in_as[key]  ## Finds their character sheet from theirr discord username
                     response, image_file = char_sheet.get_profile()  # This is their public profile
                     await message.author.send(response, file=discord.File(image_file))
 
     ## BATTLE COMMANDS
 
-    # if message.content == ("!begincombat") or message.content == ("!startcombat"):
-    #     ## Start Combat
-    #     ## Switch to combat mode
-    #     pass
-    #
-    # if message.content.startswith('!addcombatant'):
-    #     ## Check if they have DM power
-    #     if not (str(message.author) in ADMINS):
-    #         await message.author.send("Hey!! You're not allowed to add combatants to the initiative. Nice try, chump.")
-    #
-    #     else:
-    #         combatant_name = message.content.split(" ")[1].strip()  ## grabs the second element and removes whitespace
-    #         if combatant_name in dm.logged_in_as.values():
-    #             pass
-    #             ## to do, during the login by the user, retrieve all their info
-    #         enemy = NPC(combatant_name)  ## tries to make an npc of the type specified
-    #         dm.add_to_combat(enemy)
+    if message.content == ("!begincombat") or message.content == ("!startcombat"):
+        ## Start Combat
+        ## Switch to combat mode
+        pass
+
+    if message.content.startswith('!addcombatant'):
+        ## Check if they have DM power
+        if not (str(message.author) in ADMINS):
+            await message.author.send("Hey!! You're not allowed to add combatants to the initiative. Nice try, chump.")
+
+        else:
+            combatant_name = message.content.split(" ")[1].strip()  ## grabs the second element and removes whitespace
+            if combatant_name in dm.logged_in_as.values():
+                pass
+                ## to do, during the login by the user, retrieve all their info
+            enemy = NPC(combatant_name)  ## tries to make an npc of the type specified
+            dm.add_to_combat(enemy)
 
     ## DICE COMMANDS
 
@@ -284,8 +284,8 @@ async def on_message(message):
 
     ## GAME COMMANDS
 
-    if message.content == ("!play poker"):
-        await do_poker_game(message)
+    # if message.content == ("!play poker"):
+    #     await do_poker_game(message)
 
     ## JUST FOR FUN COMMANDS
 

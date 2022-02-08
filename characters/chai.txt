@@ -12,21 +12,21 @@ hair_colour = blonde
 skin_colour = fair
 description = "You see a fair young elven lady, with an air of nobility about her. Her grey-blue eyes belie her feisty nature, and her golden locks spill out of a battle braid and curl around the small of her back. Her modest but extravagent clothes fail to hide both her attractive figure... and her battle scars."
 public_history = "Chailaine has seen a lot of fighting in her time."
-full_history =
+full_history = "Too much stuff happened in chai eighty-seven year lifespan"
 alignment = true neutral
 strength = 12
 dexterity = 18
 constitution = 10
 intelligence = 18
 wisdom = 14
-charisma6
+charisma = 16
 maximum_health = 48
 current_health = 48
 armor_class = 18
 base_attack_bonus = 6
 initiative = 4
 xp_points = 92480
-platinum_coins =
+platinum_coins = 0
 gold_coins = 58000
 silver_coins = 0
 copper_coins = 0
@@ -38,20 +38,20 @@ balance = 0
 bluff = 0
 climb = 0
 concentration = 6
-craft_alchemy
+craft_alchemy = 0
 craft_brewing = 11
 craft_cooking = 7
 craft_needlework = 7
-craft_weaponsmithing
-craft_armoursmithing
-craft_masonry
-craft_carpentry
-craft_poison
-craft_trap
-craft_culinary
-craft_musical_composition
-craft_written_composition
-decipher_script
+craft_weaponsmithing = 0
+craft_armoursmithing = 0
+craft_masonry = 0
+craft_carpentry = 0
+craft_poison = 0
+craft_trap = 0
+craft_culinary = 0
+craft_musical_composition = 0
+craft_written_composition = 0
+decipher_script = 0
 diplomacy = 6
 disable_device = 2
 disguise = 0
@@ -60,75 +60,75 @@ forgery = 0
 gather_information = 1
 handle_animal = 3
 heal = 3
-hide
+hide = 0
 intimidate = 7
 jump = 0
 knowledge_arcana = 7
-knowledge_engineering
-knowledge_dungeoneering
-knowledge_geography
-knowledge_history
-knowledge_local
+knowledge_engineering = 0
+knowledge_dungeoneering = 0
+knowledge_geography = 0
+knowledge_history = 0
+knowledge_local = 0
 knowledge_legal = 4
-knowledge_nature
+knowledge_nature = 0
 knowledge_nobility = 4
 knowledge_religion = 1
-knowledge_the_planes
-listen
-move_silently
-open_lock
-perform_act
-perform_comedy
-perform_dance
-perform_keyboard
-perform_oratory
-perform_percussion
-perform_stringed
-perform_wind
-perform_sing
-profession_academic
-profession_apothecary
-profession_celebrity
-profession_military
-profession_criminal
-profession_doctor
-profession_entrepreneur
-profession_investigator
-profession_scavenger
-profession_religious
-profession_transporter
-profession_engineer
-profession_alchemist
-profession_monster_hunter
+knowledge_the_planes = 0
+listen = 0
+move_silently = 0
+open_lock = 0
+perform_act = 0
+perform_comedy = 0
+perform_dance = 0
+perform_keyboard = 0
+perform_oratory = 0
+perform_percussion = 0
+perform_stringed = 0
+perform_wind = 0
+perform_sing = 0
+profession_academic = 0
+profession_apothecary = 0
+profession_celebrity = 0
+profession_military = 0
+profession_criminal = 0
+profession_doctor = 0
+profession_entrepreneur = 0
+profession_investigator = 0
+profession_scavenger = 0
+profession_religious = 0
+profession_transporter = 0
+profession_engineer = 0
+profession_alchemist = 0
+profession_monster_hunter = 0
 profession_princess = 6
 ride = 0
 search = 1
 sense_motive = 3
-sleight_of_hand
-speak_language_abyssal
-speak_language_aquan
-speak_language_auran
-speak_language_celestial
-speak_language_common
-speak_language_draconic
-speak_language_druidic
-speak_language_dwarven
-speak_language_elven
-speak_language_giant
-speak_language_gnome
-speak_language_goblin
-speak_language_gnoll
-speak_language_halfling
-speak_language_ignan
-speak_language_orcish
-speak_language_sylvan
-speak_language_terran
-speak_language_undercommon
+sleight_of_hand = 0
+speak_language_abyssal = 0
+speak_language_aquan = 0
+speak_language_auran = 0
+speak_language_celestial = 0
+speak_language_common = 0
+speak_language_draconic = 0
+speak_language_druidic = 0
+speak_language_dwarven = 0
+speak_language_elven = 0
+speak_language_giant = 0
+speak_language_gnome = 0
+speak_language_goblin = 0
+speak_language_gnoll = 0
+speak_language_halfling = 0
+speak_language_ignan = 0
+speak_language_orcish = 0
+speak_language_sylvan = 0
+speak_language_terran = 0
+speak_language_undercommon = 0
 spellcraft = 10
 spot = 0
 survival = 0
 swim = 3
-tumble
+tumble = 0
 use_magic_device = 8
 use_rope = 0
 feats = [magical_aptitude, eschew_materials, brew_potion, craft_wondrous_item, bone_art, scribe_scroll]
