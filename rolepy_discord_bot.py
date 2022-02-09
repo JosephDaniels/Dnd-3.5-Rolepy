@@ -3,6 +3,9 @@ import discord
 import asyncio
 
 import os
+
+import atexit
+
 from datetime import date
 
 from TOKEN import TOKEN
@@ -32,7 +35,7 @@ VALID_CHARACTERS = {'StabbyStabby#1327' : ['vsevellar', 'zandrius', 'zandria', '
                     'baronanansi#2600' : ['barda'],
                     'alanwongis#3590' : ['bob', 'akbar']}
 
-## START THE ENGINES
+# START THE ENGINES
 
 client = discord.Client()
 
@@ -352,3 +355,18 @@ async def on_message(message):
             await message.author.send(HELP_GENERAL_MESSAGE)
 
 client.run(TOKEN)
+
+def save_all(dm_instance):
+    # This will save all characters currently logged into the system
+    filename = "data/logged_in.txt"
+    _data = ""
+    for key in dm_instance.logged_in_as.keys():
+        _data = _data + ("%s = %s\n" % (key, dm_instance.logged_in_as[key].username))
+    f = open(filename, mode='w+')
+    f.write(_data)
+    f.close()
+
+@atexit.register
+def goodbye():
+    save_all(dm)
+    print('All logged in characters have been saved.')

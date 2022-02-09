@@ -53,12 +53,17 @@ class DM_helper(object):
         for character in self.characters:
             pass
 
-    def load_all_characters(self):
-        for character in self.characters:
-            pass
-
     def load_last_session(self):
-        self.load_all_characters()
+        ## This block re-logs all characters back in who were logged in before everything got reset
+        file = "data/logged_in.txt"
+        logged_in_charas = open(file, encoding="latin-1")
+        for line in logged_in_charas:
+            try:
+                key, value = line.split("=")
+                key, value = key.strip(), value.strip()  # Removes whitespace
+                self.logged_in_as[key] = value
+            except ValueError:
+                print ("No Characters logged in previously. [BLANK FILE FOUND]")
 
     def load_dnd_classes(self):
         for classname in DND35PH_CLASSES:
@@ -85,12 +90,12 @@ class DM_helper(object):
     def remove_from_combat(self,character_name=""):
         ## Used when someone retreats from the battle successfully and basically is a coward
         pos = 0
-        while pos < len(battle_order):
+        while pos < len(self.battle_order):
             initiative, character = self.battle_order[pos]
             if character_name == character.username:
-                battle_order.pop(pos)
-                if current_combatant >= len(self.battle_order):
-                    current_combatant = 0
+                self.battle_order.pop(pos)
+                if self.current_combatant >= len(self.battle_order):
+                    self.current_combatant = 0
     
     def dump_battle_order(self):
         ## test function
@@ -98,7 +103,7 @@ class DM_helper(object):
             print(initiative, participant.username)
 
     def whose_turn_isit(self):
-        return self.battle_order[current_combatant][1].username
+        return self.battle_order[self.current_combatant][1].username
 
     def ready_next_turn(self):
         # this is the phase which asks the current player their choice
@@ -106,10 +111,10 @@ class DM_helper(object):
     
     def do_next_turn(self):
         # this is where you as the DM confirm the turn and execute
-        current_combatant+=1
-        if current_combatant>=len(battle_order):
-            current_combatant=0
-            current_round+=1
+        self.current_combatant+=1
+        if self.current_combatant>=len(self.battle_order):
+            self.current_combatant=0
+            self.current_round+=1
 
     # this is a DM exclusive command to direct npcs to attack a specific player during combat
     def command_to_fight(self, npc, player):
@@ -164,22 +169,24 @@ class DM_helper(object):
         _effective_attack_bonus = defender.total_attack_bonus-4
         return (_effective_armor_class, _effective_attack_bonus)
 
-    def load_valid_characters(self, valid_characters_list):
-        for character in self.valid_characters_list.values():
-            pass
-
-
-    def get_logged_in_info(self):
+    def dump_logins(self):
         return self.logged_in_as
 
     def save_logins(self):
-        pass
+        # This will save all characters currently logged into the system
+        filename = "data/logged_in.txt"
+        _data = ""
+        for key in self.logged_in_as.keys():
+            _data = _data+("%s = %s\n" % (key, self.logged_in_as[key].username))
+        f = open(filename, mode='w+')
+        f.write(_data)
+        f.close()
 
     def end_combat(self):
         if len(self.battle_order) > 1:
             combat_active = False
         self.current_combatant = -1
-        refresh_combat()
+        # refresh_combat()
     
     def _test_combat(self, combatants):
         """
@@ -200,8 +207,8 @@ It will take their characters, use their initiative bonus and roll initiative fo
             temp_list.append((initiative_result, combatant))  ## Combatant name associated with a 
             temp_list.sort()
             temp_list.reverse()
-        battle_order = temp_list
-        combat_active = True
+        self.battle_order = temp_list
+        self.combat_active = True
 
 
 def test(): # combat test
@@ -254,8 +261,17 @@ def test(): # combat test
         dm.do_next_turn()
         print("It's now %s's turn!" % dm.whose_turn_isit())
 
-def test_2(): # 
-    pass
+def test_2():
+    # This test is to try and load the previous logins
+    dm = DM_helper()
+    dm.load_last_session()
+    print (dm.dump_logins())
+
+def test_3():
+    # Save the logins after a session
+    dm = DM_helper()
+    dm.load_last_session()
+    dm.save_logins()
 
 if __name__ == "__main__":
-    test()
+    test_3()
