@@ -18,31 +18,6 @@ from NPC import *  # non-player character information
 
 # from card_games import play_poker_game
 
-CHAT_COMMANDS = [  # Execution table that based on the command input
-    # it will throw control over to the given function
-    ("greet", do_greet),
-    ("hello", do_hello),
-    ("help", do_help),  # Handles vanilla help and help [command]
-    ("suggest", do_suggest),
-    ("login", do_login),  # formats as login [user]
-    ("logout", do_logout),
-    ("roll", do_roll),  # Handles both normal and wod rolls
-    ("coinflip", do_coinflip),  # These are all the same but people screw up and call it differently
-    ("flipcoin", do_coinflip),
-    ("cointoss", do_coinflip),
-    ("rockpaperscissors", do_rockpaperscissors),
-    ("whois", do_whois),
-    ("whoami", do_whoami),
-    ("me", do_whoami),
-    ("whosloggedin", do_showlogins),
-    ("tableflip", do_tableflip),
-    ("fliptable", do_tableflip),
-    ("breaktable", do_breaktable),
-    ("unfliptable", do_unfliptable),
-    ("sunglassesfingerguns", do_sunglassesfingerguns),
-    ("kickinthedoor", do_kickinthedoor)
-]
-
 ADMINS = ['StabbyStabby#1327', 'alanwongis#3590']
 
 DND_PLAYERS = ['StabbyStabby#1327',
@@ -81,11 +56,7 @@ suggestions = file_count
 async def on_ready():
     print('We have logged in as {0.user}'.format(client))
 
-def do_roll(command_line, username):
-    dice_total, num_dice, results, dice_type, modifier = parse_dice_command(command_line)  # Pulls the
-    return "%s rolled a %i on a %i%s. Results: %s%s" % (username, dice_total, num_dice, dice_type, results, modifier)
-
-def do_roll_wod(message, eight_again=False, nine_again=False):
+def handle_roll_wod(message, eight_again=False, nine_again=False):
     cmd, dice_pool = message.content.split(" ")
     dice_pool = int(dice_pool)
     username = message.author
@@ -108,49 +79,97 @@ def do_roll_wod(message, eight_again=False, nine_again=False):
             return "%s rolled %i dice and had %i successes%s. Dice Results: %s" % (
             username, dice_pool, successes, extra_text, dice_results)
 
+def do_roll(message):
+    username = "%s#%s" % (message.author.name, message.author.discriminator)
+    command_line = message.content  # E.g. !roll3d8
+    if message.content.startswith("!rollwod"):
+        try:
+            command, dice_pool = message.content.split(" ")
+        except ValueError:
+            response = "Sorry that didn't work. Try again."
+            return response, message.channel
+        if command == "!rollwod":
+            response = handle_roll_wod(message, dice_pool)
+        elif command == ("!rollwod8again"):
+            response = handle_roll_wod(message, dice_pool, eight_again=True)
+        elif command == ("!rollwod9again"):
+            response = handle_roll_wod(message, dice_pool, nine_again=True)
+
+    elif message.content.startswith('!rollchancedie'):
+        dice_result = rolld(10)
+        if dice_result == 1:
+            response = "%s rolled a chance die and suffered a dramatic failure. [Rolled 1 on a d10]" % (username)
+        elif dice_result == 10:
+            response = "%s rolled a chance die and managed to succeed. [Rolled 10 on a d10]" % (username)
+        else:
+            response = "%s rolled a chance die and failed. [Rolled %s on a d10]" % (username, dice_result)
+
+    else: # Handles both single dice and multiple dice
+        cmd = message.content
+        dice_total, num_dice, results, dice_type, modifier = parse_dice_command(command_line)  # Pulls the
+        response = "%s rolled a %i on a %i%s. Results: %s%s" % (username,
+                                                                dice_total,
+                                                                num_dice,
+                                                                dice_type,
+                                                                results,
+                                                                modifier)
+    return response, message.channel
+
 def do_login(message):
     nick = None
+    response = ""
     username = "%s#%s" % (message.author.name, message.author.discriminator)
-    command_line = message.content
+    command_line = message.content  # E.g. !login chai
+
+    try:
+        command_line = command_line.split(" ")  # splits the argument into two pieces IE login character
+        target_character = command_line[1]  # target character is the second side of the argument
+    except ValueError:  # means that the command failed to parse
+        response = "Failed to login."
+        return response, message.channel
+
     # Error Check 1 - You're not one of my friends
     if username not in DND_PLAYERS:
         response = "You are not allowed to play DnD. Please contact DM Joey for permission."
-        return response, nick
-    try:
-        command_line = command_line.split(" ")  # splits the argument into two pieces IE login character
-        target_character = " ".join(command_line[1:])  # target character is the second side of the argument
-    except ValueError:  # means that the command failed to parse
-        response = "Failed to login."
-        return response, nick
+    else:
 
-    # Error Check 2 - Don't try to steal my character!!!
-    if target_character not in VALID_CHARACTERS[username]:  # checks if the target character is valid for the user
-        response = "You cannot login as %s, %s is not your character." % (target_character, target_character)
-        return response, nick
+        # Error Check 2 - Don't try to steal my character!!!
+        if target_character not in VALID_CHARACTERS[username]:  # checks if the target character is valid for the user
+            response = "You cannot login as %s, %s is not your character." % (target_character, target_character)
 
-    # Exception, you're already logged in, I'm going to swap your character for you.
-    if username in dm.logged_in_as.keys():  # Already logged in
-        response = "%s, you are already logged in as %s." % (username,
-                                                             target_character)
-        return response, nick
-    else:  # Truly log their character in and load them in the system
-        response = "Successfully logged %s in as the character %s." % (username, target_character)
-        character_sheet = Character(target_character)
-        nick = character_sheet.username  # for changing their name in discord
-        dm.logged_in_as[username] = character_sheet  #Associates a given username with a character sheet
-        dm.add_character(character_sheet)
-        print ("%s has logged in as %s." % (username, target_character))
-        return response, nick
+        # Exception, you're already logged in. In the future I'm going to swap your character for you.
+        if username in dm.logged_in_as.keys():  # Already logged in
+            response = "%s, you are already logged in as %s." % (username,
+                                                                 target_character)
 
-async def do_logout(message):
+        else:  # Truly log their character in and load them in the system
+            response = "Successfully logged %s in as the character %s." % (username, target_character)
+            character_sheet = Character(target_character)
+            nick = character_sheet.username  # for changing their name in discord
+            dm.logged_in_as[username] = character_sheet  #Associates a given username with a character sheet
+            dm.add_character(character_sheet)
+            print ("%s has logged in as %s." % (username, target_character))
+
+    # if nick != None:  # change their nickname
+    #     if username in ADMINS:
+    #         print ("tried to change your name but you are too powerful, %s" % (username))
+    #     else:
+    #         await message.author.edit(nick=nick)
+
+    return response, message.channel
+
+def do_logout(message):
     member = message.author
     username = "%s#%s" % (member.name, member.discriminator)
     if username in dm.logged_in_as.keys():  # checks if the username is in the logged_in_as dictionary keys ie Bobby#2451
-        character = dm.logged_in_as[username]  # retrieves the the character they are logged in as
+        character = dm.logged_in_as[username]  # retrieves the the character obj they are logged in as
+        response = "%s, your character %s has been logged out." % (username, character.username)
         dm.logged_in_as.pop(username)  # remove them from the logged in
-        return "%s, your character %s has been logged out." % (username, character.username)
+        # await message.author.edit(nick=username)  # restore username, doesn't work currently
     else:
-        return "You're not logged in!"
+        response = "You're not logged in!"
+    return response, message.channel
+
 
 # async def do_poker_game(message):
 #     await play_poker_game(message)
@@ -182,13 +201,8 @@ def do_rock_paper_scissors(message):
     response = "Rock! Paper! Scissors. . .  %s!!! %s" % (bot_throw, bonus_message)
     return response
 
-@client.event
-async def on_message(message):
-    member = message.author
-    username = "%s#%s" % (member.name, member.discriminator)
-
+async def old_user_commands():
     ##USER COMMANDS
-
     if message.content.startswith('!hello'):
         msg = "Hello, welcome to The Joey DnD RP Server, %s." % (username)
         await message.author.send(msg, file=discord.File('images/BaldursGate2Enhanced.jpg'))
@@ -203,23 +217,6 @@ async def on_message(message):
     #         await channel.send('Hello {.author}!'.format(msg))
     #     except asyncio.TimeoutError:
     #         await message.author.send("I waited for you to say hello... </3")
-
-    if message.content.startswith('!login'):
-        response, nick = do_login(message)
-        if nick != None:  # change their nickname
-            if username in ADMINS:
-                print ("tried to change your name but you are too powerful, %s" % (username))
-            else:
-                await member.edit(nick=nick)
-        await message.channel.send(response)
-
-    if message.content.startswith('!logout'):
-        response = await do_logout(message)
-        if response == "logout!":
-            await member.edit(nick=username)  # restore username
-            return
-        else:
-            await message.channel.send(response)
 
     ## ROLEPLAY COMMANDS
 
@@ -270,40 +267,6 @@ async def on_message(message):
             dm.add_to_combat(enemy)
 
     ## DICE COMMANDS
-
-    if message.content.startswith('!roll'):
-        if message.content.startswith("!rollwod"):
-            try:
-                cmd, dice_pool = message.content.split(" ")
-            except ValueError:
-                await message.channel.send("Sorry that didn't work. Try again.")
-                return
-            if cmd == "!rollwod":
-                response = do_roll_wod(message, dice_pool)
-                await message.channel.send(response)
-            elif cmd == ("!rollwod8again"):
-                response = do_roll_wod(message, dice_pool, eight_again=True)
-                await message.channel.send(response)
-            elif command == ("!rollwod9again"):
-                response = do_roll_wod(message, dice_pool, nine_again=True)
-                await message.channel.send(response)
-
-        elif message.content.startswith('!rollchancedie'):
-            dice_result = rolld(10)
-            if dice_result == 1:
-                await message.channel.send(
-                    "%s rolled a chance die and suffered a dramatic failure. [Rolled 1 on a d10]" % (username))
-            elif dice_result == 10:
-                await message.channel.send(
-                    "%s rolled a chance die and managed to succeed. [Rolled 10 on a d10]" % (username))
-            else:
-                await message.channel.send(
-                    "%s rolled a chance die and failed. [Rolled %s on a d10]" % (username, dice_result))
-
-        else: # Handles both single dice and multiple dice
-            cmd = message.content
-            response = do_roll(cmd, username)  # Do roll handles the dice using "parse_dice_command"
-            await message.channel.send(response)
 
     if message.content.startswith('!coinflip') or message.content.startswith('!flipcoin') or message.content.startswith('!cointoss'):
         result = coinflip()
@@ -381,8 +344,6 @@ async def on_message(message):
         if message.content == ('!help'):
             await message.author.send(HELP_GENERAL_MESSAGE)
 
-client.run(TOKEN)
-
 def save_all(dm_instance):
     # This will save all characters currently logged into the system
     filename = "data/logged_in.txt"
@@ -393,7 +354,56 @@ def save_all(dm_instance):
     f.write(_data)
     f.close()
 
+# This is the MEGA lookup table of commands
+
+CHAT_COMMANDS = [  # Execution table that based on the command input
+    # it will throw control over to the given function
+    # ("greet", do_greet),
+    # ("hello", do_hello),
+    # ("help", do_help),  # Handles vanilla help and help [command]
+    # ("suggest", do_suggest),
+    ("login", do_login),  # formats as login [user]
+    ("logout", do_logout),
+    ("roll", do_roll),  # Handles both normal and wod rolls
+    # ("coinflip", do_coinflip),  # These are all the same but people screw up and call it differently
+    # ("flipcoin", do_coinflip),
+    # ("cointoss", do_coinflip),
+    # ("rockpaperscissors", do_rockpaperscissors),
+    # ("whois", do_whois),
+    # ("whoami", do_whoami),
+    # ("me", do_whoami),
+    # ("whosloggedin", do_showlogins),
+    # ("tableflip", do_tableflip),
+    # ("fliptable", do_tableflip),
+    # ("breaktable", do_breaktable),
+    # ("unfliptable", do_unfliptable),
+    # ("sunglassesfingerguns", do_sunglassesfingerguns),
+    # ("kickinthedoor", do_kickinthedoor)
+]
+
+@client.event
+async def on_message(message):  # This is the main entry point for the discord bot
+    member = message.author
+    username = "%s#%s" % (member.name, member.discriminator)
+
+    command_found = False
+
+    if message.content.startswith("!"):
+        for chat_command, do_func in CHAT_COMMANDS:
+            if message.content.startswith("!"+chat_command):
+                response, response_channel = do_func(message)  # Response channel is either pub channel or personal
+                command_found = True
+                break
+        if not command_found:
+            response = ("Sorry, that command didn't work. Command = [%s]" % (message.content))
+            response_channel = message.channel
+        await response_channel.send(response)
+    else:
+        pass
+
 @atexit.register
 def goodbye():
     save_all(dm)
     print('All logged in characters have been saved.')
+
+client.run(TOKEN)
