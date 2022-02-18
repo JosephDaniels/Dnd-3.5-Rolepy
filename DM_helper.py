@@ -55,13 +55,15 @@ class DM_helper(object):
 
     def load_last_session(self):
         ## This block re-logs all characters back in who were logged in before everything got reset
-        file = "data/logged_in.txt"
-        logged_in_charas = open(file, encoding="latin-1")
+
+        ## ASSOCIATES A CHARACTER SHEET BASED OFF OF LAST LOGINS
+        logged_in_charas = open("data/logged_in.txt", encoding="latin-1")
         for line in logged_in_charas:
             try:
-                key, value = line.split("=")
-                key, value = key.strip(), value.strip()  # Removes whitespace
-                self.logged_in_as[key] = value
+                username, character_name = line.split("=")
+                username, character_name = username.strip(), character_name.strip()  # Removes whitespace
+                character = Character(character_name)
+                self.logged_in_as[username] = character
             except ValueError:
                 print ("No Characters logged in previously. [BLANK FILE FOUND]")
 

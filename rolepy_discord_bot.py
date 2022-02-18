@@ -79,7 +79,7 @@ def handle_roll_wod(message, eight_again=False, nine_again=False):
             return "%s rolled %i dice and had %i successes%s. Dice Results: %s" % (
             username, dice_pool, successes, extra_text, dice_results)
 
-def do_roll(message):
+async def do_roll(message):
     username = "%s#%s" % (message.author.name, message.author.discriminator)
     command_line = message.content  # E.g. !roll3d8
     if message.content.startswith("!rollwod"):
@@ -115,7 +115,37 @@ def do_roll(message):
                                                                 modifier)
     return response, message.channel
 
-def do_login(message):
+async def do_help(message):
+    if message.content == '!help login':
+        response = (HELP_LOGIN_MESSAGE)
+    if message.content == '!help whois':
+        response = (HELP_WHOIS_MESSAGE)
+    if message.content == ('!help'):
+        response = (HELP_GENERAL_MESSAGE)
+    return response, message.author
+
+async def do_suggest(message):
+    global suggestions  ## This is the global text file
+    await message.author.send("Please type your message to be added to the suggestion box.")
+    try:
+        msg = await client.wait_for('message', timeout=180.0, check=None)
+    except asyncio.TimeoutError:
+        await message.author.send("Sorry, your suggestion has timed out. (180 secs or 3 minutes elapsed)")
+        msg = None
+    if msg != None:
+        suggestions+=1
+        data = msg.content
+        today = date.today()
+        data = data+" -- Suggestion written by %s on %s." % (username, today)
+        filename = "suggestionbox/suggestion%i.txt" % (suggestions)
+        f = open(filename, mode='w+')
+        f.write(data)
+        f.close()
+        print ("Suggestion#%i just got saved. Thanks %s!" % (suggestions, username))
+        await message.author.send("Thanks! received suggestion: %s" % (msg.content))
+    return "", message.author
+
+async def do_login(message):
     nick = None
     response = ""
     username = "%s#%s" % (message.author.name, message.author.discriminator)
@@ -144,8 +174,9 @@ def do_login(message):
 
         else:  # Truly log their character in and load them in the system
             response = "Successfully logged %s in as the character %s." % (username, target_character)
-            character_sheet = Character(target_character)
-            nick = character_sheet.username  # for changing their name in discord
+            character_sheet = Character(target_character)  #Loads a character file based off of name
+            print (character_sheet)
+            # nick = character_sheet.username  # for changing their name in discord
             dm.logged_in_as[username] = character_sheet  #Associates a given username with a character sheet
             dm.add_character(character_sheet)
             print ("%s has logged in as %s." % (username, target_character))
@@ -158,11 +189,12 @@ def do_login(message):
 
     return response, message.channel
 
-def do_logout(message):
+async def do_logout(message):
     member = message.author
     username = "%s#%s" % (member.name, member.discriminator)
     if username in dm.logged_in_as.keys():  # checks if the username is in the logged_in_as dictionary keys ie Bobby#2451
         character = dm.logged_in_as[username]  # retrieves the the character obj they are logged in as
+        print (dm.logged_in_as)
         response = "%s, your character %s has been logged out." % (username, character.username)
         dm.logged_in_as.pop(username)  # remove them from the logged in
         # await message.author.edit(nick=username)  # restore username, doesn't work currently
@@ -315,35 +347,6 @@ async def old_user_commands():
             "%s is looking too damn cool with their sunglasses and fingerguns. Watch out, here comes %s!" % (
             username, username))
 
-    ## HELP AND SUGGESTION COMMANDS
-    if message.content.startswith('!suggest'):
-        global suggestions  ## This is the global text file
-        await message.author.send("Please type your message to be added to the suggestion box.")
-        try:
-            msg = await client.wait_for('message', timeout=180.0, check=None)
-        except asyncio.TimeoutError:
-            await message.author.send("Sorry, your suggestion has timed out. (180 secs or 3 minutes elapsed)")
-            msg = None
-        if msg != None:
-            suggestions+=1
-            data = msg.content
-            today = date.today()
-            data = data+" -- Suggestion written by %s on %s." % (username, today)
-            filename = "suggestionbox/suggestion%i.txt" % (suggestions)
-            f = open(filename, mode='w+')
-            f.write(data)
-            f.close()
-            print ("Suggestion#%i just got saved. Thanks %s!" % (suggestions, username))
-            await message.author.send("Thanks! received suggestion: %s" % (msg.content))
-
-    if message.content.startswith('!help'):  ## All Help Commands
-        if message.content == '!help login':
-            await message.author.send(HELP_LOGIN_MESSAGE)
-        if message.content == '!help whois':
-            await message.author.send(HELP_WHOIS_MESSAGE)
-        if message.content == ('!help'):
-            await message.author.send(HELP_GENERAL_MESSAGE)
-
 def save_all(dm_instance):
     # This will save all characters currently logged into the system
     filename = "data/logged_in.txt"
@@ -360,8 +363,8 @@ CHAT_COMMANDS = [  # Execution table that based on the command input
     # it will throw control over to the given function
     # ("greet", do_greet),
     # ("hello", do_hello),
-    # ("help", do_help),  # Handles vanilla help and help [command]
-    # ("suggest", do_suggest),
+    ("help", do_help),  # Handles vanilla help and help [command]
+    ("suggest", do_suggest),
     ("login", do_login),  # formats as login [user]
     ("logout", do_logout),
     ("roll", do_roll),  # Handles both normal and wod rolls
@@ -391,7 +394,7 @@ async def on_message(message):  # This is the main entry point for the discord b
     if message.content.startswith("!"):
         for chat_command, do_func in CHAT_COMMANDS:
             if message.content.startswith("!"+chat_command):
-                response, response_channel = do_func(message)  # Response channel is either pub channel or personal
+                response, response_channel = await do_func(message)  # Response channel is either pub channel or personal
                 command_found = True
                 break
         if not command_found:
