@@ -9,7 +9,9 @@ import atexit
 from datetime import date
 
 from TOKEN import TOKEN
-from rolepy_help import *
+
+from help_messages import *
+from rolepy_dice import *  # ALL DICE HELPER THINGS SUCH AS "parse_dice_command" COME FROM HERE
 
 from DM_helper import *  # Module for running the game, lets us keep track of characters
 from NPC import *  # non-player character information
@@ -58,6 +60,29 @@ def do_roll(command_line, username):
     dice_total, num_dice, results, dice_type, modifier = parse_dice_command(command_line)  # Pulls the
     return "%s rolled a %i on a %i%s. Results: %s%s" % (username, dice_total, num_dice, dice_type, results, modifier)
 
+def do_roll_wod(message, eight_again=False, nine_again=False):
+    cmd, dice_pool = message.content.split(" ")
+    dice_pool = int(dice_pool)
+    username = message.author
+    dice_results, successes, rerolls =  roll_wod_dice(dice_pool, eight_again, nine_again)
+
+    extra_text = ""
+    if eight_again == True:
+        extra_text = " with eight-again"
+    elif nine_again == True:
+        extra_text = " with nine-again"
+
+    if successes == 0:
+        return "%s rolled %i dice and failed their roll%s. Dice Results: %s" % (
+            username, dice_pool, extra_text, dice_results)
+    elif successes > 0:
+        if rerolls > 0:
+            return "%s rolled %i dice and received %i successes%s. They had %i rerolled dice. Dice Results: %s" % (
+            username, dice_pool, successes, extra_text, rerolls, dice_results)
+        else:
+            return "%s rolled %i dice and had %i successes%s. Dice Results: %s" % (
+            username, dice_pool, successes, extra_text, dice_results)
+
 def do_login(message):
     nick = None
     username = "%s#%s" % (message.author.name, message.author.discriminator)
@@ -104,28 +129,6 @@ async def do_logout(message):
 
 # async def do_poker_game(message):
 #     await play_poker_game(message)
-
-def do_roll_wod(message, dice_pool, eight_again=False, nine_again=False):
-    dice_pool = int(dice_pool)
-    username = message.author
-    dice_results, successes, rerolls =  roll_wod_dice(dice_pool, eight_again, nine_again)
-
-    extra_text = ""
-    if eight_again == True:
-        extra_text = " with eight-again"
-    elif nine_again == True:
-        extra_text = " with nine-again"
-
-    if successes == 0:
-        return "%s rolled %i dice and failed their roll%s. Dice Results: %s" % (
-            username, dice_pool, extra_text, dice_results)
-    elif successes > 0:
-        if rerolls > 0:
-            return "%s rolled %i dice and received %i successes%s. They had %i rerolled dice. Dice Results: %s" % (
-            username, dice_pool, successes, extra_text, rerolls, dice_results)
-        else:
-            return "%s rolled %i dice and had %i successes%s. Dice Results: %s" % (
-            username, dice_pool, successes, extra_text, dice_results)
 
 def do_rock_paper_scissors(message):
     """ Gives a random result, rock, paper or scissors.
@@ -244,24 +247,19 @@ async def on_message(message):
     ## DICE COMMANDS
 
     if message.content.startswith('!roll'):
-        if message.content.startswith('!rolld'):
-            cmd = message.content
-            response = do_roll(cmd, username)
-            await message.channel.send(response)
-
-        elif message.content.startswith('!rollwod'):
+        if message.content.startswith("!rollwod"):
             try:
-                command, dice_pool = message.content.split(" ")
+                cmd, dice_pool = message.content.split(" ")
             except ValueError:
                 await message.channel.send("Sorry that didn't work. Try again.")
                 return
-            if command == ("!rollwod"):
+            if cmd == "!rollwod":
                 response = do_roll_wod(message, dice_pool)
                 await message.channel.send(response)
-            if command == ("!rollwod8again"):
+            elif cmd == ("!rollwod8again"):
                 response = do_roll_wod(message, dice_pool, eight_again=True)
                 await message.channel.send(response)
-            if command == ("!rollwod9again"):
+            elif command == ("!rollwod9again"):
                 response = do_roll_wod(message, dice_pool, nine_again=True)
                 await message.channel.send(response)
 
@@ -276,6 +274,11 @@ async def on_message(message):
             else:
                 await message.channel.send(
                     "%s rolled a chance die and failed. [Rolled %s on a d10]" % (username, dice_result))
+
+        else: # Handles both single dice and multiple dice
+            cmd = message.content
+            response = do_roll(cmd, username)  # Do roll handles the dice using "parse_dice_command"
+            await message.channel.send(response)
 
     if message.content.startswith('!coinflip') or message.content.startswith('!flipcoin') or message.content.startswith('!cointoss'):
         result = coinflip()
