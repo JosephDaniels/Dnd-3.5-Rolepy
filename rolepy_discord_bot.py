@@ -125,6 +125,7 @@ async def do_help(message):
     return response, message.author
 
 async def do_suggest(message):
+    username = "%s#%s" % (message.author.name, message.author.discriminator)
     global suggestions  ## This is the global text file
     await message.author.send("Please type your message to be added to the suggestion box.")
     try:
@@ -201,7 +202,6 @@ async def do_logout(message):
     else:
         response = "You're not logged in!"
     return response, message.channel
-
 
 # async def do_poker_game(message):
 #     await play_poker_game(message)
@@ -364,7 +364,7 @@ CHAT_COMMANDS = [  # Execution table that based on the command input
     # ("greet", do_greet),
     # ("hello", do_hello),
     ("help", do_help),  # Handles vanilla help and help [command]
-    ("suggest", do_suggest),
+    # ("suggest", do_suggest), ## REQUIRES FEEDBACK AND FIXING
     ("login", do_login),  # formats as login [user]
     ("logout", do_logout),
     ("roll", do_roll),  # Handles both normal and wod rolls
@@ -400,7 +400,8 @@ async def on_message(message):  # This is the main entry point for the discord b
         if not command_found:
             response = ("Sorry, that command didn't work. Command = [%s]" % (message.content))
             response_channel = message.channel
-        await response_channel.send(response)
+        if response != "":
+            await response_channel.send(response)
     else:
         pass
 

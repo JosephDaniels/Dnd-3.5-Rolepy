@@ -4,6 +4,9 @@ from rolepy_dice import *
 
 DND35PH_CLASSES = ["bard","barbarian","cleric","druid","fighter","monk","paladin","ranger","rogue","sorcerer","wizard"] ## All the base classes from the DND 3.5e Player's handbook
 
+class LoginHelper(object):
+    pass
+
 class DM_helper(object):
     def __init__(self, debug = True):
         self.debug = debug ## special variable for debugging purposes, change it to false if you don't want a lot of print statements.
