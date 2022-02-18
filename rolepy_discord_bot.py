@@ -18,6 +18,31 @@ from NPC import *  # non-player character information
 
 # from card_games import play_poker_game
 
+CHAT_COMMANDS = [  # Execution table that based on the command input
+    # it will throw control over to the given function
+    ("greet", do_greet),
+    ("hello", do_hello),
+    ("help", do_help),  # Handles vanilla help and help [command]
+    ("suggest", do_suggest),
+    ("login", do_login),  # formats as login [user]
+    ("logout", do_logout),
+    ("roll", do_roll),  # Handles both normal and wod rolls
+    ("coinflip", do_coinflip),  # These are all the same but people screw up and call it differently
+    ("flipcoin", do_coinflip),
+    ("cointoss", do_coinflip),
+    ("rockpaperscissors", do_rockpaperscissors),
+    ("whois", do_whois),
+    ("whoami", do_whoami),
+    ("me", do_whoami),
+    ("whosloggedin", do_showlogins),
+    ("tableflip", do_tableflip),
+    ("fliptable", do_tableflip),
+    ("breaktable", do_breaktable),
+    ("unfliptable", do_unfliptable),
+    ("sunglassesfingerguns", do_sunglassesfingerguns),
+    ("kickinthedoor", do_kickinthedoor)
+]
+
 ADMINS = ['StabbyStabby#1327', 'alanwongis#3590']
 
 DND_PLAYERS = ['StabbyStabby#1327',
@@ -168,16 +193,16 @@ async def on_message(message):
         msg = "Hello, welcome to The Joey DnD RP Server, %s." % (username)
         await message.author.send(msg, file=discord.File('images/BaldursGate2Enhanced.jpg'))
 
-    if message.content == ('!greet'):
-        channel = message.channel
-        await channel.send('Say hello!')
-        def check(m):
-            return m.content == 'hello' and m.channel == channel
-        try:
-            msg = await client.wait_for('message', timeout=30.0, check=check)
-            await channel.send('Hello {.author}!'.format(msg))
-        except asyncio.TimeoutError:
-            await message.author.send("I waited for you to say hello... </3")
+    # if message.content == ('!greet'):
+    #     channel = message.channel
+    #     await channel.send('Say hello!')
+    #     def check(m):
+    #         return m.content == 'hello' and m.channel == channel
+    #     try:
+    #         msg = await client.wait_for('message', timeout=30.0, check=check)
+    #         await channel.send('Hello {.author}!'.format(msg))
+    #     except asyncio.TimeoutError:
+    #         await message.author.send("I waited for you to say hello... </3")
 
     if message.content.startswith('!login'):
         response, nick = do_login(message)
@@ -294,7 +319,6 @@ async def on_message(message):
     #     await do_poker_game(message)
 
     ## JUST FOR FUN COMMANDS
-
     if message.content.startswith('!breaktable'):
         result = rolld(2)
         print(result)
@@ -330,7 +354,7 @@ async def on_message(message):
 
     ## HELP AND SUGGESTION COMMANDS
     if message.content.startswith('!suggest'):
-        global suggestions
+        global suggestions  ## This is the global text file
         await message.author.send("Please type your message to be added to the suggestion box.")
         try:
             msg = await client.wait_for('message', timeout=180.0, check=None)

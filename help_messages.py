@@ -30,6 +30,7 @@ DICE COMMANDS\n
 !rollwod8again [num_dice]\n !rollchancedie\n
 !rolld3\n !rolld4\n !rolld6\n !rolld8\n !rolld10\n !rolld12\n
 !rolld16\n !rolld20\n !rolld24\n !rolld100\n !rolld1000\n 
+
 !coinflip or !flipcoin or !cointoss\n
 !rockpaperscissors\n
 ROLEPLAY COMMANDS\n
