@@ -151,6 +151,49 @@ async def do_rock_paper_scissors(message):
                " Rock! Paper! Scissors. . . %s!!! %s" % (message.author, bot_throw, bonus_message)
     return response, message.channel
 
+async def do_tableflip(message):
+    username = ("%s#%s") % (message.author.name, message.author.discriminator)
+    response = (username + " grabs the table by the edges, flipping it over like"
+                                          " an absolute savage and ruining everything!"
+                                          " Paper, dice and doritos crash into the ground!")
+    return response, message.channel
+
+async def do_unfliptable(message):
+    username = ("%s#%s") % (message.author.name, message.author.discriminator)
+    response = (username + " sheepishly returns the table to an upright position,"
+                   " collecting up the dice and brushing Dorito crumbs off"
+                   " the now orange-dusted character sheets.")
+    return response, message.channel
+
+async def do_breaktable(message):
+    username = ("%s#%s") % (message.author.name, message.author.discriminator)
+    result = rolld(2)
+    print(result)
+    if (result == 1):
+        await message.channel.send(
+            username + " dropkicks his foot straight through the table, splintering it into two seperate halves!")
+    if (result == 2):
+        await message.channel.send(
+            username + " hammers their fist down upon  the innocent table in an unbridled display of nerd rage. It cracks directly in half!")
+
+async def do_sunglassesfingerguns(message):
+    username = ("%s#%s") % (message.author.name, message.author.discriminator)
+    response = ("%s is looking too damn cool with their sunglasses and fingerguns."
+                " Watch out, here comes %s!" % (username, username))
+    return response, message.channel
+
+async def do_kickinthedoor(message):
+    username = ("%s#%s") % (message.author.name, message.author.discriminator)
+    result = rolld(2)
+    print(result)
+    if (result == 1):
+        await message.channel.send(
+            username + " delivers a swift kick to the door, but the sturdy door doesn't budge. Their foot crumples as the force of the blow reverberates back through their leg. You hop up and down on one foot for 1d4 rounds in agony.")
+    if (result == 2):
+        await message.channel.send(
+            username + " delivers a hearty kick to the door. The door flies off its hinges under the weight of their mighty boot.")
+    return "", message.channel
+
 async def do_greet(message):
     channel = message.channel
     await channel.send('Say hello!')
@@ -257,40 +300,38 @@ async def do_logout(message):
         response = "You're not logged in!"
     return response, message.channel
 
+async def do_whois(message):
+    username = ("%s#%s") % (message.author.name, message.author.discriminator)
+    char_sheet = dm.logged_in_as[username]  ## Finds your character sheet from your discord username
+    profile, image_file = char_sheet.get_full_profile()  # This is their FULL profile
+    await message.author.send(profile, file=discord.File(image_file))
+    return "", message.channel
+
+async def do_whoami(message):
+    username = ("%s#%s") % (message.author.name, message.author.discriminator)
+    char_sheet = dm.logged_in_as[username]  ## Finds your character sheet from your discord username
+    response, image_file = char_sheet.get_full_profile()  # This is their FULL profile
+    await message.author.send(response, file=discord.File(image_file))
+
+async def do_showlogins(message):
+    user_characters = []
+    for key in dm.logged_in_as.keys():  ## grabs all users who are logged in
+        user_characters.append((key, dm.logged_in_as[key].display_name))  ## appends their current character to a list
+    if user_characters == []:
+        msg = "Noone is logged in at the moment."
+    else:  # players on the list
+        msg = "Characters currently logged in: "
+        for username, charname in user_characters:
+            msg = "%s\n%s as %s\n" % (msg, username, charname)
+    return msg, message.author
+
+
+    return response, message.author
+
 # async def do_poker_game(message):
 #     await play_poker_game(message)
 
 async def old_user_commands():
-    ## ROLEPLAY COMMANDS
-
-    if message.content == ("!whoami") or message.content == ("!me"):
-        char_sheet = dm.logged_in_as[username]  ## Finds your character sheet from your discord username
-        response, image_file = char_sheet.get_full_profile()  # This is their FULL profile
-        await message.author.send(response, file=discord.File(image_file))
-
-    if message.content.startswith("!whois"):
-        if message.content == "!whoisplaying" or message.content == "!whoisloggedin":
-            char_name_list = []
-            for key in dm.logged_in_as.keys():  ## grabs all users who are logged in
-                char_name_list.append(dm.logged_in_as[key].display_name)  ## appends their current character to a list
-            if char_name_list == []:
-                response = "Noone is logged in at the moment."
-            else: #players on the list
-                response = "Characters currently logged in: "
-                for char_name in char_name_list:
-                    response = "%s\n%s\n" % (response,char_name)
-            await message.author.send(response)
-        else: # typed !whois something
-            target_character = message.content.split(" ")[1].strip()  ## gets the second parameter which is the target chara
-            char_sheet = None
-            for key in dm.logged_in_as.keys():  # A list of usernames
-                if dm.logged_in_as[key].username == target_character:  # check if a username is associated with a certain character
-                    char_sheet = dm.logged_in_as[key]  ## Finds their character sheet from theirr discord username
-                    response, image_file = char_sheet.get_profile()  # This is their public profile
-                    await message.author.send(response, file=discord.File(image_file))
-
-    ## BATTLE COMMANDS
-
     if message.content == ("!begincombat") or message.content == ("!startcombat"):
         ## Start Combat
         ## Switch to combat mode
@@ -313,40 +354,6 @@ async def old_user_commands():
 
     # if message.content == ("!play poker"):
     #     await do_poker_game(message)
-
-    ## JUST FOR FUN COMMANDS
-    if message.content.startswith('!breaktable'):
-        result = rolld(2)
-        print(result)
-        if (result == 1):
-            await message.channel.send(
-                username + " dropkicks his foot straight through the table, splintering it into two seperate halves!")
-        if (result == 2):
-            await message.channel.send(
-                username + " hammers their fist down upon  the innocent table in an unbridled display of nerd rage. It cracks directly in half!")
-
-    if message.content.startswith('!fliptable') or message.content.startswith('!tableflip'):
-        await message.channel.send(
-            username + " grabs the table by the edges, flipping it over like an absolute savage and ruining everything! Paper, dice and doritos crash into the ground!")
-
-    if message.content.startswith('!unfliptable'):
-        await message.channel.send(
-            username + " sheepishly returns the table to an upright position, collecting up the dice and brushing Dorito crumbs off the now orange-dusted character sheets.")
-
-    if message.content.startswith('!kickinthedoor'):
-        result, dice_type = rolld(2)
-        print(result)
-        if (result == 1):
-            await message.channel.send(
-                username + " delivers a swift kick to the door, but the sturdy door doesn't budge. Their foot crumples as the force of the blow reverberates back through their leg. You hop up and down on one foot for 1d4 rounds in agony.")
-        if (result == 2):
-            await message.channel.send(
-                username + " delivers a hearty kick to the door. The door flies off its hinges under the weight of their mighty boot.")
-
-    if message.content.startswith('!sunglassesfingerguns'):
-        await message.channel.send(
-            "%s is looking too damn cool with their sunglasses and fingerguns. Watch out, here comes %s!" % (
-            username, username))
 
 def save_all(dm_instance):
     # This will save all characters currently logged into the system
@@ -374,16 +381,17 @@ CHAT_COMMANDS = [  # Execution table that based on the command input
     ("cointoss", do_coinflip),
     ("rockpaperscissors", do_rock_paper_scissors), ## NEEDS VS BOT FIX
     ("rps", do_rock_paper_scissors),
+    ("whoisloggedin", do_showlogins),
+    ("whoisplaying", do_showlogins),
     ("whois", do_whois),
-    # ("whoami", do_whoami),
-    # ("me", do_whoami),
-    # ("whosloggedin", do_showlogins),
-    # ("tableflip", do_tableflip),
-    # ("fliptable", do_tableflip),
-    # ("breaktable", do_breaktable),
-    # ("unfliptable", do_unfliptable),
-    # ("sunglassesfingerguns", do_sunglassesfingerguns),
-    # ("kickinthedoor", do_kickinthedoor)
+    ("whoami", do_whoami),
+    ("me", do_whoami),
+    ("tableflip", do_tableflip),
+    ("fliptable", do_tableflip),
+    ("unfliptable", do_unfliptable),
+    ("breaktable", do_breaktable),
+    ("sunglassesfingerguns", do_sunglassesfingerguns),
+    ("kickinthedoor", do_kickinthedoor)
 ]
 
 @client.event
