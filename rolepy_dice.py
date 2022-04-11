@@ -72,13 +72,12 @@ def coinflip():
 
 def rock_paper_scissors():
     dice_result = random.randint(1,3)
-    response = ""
     if (dice_result == 1):
-        response = "rock"
+        response = "Rock"
     elif (dice_result == 2):
-        response = "paper"
+        response = "Paper"
     elif (dice_result == 3):
-        response = "scissors"
+        response = "Scissors"
     return response
 
 def rolld(n):

@@ -79,6 +79,11 @@ def handle_roll_wod(message, eight_again=False, nine_again=False):
             return "%s rolled %i dice and had %i successes%s. Dice Results: %s" % (
             username, dice_pool, successes, extra_text, dice_results)
 
+async def do_coinflip(message):
+    result = coinflip()
+    response = "%s flips a coin! Result is %s." % (message.author, result)
+    return response, message.channel
+
 async def do_roll(message):
     username = "%s#%s" % (message.author.name, message.author.discriminator)
     command_line = message.content  # E.g. !roll3d8
@@ -115,6 +120,55 @@ async def do_roll(message):
                                                                 modifier)
     return response, message.channel
 
+async def do_rock_paper_scissors(message):
+    """ Gives a random result, rock, paper or scissors.
+        If you give it an argument, it will try to play against you.
+        If you win, lose or tie, it will tell you.
+        Everything gets returned in the response variable."""
+    bonus_message = ""  # victory, tie or loss message
+    victory_message = " You win!!!"
+    lose_message = " You lose!!!"
+    if message == "!rockpaperscissors" or "!rps":  # Solo play
+        bot_throw = rock_paper_scissors()  # returns a string = 'rock' 'paper' or 'scissors'
+
+    ### THIS ENTIRE VS AI PART DOESN'T WORK!!!!
+    else:  # Against the bot
+        print ("against the bot block")
+        player_throw = message.content.split(" ")[1].strip()  # should be 'rock' 'paper' or 'scissors'
+        bot_throw = rock_paper_scissors()  # should be 'rock' 'paper' or 'scissors'
+        if player_throw == bot_throw:  ## detects a tie
+            bonus_message = " It's a tie. Thats means we both lose."
+        elif player_throw == "rock" and bot_throw == "scissors":
+            bonus_message = "Rock breaks scissors." + victory_message
+        elif player_throw == "paper" and bot_throw == "rock":
+            bonus_message = "Paper covers rock." + victory_message
+        elif player_throw == "scissors" and bot_throw == "paper":
+            bonus_message = "Scissors cuts paper." + victory_message
+        else:
+            bonus_message = lose_message
+        bonus_message = " (Player threw %s. Bot threw %s.)" % (player_throw, bot_throw)+bonus_message
+    response = "%s is playing Rock, Paper, Scissors! Are you ready...?" \
+               " Rock! Paper! Scissors. . . %s!!! %s" % (message.author, bot_throw, bonus_message)
+    return response, message.channel
+
+async def do_greet(message):
+    channel = message.channel
+    await channel.send('Say hello!')
+    def check(m):
+        return m.content == 'hello' and m.channel == channel
+    try:
+        msg = await client.wait_for('message', timeout=30.0, check=check)
+        await channel.send('Hello {.author}!'.format(msg))
+    except asyncio.TimeoutError:
+        await message.author.send("I waited for you to say hello... </3")
+
+    return "", message.author
+
+async def do_hello(message):
+    msg = "Hello, welcome to The Joey DnD RP Server, %s." % (message.author)
+    await message.author.send(msg, file=discord.File('images/BaldursGate2Enhanced.jpg'))
+    return "", message.author
+
 async def do_help(message):
     if message.content == '!help login':
         response = (HELP_LOGIN_MESSAGE)
@@ -127,11 +181,11 @@ async def do_help(message):
 async def do_suggest(message):
     username = "%s#%s" % (message.author.name, message.author.discriminator)
     global suggestions  ## This is the global text file
-    await message.author.send("Please type your message to be added to the suggestion box.")
+    await message.author.send("Please type your message to be added to the suggestion box. You have 5 minutes.")
     try:
-        msg = await client.wait_for('message', timeout=180.0, check=None)
+        msg = await client.wait_for('message', timeout=300.0, check=None)
     except asyncio.TimeoutError:
-        await message.author.send("Sorry, your suggestion has timed out. (180 secs or 3 minutes elapsed)")
+        await message.author.send("Sorry but your suggestion has timed out. (5 Minutes Elapsed)")
         msg = None
     if msg != None:
         suggestions+=1
@@ -143,7 +197,7 @@ async def do_suggest(message):
         f.write(data)
         f.close()
         print ("Suggestion#%i just got saved. Thanks %s!" % (suggestions, username))
-        await message.author.send("Thanks! received suggestion: %s" % (msg.content))
+        await message.author.send("Thanks! Received suggestion#%i: '%s'" % (suggestions, msg.content))
     return "", message.author
 
 async def do_login(message):
@@ -206,50 +260,7 @@ async def do_logout(message):
 # async def do_poker_game(message):
 #     await play_poker_game(message)
 
-def do_rock_paper_scissors(message):
-    """ Gives a random result, rock, paper or scissors.
-        If you give it an argument, it will try to play against you.
-        If you win, lose or tie, it will tell you.
-        Everything gets returned in the response variable."""
-    bonus_message = ""  # victory, tie or loss message
-    victory_message = " You win!!!"
-    lose_message = " You lose!!!"
-    if message.content == "!rockpaperscissors":  # Solo play
-        bot_throw = rock_paper_scissors()  # returns a string = 'rock' 'paper' or 'scissors'
-    else:  # Against the bot
-        player_throw = message.content.split(" ")[1].strip()  # should be 'rock' 'paper' or 'scissors'
-        bot_throw = rock_paper_scissors()  # should be 'rock' 'paper' or 'scissors'
-        if player_throw == bot_throw:  ## detects a tie
-            bonus_message = " It's a tie. Thats means we both lose."
-        elif player_throw == "rock" and bot_throw == "scissors":
-            bonus_message = "Rock breaks scissors." + victory_message
-        elif player_throw == "paper" and bot_throw == "rock":
-            bonus_message = "Paper covers rock." + victory_message
-        elif player_throw == "scissors" and bot_throw == "paper":
-            bonus_message = "Scissors cuts paper." + victory_message
-        else:
-            bonus_message = lose_message
-        bonus_message = " (Player threw %s. Bot threw %s.)" % (player_throw, bot_throw)+bonus_message
-    response = "Rock! Paper! Scissors. . .  %s!!! %s" % (bot_throw, bonus_message)
-    return response
-
 async def old_user_commands():
-    ##USER COMMANDS
-    if message.content.startswith('!hello'):
-        msg = "Hello, welcome to The Joey DnD RP Server, %s." % (username)
-        await message.author.send(msg, file=discord.File('images/BaldursGate2Enhanced.jpg'))
-
-    # if message.content == ('!greet'):
-    #     channel = message.channel
-    #     await channel.send('Say hello!')
-    #     def check(m):
-    #         return m.content == 'hello' and m.channel == channel
-    #     try:
-    #         msg = await client.wait_for('message', timeout=30.0, check=check)
-    #         await channel.send('Hello {.author}!'.format(msg))
-    #     except asyncio.TimeoutError:
-    #         await message.author.send("I waited for you to say hello... </3")
-
     ## ROLEPLAY COMMANDS
 
     if message.content == ("!whoami") or message.content == ("!me"):
@@ -297,16 +308,6 @@ async def old_user_commands():
                 ## to do, during the login by the user, retrieve all their info
             enemy = NPC(combatant_name)  ## tries to make an npc of the type specified
             dm.add_to_combat(enemy)
-
-    ## DICE COMMANDS
-
-    if message.content.startswith('!coinflip') or message.content.startswith('!flipcoin') or message.content.startswith('!cointoss'):
-        result = coinflip()
-        await message.channel.send("%s flips a coin! Result is %s." % (username,result))
-
-    if message.content.startswith('!rockpaperscissors'):
-        response = do_rock_paper_scissors(message)
-        await message.channel.send(response)
 
     ## GAME COMMANDS
 
@@ -361,18 +362,19 @@ def save_all(dm_instance):
 
 CHAT_COMMANDS = [  # Execution table that based on the command input
     # it will throw control over to the given function
-    # ("greet", do_greet),
-    # ("hello", do_hello),
+    ("greet", do_greet),
+    ("hello", do_hello),
     ("help", do_help),  # Handles vanilla help and help [command]
-    # ("suggest", do_suggest), ## REQUIRES FEEDBACK AND FIXING
+    ("suggest", do_suggest), ## REQUIRES FEEDBACK AND FIXING
     ("login", do_login),  # formats as login [user]
     ("logout", do_logout),
     ("roll", do_roll),  # Handles both normal and wod rolls
-    # ("coinflip", do_coinflip),  # These are all the same but people screw up and call it differently
-    # ("flipcoin", do_coinflip),
-    # ("cointoss", do_coinflip),
-    # ("rockpaperscissors", do_rockpaperscissors),
-    # ("whois", do_whois),
+    ("coinflip", do_coinflip),  # These are all the same but people screw up and call it differently
+    ("flipcoin", do_coinflip),
+    ("cointoss", do_coinflip),
+    ("rockpaperscissors", do_rock_paper_scissors), ## NEEDS VS BOT FIX
+    ("rps", do_rock_paper_scissors),
+    ("whois", do_whois),
     # ("whoami", do_whoami),
     # ("me", do_whoami),
     # ("whosloggedin", do_showlogins),
