@@ -1,3 +1,4 @@
+from datetime import date
 
 from skills import * ## import skill information
 
@@ -261,6 +262,7 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
 
     def get_character_sheet(self, show_all = False):
         lines = []
+        today = date.today()
         for key in self.__dict__.keys(): ## Goes through all the attributes of the character - strength, dex, skills etc
             value = self.__dict__[key] ## retrieves what the attribute corresponds to - so the value of strength or base_fortitude
             #Depending on the type we'll format it correctly
@@ -277,6 +279,7 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
                     lines.append("%s = %s" % (key, value))
             else: ## too much flowing through else exception
                 lines.append('%s = %s' % (key, value))
+        lines.append("date = %s" % (today))
         return "\n".join(lines)
 
     @staticmethod
@@ -480,5 +483,11 @@ def test_10(): ## Runs a test for character sheet and get profile on a known val
     print(chara.get_character_sheet())
     print(chara.get_profile())
 
+def test_11():
+    paige_file = "characters/paige.txt"
+    chara = Character()
+    chara.load(paige_file)
+    print(chara.get_character_sheet())
+
 if __name__ == "__main__":
-    test_1()
+    test_11()

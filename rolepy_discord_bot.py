@@ -260,7 +260,6 @@ async def do_login(message):
     if username not in DND_PLAYERS:
         response = "You are not allowed to play DnD. Please contact DM Joey for permission."
     else:
-
         # Error Check 2 - Don't try to steal my character!!!
         if target_character not in VALID_CHARACTERS[username]:  # checks if the target character is valid for the user
             response = "You cannot login as %s, %s is not your character." % (target_character, target_character)
@@ -301,7 +300,7 @@ async def do_logout(message):
     return response, message.channel
 
 async def do_whois(message):
-    username = ("%s#%s") % (message.author.name, message.author.discriminator)
+    # username = ("%s#%s") % (message.author.name, message.author.discriminator)
     char_sheet = dm.logged_in_as[username]  ## Finds your character sheet from your discord username
     profile, image_file = char_sheet.get_full_profile()  # This is their FULL profile
     await message.author.send(profile, file=discord.File(image_file))
@@ -367,8 +366,7 @@ def save_all(dm_instance):
 
 # This is the MEGA lookup table of commands
 
-CHAT_COMMANDS = [  # Execution table that based on the command input
-    # it will throw control over to the given function
+CHAT_COMMANDS = [  # Execution table that based on the command input, it will throw control to the function
     ("greet", do_greet),
     ("hello", do_hello),
     ("help", do_help),  # Handles vanilla help and help [command]

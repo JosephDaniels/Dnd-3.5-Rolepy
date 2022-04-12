@@ -52,9 +52,9 @@ class DM_helper(object):
                                                               dice_result, initiative_bonus))
         return initiative_result
 
-    def save_all_characters(self):
-        for character in self.characters:
-            pass
+    # def save_all_characters(self):
+    #     for character in self.characters:
+    #         pass
 
     def load_last_session(self):
         ## This block re-logs all characters back in who were logged in before everything got reset

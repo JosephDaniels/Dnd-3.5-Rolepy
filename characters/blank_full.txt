@@ -1,6 +1,6 @@
-name = 
-display_name = 
-discord_username = 
+name = Romanticus the Pleasant
+display_name = Roman
+discord_username = Roman#1234
 character_class = []
 alignment = 
 age
