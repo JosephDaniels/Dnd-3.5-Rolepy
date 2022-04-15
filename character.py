@@ -226,6 +226,10 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
             print("Wasn't able to find this image file! : %s" % (self.profile_image))
         return response, image_file
 
+    def dump_info(self):
+        for k in self.__dict__.keys():
+            print (k, ":", self.__dict__[k])
+
     def get_profile(self):
         """ Returns a string that tells you public information about the character."""
         picture_status = ""

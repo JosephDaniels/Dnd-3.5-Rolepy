@@ -28,6 +28,7 @@ from tkinter import ttk, messagebox
 PLAYER_PROFILE_DETAILS = [("Player Name", "player_name"),
                           ("Discord Username", "discord_username")]
 
+## Label, Internal name, type of this you want to have eg. entry or textboxes or dropdown
 CHARACTER_PROFILE_ENTRIES = [("Character Full Name: ", "display_name"),
                              ("Age: ","age"),
                              ("Gender: ","gender"),
@@ -37,8 +38,6 @@ CHARACTER_PROFILE_ENTRIES = [("Character Full Name: ", "display_name"),
                              ("Height: ","height"),
                              ("Weight: ","weight")
                              ]
-
-ALL_CHARACTER_PROFILE_ENTRIES = PLAYER_PROFILE_DETAILS+CHARACTER_PROFILE_ENTRIES
 
 CHARACTER_ATTRIBUTE_ENTRIES = ["strength","dexterity","constitution","intelligence","wisdom","charisma"]
 
@@ -156,172 +155,14 @@ class Character_Creation_Window(tk.Toplevel):
         self.profile_window = Profile_Creation_Window(self.master) ## passes root as master
 
     def do_accept_attributes(self):
-        print ("Please Override me! (Accept)")
+        print ("Please override me! (Accept attributes)")
         pass
 
     def do_cancel_attributes(self):
-        print ("Please Override me! (Cancel)")
+        print ("Please Override me! (Cancel attributes)")
         pass
 
-class Profile_Creation_Window(tk.Toplevel):
-    def __init__(self,master):
-        super().__init__(master)
-        self.master = master  # root window
-        self.master.profile_window = self
-
-        # actual data for the character
-        self.profile_data = {}  # display_name = "dude", hair_colour = black" etc
-
-        # UI stuff for the profile window
-        self.profile_labels = []
-        self.profile_entries = []
-        self.profile_label_stringvars = {}
-        self.profile_entry_stringvars = {}
-
-        for label, name in CHARACTER_PROFILE_ENTRIES:
-            self.profile_label_stringvars[label] = tk.StringVar()
-
-        for label, name in CHARACTER_PROFILE_ENTRIES:
-            self.profile_entry_stringvars[name] = tk.StringVar()
-
-        for label, name in CHARACTER_PROFILE_ENTRIES:
-            self.profile_data[name] = ""
-
-        self.create_widgets()
-
-    def _convert_profile_for_display(self):
-        for label, name in CHARACTER_PROFILE_ENTRIES:
-            self.profile_data[name] = str(self.profile_entry_stringvars[name].get())
-
-    def reset_data(self):
-        self.profile_entries = []
-        self.profile_stringvars = {}
-        self.profile_data = {}
-        for label, key in CHARACTER_PROFILE_ENTRIES:
-            self.profile_stringvars[label] = tk.StringVar()
-
-    def do_accept_character_profile(self):
-        answer = messagebox.askyesno("Do you accept?", "Do you wish to save the character sheet"
-                                                       " in its current state?")
-        if answer:
-            self.destroy()
-            self.do_character_save()
-
-        elif answer == False:
-            answer = messagebox.askyesno("Save Changes?", "Would you like to save your changes so far? \n"
-                                                          "You need at least a name to save.")
-            if answer:
-                self.destroy()
-                self.do_character_save()
-            elif answer == False:
-                pass
-
-    def do_cancel_character_profile(self):
-        answer = messagebox.askyesno("Keep your changes?", "Do you wish to keep your changes?")
-        if answer:
-            ## Actually do some sort of saving
-            self.do_character_save()
-            ## For now we're going to save, in the future we continue with profile creation
-
-        elif answer == False:
-            if answer:
-                pass
-            elif answer == False:
-                print("Ooh should've saved those stats, they were good!")
-                self.clear_data()
-                self.destroy()
-
-class Choose_Attributes_Window(Attribute_Window):
-    def __init__(self, master, charname=""):
-        super().__init__(master)
-        self.master = master
-        self.create_widgets()
-
-    def create_widgets(self):
-        row = 0
-
-        self.reset_attributes_and_modifiers()
-        self._convert_attributes_for_display()
-
-        ## GUI SETUP
-
-        point_buy_message = "Hi there!\n" \
-                            "Plus and minus buttons add or remove points.\n" \
-                            "Pay attention to the available points left.\n" \
-                            "Higher Attributes will cost more to improve."
-
-        point_buy_info_message = tk.Label(self, text=point_buy_message)
-        point_buy_info_message.grid(column=0, row=row)
-        row = row+1
-
-        #attribute_column_label = tk.Label(self, text="Attributes")
-        #point_buy_info_message.grid(column=1, row=row)
-
-        #attribute_column_label = tk.Label(self, text="Modifiers")
-        #point_buy_info_message.grid(column=2, row=row)
-
-        row = row + 1
-
-        self.attribute_labels = []
-        self.attribute_entries = []
-        self.attribute_buttons = []
-
-        for name in CHARACTER_ATTRIBUTE_ENTRIES:
-            new_label = tk.Label(self, text=name.capitalize())
-            new_label.grid(column=0, row=row)
-
-            new_entry = tk.Entry(self,
-                                 textvariable=self.attribute_stringvars[name])
-            new_entry.grid(column=1, row=row)
-
-            self.attribute_labels.append(new_label)
-            self.attribute_entries.append(new_entry)
-
-            #  Modifier
-            if self.attribute_data == {}: ## Nothing has been rolled yet
-                _modifier = 0
-            modifier_entry = tk.Entry(self,
-                                      textvariable=self.modifier_stringvars[name])
-            modifier_entry.grid(column=2, row=row)
-            #row = row + 1
-
-            positive_button = tk.Button(self,
-                                        text="+",
-                                        command = partial(self.up_attribute_point, name))
-            positive_button.grid(column=3, row=row)
-
-            negative_button = tk.Button(self,
-                                        text="-",
-                                        command = partial(self.down_attribute_point, name))
-            negative_button.grid(column=4, row=row)
-
-            self.attribute_buttons.append(positive_button)
-            self.attribute_buttons.append(negative_button)
-            row = row + 1
-
-        available_point_label = tk.Label(self,
-                                              text='Available Points:')
-        available_point_label.grid(column=0, row=row)
-
-        available_points_entry = tk.Entry(self,
-                                               textvariable=self.available_attribute_points_stringvar)
-        available_points_entry.grid(column=1, row=row)
-        row = row + 1
-
-
-        accept_attributes_button = tk.Button(self,
-                                                  text='Accept All',
-                                                  command=self.do_accept_attributes)
-        accept_attributes_button.grid(column=1, row=row)
-        row = row + 1
-
-        cancel_attributes_button = tk.Button(self,
-                                                  text='Cancel',
-                                                  command=self.do_cancel_attributes)
-        cancel_attributes_button.grid(column=1, row=row)
-        row = row + 1
-
-class Point_Buy_Window(Attribute_Window):
+class Point_Buy_Window(Character_Creation_Window):
     def __init__(self, master):
         super().__init__(master)
         self.master = master
@@ -565,23 +406,41 @@ class Roll_Attributes_Window(Character_Creation_Window):
         print ("Attribute window cancelled.")
         self.destroy()
 
-class Character_Editor_Window(Profile_Creation_Window):
-    def __init__(self, master, charname=""):
+class Character_Editor_Window(tk.Toplevel):
+    def __init__(self, master, character,charname="",):
+        # character is a Character object
+
+        # This window will modify this object
+        # with what the player enters into this
+        # window once they clicks the "Save"
+        # button at the end.
+
         super().__init__(master)
         self.master = master
 
         ## Profile Data
-        self.profile_data = {}
-        self.profile_label_stringvars = {}
-        self.profile_entry_stringvars = {}
-        for label, name in ALL_CHARACTER_PROFILE_ENTRIES:
-            self.profile_label_stringvars[label] = tk.StringVar()
-        for label, name in ALL_CHARACTER_PROFILE_ENTRIES:
-            self.profile_entry_stringvars[name] = tk.StringVar()
-        for label, name in ALL_CHARACTER_PROFILE_ENTRIES:
-            self.profile_data[name] = ""
+        self.player_profile_details_stringvars = {}
+
+        self.character_profile_stringvars = {}
+
+        for label, name in PLAYER_PROFILE_DETAILS:
+            self.player_profile_details_stringvars[name] = tk.StringVar()
+
+        for label, name in CHARACTER_PROFILE_ENTRIES: # Encompasses
+            self.character_profile_stringvars[name] = tk.StringVar()
 
         self.create_widgets()
+
+    def _convert_profile_for_display(self):
+        for label, name in CHARACTER_PROFILE_ENTRIES:
+            self.profile_data[name] = str(self.profile_entry_stringvars[name].get())
+
+    def reset_data(self):
+        self.profile_entries = []
+        self.profile_stringvars = {}
+        self.profile_data = {}
+        for label, key in CHARACTER_PROFILE_ENTRIES:
+            self.profile_stringvars[label] = tk.StringVar()
 
     def open_attribute_window(self):
         self.master.attribute_window = Choose_Attributes_Window(self.master)
@@ -591,12 +450,23 @@ class Character_Editor_Window(Profile_Creation_Window):
         answer = messagebox.askyesno("Do you accept?", "Do you accept these character details?")
 
         if answer:
-            # gives master a easy reference to this object
-            self.master.profile_window = self
-            # gets all the attribute data from the current window
-            self.master._set_profile_data_from_window()
-            self.destroy()
-            self.open_attribute_window()
+            # # gives master a easy reference to this object
+            # self.master.profile_window = self
+            # # gets all the attribute data from the current window
+            # self.master._set_profile_data_from_window()
+            # self.destroy()
+            # self.open_attribute_window()
+
+            for string_var_name in self.player_profile_details_stringvars.keys():
+                self.character.__dict__[string_var_name] = self.player_profile_details_stringvars[string_var_name].get()
+
+            for string_var_name in self.character_profile_stringvars.keys():
+                self.character.__dict__[string_var_name] = self.character_profile_stringvars[string_var_name].get()
+
+            # Handle Special case of pulling Race Data from Drop down
+            self.character.race = self.race_menu_stringvar.get()
+
+            print (self.character.dump_info())
 
         elif answer == False:
             print ("Ooh should've saved those stats, they were good!")
@@ -615,29 +485,30 @@ class Character_Editor_Window(Profile_Creation_Window):
             print ("Was not able to update. (invalid literal for int() with base 10: '')")
 
     def do_race_option(self, option):
-        self.profile_data['race'] = option
+        # self.profile_data['race'] = option
         race_benefits = RACE_BENEFITS[option]
         print (race_benefits)
 
     def create_widgets(self):
         row = 0
 
-        for label, name in ALL_CHARACTER_PROFILE_ENTRIES:
+        for label, name in PLAYER_PROFILE_DETAILS:
             new_label = tk.Label(self, text=label)
             new_label.grid(column=0, row=row)
 
             new_entry = tk.Entry(self,
-                                 textvariable=self.profile_entry_stringvars[name])
+                                 textvariable=self.player_profile_details_stringvars[name])
             new_entry.grid(column=1, row=row)
             row = row + 1
 
-        self.race_menu_stringvar = tk.StringVar(self)
-        self.race_menu_stringvar.set("Please select a race")
-        self.question_menu = tk.OptionMenu(self,
-                                      self.race_menu_stringvar,
-                                      command = self.do_race_option,
-                                      *ALL_CHARACTER_RACES)
-        self.question_menu.grid(column=0,row=row)
+        for label, name in CHARACTER_PROFILE_ENTRIES:
+            new_label = tk.Label(self, text=label)
+            new_label.grid(column=0, row=row)
+
+            new_entry = tk.Entry(self,
+                                 textvariable=self.character_profile_stringvars[name])
+            new_entry.grid(column=1, row=row)
+            row = row + 1
 
         # self.accept_player_info_button = tk.Button(self,
         #                                            text='Update',
@@ -645,6 +516,18 @@ class Character_Editor_Window(Profile_Creation_Window):
         #
         # self.accept_player_info_button.grid(column=1, row=row)
         # row = row + 1
+
+        new_label = tk.Label(self, text="Race:")
+        new_label.grid(column=0, row=row)
+
+        self.race_menu_stringvar = tk.StringVar(self)
+        self.race_menu_stringvar.set("Please select a race")
+        self.question_menu = tk.OptionMenu(self,
+                                      self.race_menu_stringvar,
+                                      command = self.do_race_option,
+                                      *ALL_CHARACTER_RACES)
+        self.question_menu.grid(column=1,row=row)
+        row=row+1
 
         self.accept_player_info_button = tk.Button(self,
                                                    text='Accept All',
@@ -691,53 +574,6 @@ class Character_Editor_Window(Profile_Creation_Window):
         #                               textvariable=self.modifier_stringvars[name])
         #     modifier_entry.grid(column=7, row=row)
         #     row = row + 1
-
-    def do_race_option(self, option):
-        self.profile_data['race'] = option
-
-    def create_widgets(self):
-        new_profile_message = "Please fill out the personal character identity information fields below."
-
-        row = 0
-
-        info_message = tk.Label(self,
-                                text = new_profile_message)
-        info_message.grid(column=0, row = row)
-        row = row + 1
-
-        self.race_menu_stringvar = tk.StringVar(self)
-        self.race_menu_stringvar.set("Please select a race")
-        self.question_menu = tk.OptionMenu(self,
-                                      self.race_menu_stringvar,
-                                      command = self.do_race_option,
-                                      *ALL_CHARACTER_RACES)
-        self.question_menu.grid(column=0,row=row)
-        row = row + 1
-
-        for label, name in CHARACTER_PROFILE_ENTRIES:
-            new_label = tk.Label(self, text=label)
-            new_label.grid(column=0, row=row)
-
-            new_entry = tk.Entry(self,
-                                 textvariable = self.profile_entry_stringvars[name])
-            new_entry.grid(column=1, row=row)
-            self.profile_labels.append(new_label)
-            self.profile_entries.append(new_entry)
-            row = row + 1
-
-
-        self.accept_player_info_button = tk.Button(self,
-                                                   text='Accept All',
-                                                   command=self.do_accept_character_profile)
-
-        self.accept_player_info_button.grid(column=1, row=row)
-        row = row + 1
-
-        self.cancel_player_info_button = tk.Button(self,
-                                                   text='Cancel',
-                                                   command=self.do_cancel_character_profile)
-        self.cancel_player_info_button.grid(column=1, row=row)
-        row = row + 1
 
     def get_profile(self):
         _data = []
@@ -809,17 +645,19 @@ class Character_Helper_App(tk.Frame):
 
         self.create_widgets()
 
-    def open_character_editor_prompt(self):
-        answer = messagebox.askyesnocancel("Make Blank Character?", "Edit blank character sheet?")
+    def open_new_character_editor_prompt(self):
+        answer = messagebox.askyesno("Make Blank Character?", "Edit blank character sheet?")
         if answer:
-            self.character_editor = Character_Editor_Window(self)
+            c = Character()
+            self.character_editor = Character_Editor_Window(self, c)
         elif answer == False:
-            self.entry_window = Entry_Window(self, message = "What is your character's name?")  # Prompt window to get their character's name
+            pass
+            # self.entry_window = Entry_Window(self, message = "What is your character's name?")  # Prompt window to get their character's name
 
     def create_widgets(self):
         message = tk.Label(self.frame, text=WELCOME_MESSAGE).grid(column=1, row=0)
         new_chara_button = tk.Button(self.frame, text="New Character", command=self.open_roll_or_point_buy_prompt).grid(column=1, row=3)
-        character_editor_button = tk.Button(self.frame, text="Character Editor", command=self.open_character_editor_prompt).grid(column=1, row=4)
+        character_editor_button = tk.Button(self.frame, text="Character Editor", command=self.open_new_character_editor_prompt).grid(column=1, row=4)
         quit_button = tk.Button(self.frame, text="Quit", command=self.master.destroy).grid(column=1, row=6)
 
     def open_roll_or_point_buy_prompt(self):
