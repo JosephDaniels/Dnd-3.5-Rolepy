@@ -1,6 +1,6 @@
-name =
-display_name =
-discord_username =
+name = 
+display_name = 
+discord_username = 
 character_class = []
 alignment = 
 age

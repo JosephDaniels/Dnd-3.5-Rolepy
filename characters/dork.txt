@@ -1,0 +1,16 @@
+display_name = dork the daring
+age = 42
+gender = man
+eye_colour = red
+hair_colour = blue
+skin_colour = tan
+height = 5"9
+weight = 275
+race = human
+username = dork
+strength = 18
+dexterity = 18
+constitution = 17
+intelligence = 1
+wisdom = 2
+charisma = 1

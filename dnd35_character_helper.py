@@ -6,28 +6,24 @@ Made by Jordan Vo with help from Alan Wong. Please do not redistribute."""
 
 WELCOME_MESSAGE = " Hi there!\n" \
                   "Welcome to DM Joey's DND3.5E Character Creator.\n" \
+                  "DND of course standing for Demons and Daggers.\n" \
                   "Please select an option below."
 
+# HEY THIS IS THE OFFICIAL LIBRARY STUFF!! NO TOUCHY!!! NO TOUCHY!
 import random
-
+import os
 from functools import partial
+from datetime import date
+import tkinter as tk
+from tkinter import ttk, messagebox, simpledialog
 
+# My own libraries, go ahead and improve them!
 from character import Character
-
 from race import *
 
-from datetime import date
-
-#from character import Race  # For when the race objects need to be more complex
-
-import tkinter as tk
-from tkinter import ttk, messagebox
-
 ## Label followed by the internal key name
-
 PLAYER_PROFILE_DETAILS = [("Player Name", "player_name"),
                           ("Discord Username", "discord_username")]
-
 ## Label, Internal name, type of this you want to have eg. entry or textboxes or dropdown
 CHARACTER_PROFILE_ENTRIES = [("Character Full Name: ", "display_name"),
                              ("Age: ","age"),
@@ -61,38 +57,30 @@ POINT_BUY_COST = { 1 : 1,
                    17: 3,
                    18: 3 }
 
+#This is how many points you get to use with point buy. Referenced by the drop down menu
 POWER_LEVEL_OPTIONS_LIST = {"Low-Power" : 15,
                             "Challenging" : 22,
                             "Adventurer" : 25,
-                            "Heroic" : 28,
-                            "Super-Heroic" : 32,
-                            "Legendary" : 40}
+                            "Heroic" : 32,
+                            "Super-Heroic" : 50,
+                            "Legendary" : 80}
 
-class Entry_Window(tk.Toplevel):
-    def __init__(self, master, message):
-        super().__init__(master)
-        self.master = master
-        self.title = message
-        self.create_widgets()
-    def create_widgets(self):
-        print ("Prompt!!")
-        pass
+player_character = None  # Initializes to a character upon operation
 
 class Character_Creation_Window(tk.Toplevel):
     def __init__(self, master):
         super().__init__(master)
-        self.master = master
-        # init internal data
-        self.available_attribute_points = 0
+        self.master = master  # Giving us a reference to the root window
+        self.character = character  # This is passed into the current window,
+        # and it modifies the character on your behalf.
+        self.available_attribute_points = 0  # Affected by POWER_LEVEL_OPTIONS_LIST
         self.available_attribute_points_stringvar = tk.StringVar()
-
         self.attribute_data = {}  # strength = 10, dexterity = 12, intelligence = 11 etc
 
         # UI stuff for the attribute window
         self.attribute_labels = []
         self.attribute_entries = []
         self.attribute_buttons = []
-
         self.attribute_stringvars = {}
         self.modifier_data = {}
         self.modifier_stringvars = {}
@@ -162,7 +150,7 @@ class Character_Creation_Window(tk.Toplevel):
         print ("Please Override me! (Cancel attributes)")
         pass
 
-class Point_Buy_Window(Character_Creation_Window):
+class Point_Buy_Window(tk.Toplevel):
     def __init__(self, master):
         super().__init__(master)
         self.master = master
@@ -315,7 +303,7 @@ class Point_Buy_Window(Character_Creation_Window):
         print ("Attribute window cancelled.")
         self.destroy()
 
-class Roll_Attributes_Window(Character_Creation_Window):
+class Roll_Attributes_Window(tk.Toplevel):
     def __init__(self, master):
         super().__init__(master)
         self.master = master
@@ -591,8 +579,9 @@ class Character_Editor_Window(tk.Toplevel):
         self.master.do_save()
 
 class Roll_or_Point_Buy_Prompt(tk.Toplevel):
-    def __init__(self, master):
+    def __init__(self, master, character):
         super().__init__(master)
+        self.character = character
         self.master = master
         self.create_widgets()
 
@@ -620,7 +609,7 @@ class Roll_or_Point_Buy_Prompt(tk.Toplevel):
         row = row+1
 
     def open_point_buy_window(self):
-        self.master.point_buy_window = Point_Buy_Window(self.master)
+        self.master.point_buy_window = Point_Buy_Window(self.master, self.character)
         self.destroy()
 
     def open_roll_attributes_window(self):
@@ -656,12 +645,40 @@ class Character_Helper_App(tk.Frame):
 
     def create_widgets(self):
         message = tk.Label(self.frame, text=WELCOME_MESSAGE).grid(column=1, row=0)
-        new_chara_button = tk.Button(self.frame, text="New Character", command=self.open_roll_or_point_buy_prompt).grid(column=1, row=3)
-        character_editor_button = tk.Button(self.frame, text="Character Editor", command=self.open_new_character_editor_prompt).grid(column=1, row=4)
+        new_chara_button = tk.Button(self.frame, text="New Character", command=self.do_new_character).grid(column=1, row=3)
+        character_editor_button = tk.Button(self.frame, text="Existing Character", command=self.open_new_character_editor_prompt).grid(column=1, row=4)
         quit_button = tk.Button(self.frame, text="Quit", command=self.master.destroy).grid(column=1, row=6)
 
-    def open_roll_or_point_buy_prompt(self):
-        roll_or_point_buy_prompt = Roll_or_Point_Buy_Prompt(self)
+    def do_new_character(self):
+        global player_character
+        answer = tk.simpledialog.askstring("New Character Name", "What is your new character's name?")
+        if answer:
+            # Answer Input Sanitization
+            answer = answer.strip()  # Remove whitespace
+            answer = answer.strip("_")  # Remove leading and trailing underscores
+            answer = (answer.translate({ord(i): None for i in '~.,?!@#$%^&*()-=+{}[]|'}))
+            existing_files = os.listdir("characters/")
+            print (existing_files)
+            filename = answer
+            # Filename Input Sanitization
+            filename = filename.lower() # Remove the capital letter
+            filename = filename.replace(" ", "_") # Change spaces to underscores
+            print ("Filename:",filename)
+            print("Character name:",answer)
+            # INPUT VALIDATION CHECK 2 MAKE SURE IT DOESNT CLOBBER OTHER CHARACTERS
+            if filename in existing_files:
+                print ("Exploded1!!!!")
+                tk.messagebox.showinfo("Screw you!!!", "That character name is already in use.")
+            else:
+                new_file = open("characters/"+filename+".txt", "w", encoding="latin-1")
+                blank_file = open("characters/blank.txt")
+                ## Copy the blank.txt into that new filename
+                new_file.write(blank_file.read())
+                blank_file.close()
+                new_file.close()
+                ## Finally open the new character
+                player_character = Character(filename)
+                roll_or_point_buy_prompt = Roll_or_Point_Buy_Prompt(self, player_character)
 
     def open_character_editor(self):
         print ("Opening the character editor!")

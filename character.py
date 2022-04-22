@@ -27,7 +27,8 @@ a text file. Please see the load for more information.
 
 If an attribute has a value of -1 then it has not been set or was corrupted somehow.
     """
-    def __init__(self, character_name = "", picture_caption = "",
+    def __init__(self, character_name = "",
+                 picture_caption = "",
                  profile_image=None):
 
         ## CHARACTER INFO
@@ -96,6 +97,11 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
             filename = "characters/%s.txt" % (character_name) ## always the same
             self.load(filename)
 
+        ## META DATA
+
+        self.date_modified = date.today()
+        self.date_created = date.today() ## Changed when it has loaded
+
     def init_all_skills(self):
         for skill in ALL_STANDARD_SKILLS:
             self.skill = -1
@@ -112,6 +118,7 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
         return classes
 
     def save(self, filename, show_all=True):
+        self.date_modified = date.today()
         data = self.get_character_sheet(show_all=show_all)
         f = open(filename, mode='w+')
         f.write(data)
@@ -153,16 +160,18 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
                 # so split at the ',' and then each is split further on "Lv"
                 # The output will be a list of tuples like this:
                 # [ ('cleric', 1), ('druid', 10)]
-                parsed_classes =  []
-                char_classes = value.strip('[]').split(",") # split on comma, will give each class and their associated level
-                for raw_char_st in char_classes: ## Alan put this line it handles the full character string such as "fighterLv3" or "rogueLv2"
-                    char_class_name, level = raw_char_st.split("Lv") # split between class name and level
-                    try:
-                        level = int(level)
-                    except:
-                        pass
-                    parsed_classes.append( (char_class_name, level) )
-                value = parsed_classes
+                parsed_classes = []
+                # check if the character class is blank
+                if len(value.strip("[]")) > 0:
+                    char_classes = value.strip('[]').split(",") # split on comma, will give each class and their associated level
+                    for raw_char_st in char_classes: ## Alan put this line it handles the full character string such as "fighterLv3" or "rogueLv2"
+                        char_class_name, level = raw_char_st.split("Lv") # split between class name and level
+                        try:
+                            level = int(level)
+                        except:
+                            pass
+                        parsed_classes.append( (char_class_name, level) )
+                    value = parsed_classes
             if "(" in key: # detected that the user typed something like knowledge(arcana)
                 main_key, sub_key = key.strip(")").split("(")
                 if main_key in MULTIAREA_SKILL_CATEGORIES:
@@ -283,7 +292,6 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
                     lines.append("%s = %s" % (key, value))
             else: ## too much flowing through else exception
                 lines.append('%s = %s' % (key, value))
-        lines.append("date = %s" % (today))
         return "\n".join(lines)
 
     @staticmethod
@@ -494,4 +502,5 @@ def test_11():
     print(chara.get_character_sheet())
 
 if __name__ == "__main__":
-    test_11()
+    test_8() # el blanko nino
+    print ("test completed")
