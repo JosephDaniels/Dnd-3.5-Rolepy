@@ -174,8 +174,6 @@ class Point_Buy_Window(tk.Toplevel):
         for key in CHARACTER_ATTRIBUTE_ENTRIES:
             self.modifier_stringvars[key] = tk.StringVar()
 
-
-
         self.create_widgets()
 
     def reset_attributes_and_modifiers(self):
@@ -359,10 +357,13 @@ class Point_Buy_Window(tk.Toplevel):
     def do_accept_attributes(self):
         answer = messagebox.askyesno("Do you accept?", "Do you accept these stats?")
         if answer:
-            # gives master a easy reference to this object
-            self.master.attribute_window = self
-            # gets all the attribute data from the current window
-            self.master._set_attribute_data_from_window()
+            for key in CHARACTER_ATTRIBUTE_ENTRIES: # Iterate through all the fieldnames
+                #Extract the value from the stringvars
+                value = int(self.attribute_stringvars[key].get())
+                #Put it in the character's corresponding field
+                self.character.__dict__[key] = value
+            #Save the Character sheet afterwards
+            self.character.save()
             self.destroy()
         elif answer == False:
             print("Ooh should've saved those stats, they were good!")
@@ -753,11 +754,6 @@ class Character_Helper_App(tk.Frame):
     def open_character_editor(self):
         print ("Opening the character editor!")
         self.character_editor = Character_Editor_Window(self)
-
-    def _set_attribute_data_from_window(self, debug = False):
-        self.attribute_data = self.attribute_window.attribute_data
-        if debug == True:
-            print (attribute_data)
 
     def _set_profile_data_from_window(self, debug = False):
         self.profile_data = self.profile_window.profile_data

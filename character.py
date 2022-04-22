@@ -28,7 +28,7 @@ a text file. Please see the load for more information.
 If an attribute has a value of -1 then it has not been set or was corrupted somehow.
     """
     def __init__(self, character_name = "",
-                 picture_caption = "",
+                 filename = "",
                  profile_image=None):
 
         ## CHARACTER INFO
@@ -93,12 +93,12 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
         self.feats = [] ## feats will get added to this list
         self.special_abilities = [] ## special class abilities are added to this list
 
-        if character_name:
+        if filename:
             filename = "characters/%s.txt" % (character_name) ## always the same
             self.load(filename)
 
         ## META DATA
-
+        self.filename = ""
         self.date_modified = date.today()
         self.date_created = date.today() ## Changed when it has loaded
 
