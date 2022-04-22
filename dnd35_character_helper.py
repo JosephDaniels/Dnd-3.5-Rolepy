@@ -151,15 +151,85 @@ class Character_Creation_Window(tk.Toplevel):
         pass
 
 class Point_Buy_Window(tk.Toplevel):
-    def __init__(self, master):
+    def __init__(self, master, character):
         super().__init__(master)
         self.master = master
+        self.character = character  # This is passed into the current window,
+        # and it modifies the character on your behalf.
+        self.available_attribute_points = 0  # Affected by POWER_LEVEL_OPTIONS_LIST
+        self.available_attribute_points_stringvar = tk.StringVar()
+        self.attribute_data = {}  # strength = 10, dexterity = 12, intelligence = 11 etc
+
+        # UI stuff for the attribute window
+        self.attribute_labels = []
+        self.attribute_entries = []
+        self.attribute_buttons = []
+        self.attribute_stringvars = {}
+        self.modifier_data = {}
+        self.modifier_stringvars = {}
+
+        for key in CHARACTER_ATTRIBUTE_ENTRIES:
+            self.attribute_stringvars[key] = tk.StringVar()
+
+        for key in CHARACTER_ATTRIBUTE_ENTRIES:
+            self.modifier_stringvars[key] = tk.StringVar()
+
+
+
         self.create_widgets()
 
     def reset_attributes_and_modifiers(self):
         for name in CHARACTER_ATTRIBUTE_ENTRIES:
             self.attribute_data[name] = 8
         self.update_modifier_data()
+
+    def update_modifier_data(self):
+        for entry in CHARACTER_ATTRIBUTE_ENTRIES:
+            self.modifier_data[entry] = self._calculate_modifier(self.attribute_data[entry])
+
+    def _calculate_modifier(self, value):
+        if value%2 == 1: ## Test if the attribute divides nicely
+            value = value-1 ## If not, remove one to make it even
+        modifier = int((value-10)/2) ## Attribute-1/2 is modifier formula
+        return modifier
+
+    def _convert_modifiers_for_display(self):
+        ## HANDLE THE MODIFIERS
+        for key in self.modifier_data.keys():
+            _modifier = self.modifier_data[key]
+            if _modifier>=0:
+                _modifier = "+"+str(_modifier)
+            else:
+                _modifier = self.modifier_data[key]
+            self.modifier_stringvars[key].set(_modifier)
+
+    def _convert_attributes_for_display(self):
+        """iterates through all the actual values,
+         and sticks them into the stringvars for display."""
+
+        ## HANDLE ATTRIBUTES
+        self.get_attribute_data_from_stringvars()
+
+        for key in self.attribute_data.keys():
+            # update stringvars based on the attribute data
+            self.attribute_stringvars[key].set(str(self.attribute_data[key]))
+
+        ## HANDLE AVAILABLE POINTS COUNTER
+        self.available_attribute_points_stringvar.set(str(self.available_attribute_points))
+
+        ## HANDLE MODIFIERS
+        self._convert_modifiers_for_display()
+
+    def get_attribute_data_from_stringvars(self):
+        """ Used when you want to update the stringvars based on new attribute data"""
+        for key in self.attribute_data.keys():
+            # update stringvars based on the attribute data
+            self.attribute_stringvars[key].set(str(self.attribute_data[key]))
+
+    def set_attribute_data_from_stringvars(self):
+        """ Used when you want to retrieve data thats current inside an entry stringvar"""
+        for entry in CHARACTER_ATTRIBUTE_ENTRIES:
+            self.attribute_data[entry] = int(self.attribute_stringvars[entry].get())
 
     def up_attribute_point(self, name):
         print ("Hit up attribute point")
@@ -304,8 +374,8 @@ class Point_Buy_Window(tk.Toplevel):
         self.destroy()
 
 class Roll_Attributes_Window(tk.Toplevel):
-    def __init__(self, master):
-        super().__init__(master)
+    def __init__(self, master, character):
+        super().__init__(master, character)
         self.master = master
         self.create_widgets()
 
@@ -613,7 +683,7 @@ class Roll_or_Point_Buy_Prompt(tk.Toplevel):
         self.destroy()
 
     def open_roll_attributes_window(self):
-        self.master.attribute_window = Roll_Attributes_Window(self.master)
+        self.master.attribute_window = Roll_Attributes_Window(self.master, self.character)
         self.destroy()
 
 class Character_Helper_App(tk.Frame):
