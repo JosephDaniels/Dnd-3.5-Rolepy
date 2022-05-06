@@ -151,6 +151,10 @@ async def do_rock_paper_scissors(message):
                " Rock! Paper! Scissors. . . %s!!! %s" % (message.author, bot_throw, bonus_message)
     return response, message.channel
 
+async def do_murderdeathkill(message):
+    response = "%s was victorious!" % (message.author)
+    return response, message.channel
+
 async def do_tableflip(message):
     username = ("%s#%s") % (message.author.name, message.author.discriminator)
     response = (username + " grabs the table by the edges, flipping it over like"
@@ -384,6 +388,7 @@ CHAT_COMMANDS = [  # Execution table that based on the command input, it will th
     ("whois", do_whois),
     ("whoami", do_whoami),
     ("me", do_whoami),
+    ("murderdeathkill", do_murderdeathkill),
     ("tableflip", do_tableflip),
     ("fliptable", do_tableflip),
     ("unfliptable", do_unfliptable),

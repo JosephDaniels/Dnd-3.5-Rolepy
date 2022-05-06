@@ -65,7 +65,7 @@ class DM_helper(object):
             try:
                 username, character_name = line.split("=")
                 username, character_name = username.strip(), character_name.strip()  # Removes whitespace
-                character = Character(character_name)
+                character = Character()
                 self.logged_in_as[username] = character
             except ValueError:
                 print ("No Characters logged in previously. [BLANK FILE FOUND]")

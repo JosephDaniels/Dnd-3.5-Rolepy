@@ -21,27 +21,26 @@ class Data(object):
 class Character(object):
     """
 This handles a DnD 3.5e character sheet.
+DnD of course standing for Demons and Daggers.
 This was built for use with the Rolepy Python Discord Bot.
 The class holds character information once its loaded inside from
-a text file. Please see the load for more information.
+a text file. Please see the load func for more information.
 
 If an attribute has a value of -1 then it has not been set or was corrupted somehow.
     """
-    def __init__(self, character_name = "",
-                 filename = "",
-                 profile_image=None):
+    def __init__(self, display_name=""):
+        ## PLAYER INFO
 
-        ## CHARACTER INFO
-        self.username = "" ## e.g. what they type to !login to the system
-        self.display_name = "" ## e.g. Their long name like "Ulfric Northsun of the Bearmantle Clan"
-        self.discord_username = "" ## The player's discord username such as Villager#1999
-        self.player_name = "" ## The actual name of the person who the character belongs to e.g. John A. Macdonald
-        self.character_class= [] ## lowercase character class with associated level e.g. ["fighterLv1","rogueLv2"]
-        self.alignment = "" ## Lawful <-> Chaotic and Evil <-> Good E.G. "Lawful Good" or "Chaotic Evil" or "True Neutral"
-        self.race = "" ## the name of their race in lowercase letters.
+        # PLAYER NAME
+        self.display_name = display_name # e.g. Their long name like "Ulfric Northsun"
+        self.username = Character.clean_up_display_name(display_name) # e.g. what they type to !login to the system e.g. barda_mardis which is derived from display name
+        self.filename = self.username+".txt" # It will be "your_username.txt"  something like that
+        self.discord_username = "" # The player's discord username such as Villager#1999
+        self.character_class = [] # lowercase character class with associated level e.g. ["fighterLv1","rogueLv2"]
+        self.alignment = "" # Lawful <-> Chaotic and Evil <-> Good E.G. "Lawful Good" or "Chaotic Evil" or "True Neutral"
+        self.race = "" # the name of their race in lowercase letters.
 
         ## PROFILE INFO
-
         self.age = -1
         self.height = ""
         self.weight = ""
@@ -56,7 +55,7 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
         self.public_history = ""  # What other players see when they look at your profile
         self.personal_history = ""  # The full back story of your character that only you and the DM know
 
-        self.profile_image = profile_image ## something like bobby.jpg or something
+        self.profile_image = None ## something like bobby.jpg or something
 
         ## GAME INFO
         self.dying = False
@@ -93,14 +92,17 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
         self.feats = [] ## feats will get added to this list
         self.special_abilities = [] ## special class abilities are added to this list
 
-        if filename:
-            filename = "characters/%s.txt" % (character_name) ## always the same
-            self.load(filename)
-
         ## META DATA
-        self.filename = ""
         self.date_modified = date.today()
         self.date_created = date.today() ## Changed when it has loaded
+
+    @staticmethod
+    def clean_up_display_name(display_name):
+        # Answer Input Validation
+        display_name = display_name.replace(" ", "_")  # Change spaces to underscores
+        internal_name = (display_name.translate({ord(i): None for i in '~.,?!@#$%^&*()-=+{}[]|'}))
+        internal_name = internal_name.lower()  # Something like Barda Mardis turns to barda mardis
+        return internal_name
 
     def init_all_skills(self):
         for skill in ALL_STANDARD_SKILLS:
@@ -119,7 +121,7 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
 
     def save(self, filename, show_all=True):
         self.date_modified = date.today()
-        data = self.get_character_sheet(show_all=show_all)
+        data = self.get_character_sheet(show_all=show_all) ## Gets a whole character sheet
         f = open(filename, mode='w+')
         f.write(data)
         f.close()
@@ -147,7 +149,11 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
             _initiative_bonus = 1
             _total_hp = 93
             _total_
-            etc..."""
+            etc...
+
+            Filename expects the exact directory to the file you wish to load.
+            The load function expects a .txt file.
+            """
         profile = {}
         character_file = open(filename, encoding="latin-1").read()
         character_file = character_file.split("\n")
@@ -501,6 +507,11 @@ def test_11():
     chara.load(paige_file)
     print(chara.get_character_sheet())
 
+def test_12():
+    new_charfile = "characters/bobby.txt"
+    chara = Character()
+
+
 if __name__ == "__main__":
-    test_8() # el blanko nino
+    test_12() # Make a new character sheet
     print ("test completed")

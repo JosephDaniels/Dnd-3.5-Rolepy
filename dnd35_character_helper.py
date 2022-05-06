@@ -65,8 +65,6 @@ POWER_LEVEL_OPTIONS_LIST = {"Low-Power" : 15,
                             "Super-Heroic" : 50,
                             "Legendary" : 80}
 
-player_character = None  # Initializes to a character upon operation
-
 class Character_Creation_Window(tk.Toplevel):
     def __init__(self, master):
         super().__init__(master)
@@ -363,7 +361,7 @@ class Point_Buy_Window(tk.Toplevel):
                 #Put it in the character's corresponding field
                 self.character.__dict__[key] = value
             #Save the Character sheet afterwards
-            self.character.save()
+            self.character.save()  ## ERROR!?!?! needs filename
             self.destroy()
         elif answer == False:
             print("Ooh should've saved those stats, they were good!")
@@ -466,14 +464,12 @@ class Roll_Attributes_Window(tk.Toplevel):
         self.destroy()
 
 class Character_Editor_Window(tk.Toplevel):
-    def __init__(self, master, character,charname="",):
+    def __init__(self, master, character):
         # character is a Character object
-
         # This window will modify this object
         # with what the player enters into this
         # window once they clicks the "Save"
         # button at the end.
-
         super().__init__(master)
         self.master = master
 
@@ -482,7 +478,7 @@ class Character_Editor_Window(tk.Toplevel):
 
         self.character_profile_stringvars = {}
 
-        for label, name in PLAYER_PROFILE_DETAILS:
+        for label, name in PLAYER_PROFILE_DETAILS:   ## E.G. Display Name, display_name
             self.player_profile_details_stringvars[name] = tk.StringVar()
 
         for label, name in CHARACTER_PROFILE_ENTRIES: # Encompasses
@@ -688,72 +684,71 @@ class Roll_or_Point_Buy_Prompt(tk.Toplevel):
         self.destroy()
 
 class Character_Helper_App(tk.Frame):
+    ## Root window
     def __init__(self, master, frame):
         super().__init__(master)
         self.master = master
         self.frame = frame
 
         ## Holder variables
-        self.roll_or_point_buy_prompt = None
-
-        ## Important Data
-        self.profile_window = None
-        self.profile_data = {}  # populated by get_profile_data()
-
-        self.attribute_window = None
-        self.attribute_data = {}  # populated by get_attribute_data()
+        self.character_editor_window = None
 
         self.create_widgets()
-
-    def open_new_character_editor_prompt(self):
-        answer = messagebox.askyesno("Make Blank Character?", "Edit blank character sheet?")
-        if answer:
-            c = Character()
-            self.character_editor = Character_Editor_Window(self, c)
-        elif answer == False:
-            pass
-            # self.entry_window = Entry_Window(self, message = "What is your character's name?")  # Prompt window to get their character's name
 
     def create_widgets(self):
         message = tk.Label(self.frame, text=WELCOME_MESSAGE).grid(column=1, row=0)
         new_chara_button = tk.Button(self.frame, text="New Character", command=self.do_new_character).grid(column=1, row=3)
-        character_editor_button = tk.Button(self.frame, text="Existing Character", command=self.open_new_character_editor_prompt).grid(column=1, row=4)
+        character_editor_button = tk.Button(self.frame, text="Existing Character", command=self.open_character_editor_prompt).grid(column=1, row=4)
         quit_button = tk.Button(self.frame, text="Quit", command=self.master.destroy).grid(column=1, row=6)
 
-    def do_new_character(self):
-        global player_character
-        answer = tk.simpledialog.askstring("New Character Name", "What is your new character's name?")
-        if answer:
-            # Answer Input Sanitization
-            answer = answer.strip()  # Remove whitespace
-            answer = answer.strip("_")  # Remove leading and trailing underscores
-            answer = (answer.translate({ord(i): None for i in '~.,?!@#$%^&*()-=+{}[]|'}))
-            existing_files = os.listdir("characters/")
+    def open_character_editor_prompt(self):
+        display_name = tk.simpledialog.askstring("Enter Character Name", "What is your character's name?")
+        if display_name:
+            internal_name = Character.clean_up_display_name(display_name)
+            filename = internal_name+".txt"
+            print (filename)
+            # Check if it exists already
+            existing_files = os.listdir("characters/")  # A bunch of existing filenames
             print (existing_files)
-            filename = answer
-            # Filename Input Sanitization
-            filename = filename.lower() # Remove the capital letter
-            filename = filename.replace(" ", "_") # Change spaces to underscores
+            if filename in existing_files:
+                print ("Character file found!!!")
+                character = Character(display_name = display_name)
+                character.load("characters/"+filename)
+                self.character_editor_window = Character_Editor_Window(self.master, character)
+            else:
+                tk.messagebox.showinfo("Screw you!!!", "No character found.")
+        elif answer == False:
+            pass
+            # self.entry_window = Entry_Window(self, message = "What is your character's name?")  # Prompt window to get their character's name
+
+    def do_new_character(self):
+        display_name = tk.simpledialog.askstring("New Character Name", "What is your new character's name?")
+        if display_name:
+            # We don't want to allow similar filenames
+            filename = Character.clean_up_display_name(display_name)+".txt" # Change spaces to underscores
+
+            ## COMPARING FILENAME TO CHARACTER NAME
             print ("Filename:",filename)
-            print("Character name:",answer)
+            print("Character name:",display_name)
+
+            existing_files = os.listdir("characters/") # A bunch of existing filenames
+            print (existing_files)  # Showing us all characters that are already created
+
             # INPUT VALIDATION CHECK 2 MAKE SURE IT DOESNT CLOBBER OTHER CHARACTERS
             if filename in existing_files:
                 print ("Exploded1!!!!")
                 tk.messagebox.showinfo("Screw you!!!", "That character name is already in use.")
             else:
-                new_file = open("characters/"+filename+".txt", "w", encoding="latin-1")
+                new_file = open("characters/"+filename, "w", encoding="latin-1")
                 blank_file = open("characters/blank.txt")
                 ## Copy the blank.txt into that new filename
                 new_file.write(blank_file.read())
                 blank_file.close()
                 new_file.close()
                 ## Finally open the new character
-                player_character = Character(filename)
-                roll_or_point_buy_prompt = Roll_or_Point_Buy_Prompt(self, player_character)
-
-    def open_character_editor(self):
-        print ("Opening the character editor!")
-        self.character_editor = Character_Editor_Window(self)
+                character = Character(filename)
+                # Character editor window expects (self, root, character)
+                self.character_editor_window = Character_Editor_Window(self.master, character)
 
     def _set_profile_data_from_window(self, debug = False):
         self.profile_data = self.profile_window.profile_data
