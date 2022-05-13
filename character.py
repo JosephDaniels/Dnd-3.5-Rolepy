@@ -12,6 +12,27 @@ SAVE_KEY_ABILITIES = {
     "base_will"         :   "wisdom"
     }
 
+LAW_CHAOS_ALIGNMENT = ["Lawful","Neutral","Chaotic"]
+GOOD_EVIL_ALIGNMENT = ["Good","Neutral","Evil"]
+ALL_ALIGNMENTS = ['Lawful Good',
+                  'Lawful Neutral',
+                  'Lawful Evil',
+                  'Neutral Good',
+                  'Neutral Neutral',
+                  'Neutral Evil',
+                  'Chaotic Good',
+                  'Chaotic Neutral',
+                  'Chaotic Evil']
+
+
+# def create_alignments():
+#     alignments = []
+#     for x in LAW_CHAOS_ALIGNMENT:
+#         for y in GOOD_EVIL_ALIGNMENT:
+#             alignments.append(x+" "+y)
+#     return alignments
+# ALL_ALIGNMENTS = create_alignments()
+
 class Data(object):
     def __init__(self):
         return
@@ -287,12 +308,15 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
             #Depending on the type we'll format it correctly
             if type(value) == Data:  # got a data object not currently used for anything just yet
                 pass
-            elif key == "character_class":
-                char_classes = []
-                for char_class_and_level in value:
-                    char_class, level = char_class_and_level[0],char_class_and_level[1]
-                    char_classes.append("%sLv%i" % (char_class,level))
-                lines.append('%s = %s' % (key, char_classes))
+            elif key == "character_class": # Character class stuff
+                char_classes = [] # Holds the actual data after parsing
+                if value != "[]":
+                    for char_class_and_level in value:
+                        char_class, level = char_class_and_level[0],char_class_and_level[1]
+                        char_classes.append("%sLv%i" % (char_class,level))
+                    lines.append('%s = %s' % (key, char_classes))
+                else:
+                    lines.append("character_class = []")
             elif value == -1: ## Non-valid value
                 if show_all == True:
                     lines.append("%s = %s" % (key, value))
@@ -511,7 +535,9 @@ def test_12():
     new_charfile = "characters/bobby.txt"
     chara = Character()
 
+def test_13():
+    print (ALL_ALIGNMENTS)
 
 if __name__ == "__main__":
-    test_12() # Make a new character sheet
+    test_13() # Make a new character sheet
     print ("test completed")

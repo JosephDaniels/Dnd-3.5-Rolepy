@@ -18,21 +18,33 @@ import tkinter as tk
 from tkinter import ttk, messagebox, simpledialog
 
 # My own libraries, go ahead and improve them!
-from character import Character
+from character import Character, ALL_ALIGNMENTS
+
+from weapons import *  # Gets all weapons, NOT CURRENTLY DONE
+
 from race import *
 
 ## Label followed by the internal key name
-PLAYER_PROFILE_DETAILS = [("Player Name", "player_name"),
-                          ("Discord Username", "discord_username")]
-## Label, Internal name, type of this you want to have eg. entry or textboxes or dropdown
-CHARACTER_PROFILE_ENTRIES = [("Character Full Name: ", "display_name"),
-                             ("Age: ","age"),
-                             ("Gender: ","gender"),
-                             ("Eye Colour: ","eye_colour"),
-                             ("Hair Colour: ","hair_colour"),
-                             ("Skin Colour: ","skin_colour"),
-                             ("Height: ","height"),
-                             ("Weight: ","weight")
+## Constructs the the layout of the player editor
+PLAYER_PROFILE_DETAILS = [("Player Name", "player_name", "entry", []),
+                          ("Discord Username", "discord_username", "entry", [])]
+
+## (Label, Internal name, Tkinter type, [settings for tkinter type])
+#  - type of this you want to have eg. entry or textboxes or dropdown
+## Constructs the layour of the player editor
+CHARACTER_PROFILE_ENTRIES = [("Character Full Name", "display_name", "entry", []),
+                             ("Race", "race", "dropdown", [ALL_CHARACTER_RACES]),
+                             ("Age","age","entry", []),
+                             ("Gender","gender","entry", []),
+                             ("Alignment", "alignment","dropdown", [ALL_ALIGNMENTS]),
+                             ("Eye Colour","eye_colour","entry", []),
+                             ("Hair Colour","hair_colour","entry", []),
+                             ("Skin Colour","skin_colour","entry", []),
+                             ("Height","height","slider", ["0'0","8'0"]),
+                             ("Weight","weight","slider", ["0lbs","500lbs"]),
+                             ("Description","description","textbox", [512]),
+                             ("History","history","textbox", [2048]),
+                             ("Favourite Weapon","favorite_weapon", "dropdown", [ALL_WEAPONS])
                              ]
 
 CHARACTER_ATTRIBUTE_ENTRIES = ["strength","dexterity","constitution","intelligence","wisdom","charisma"]
@@ -66,7 +78,13 @@ POWER_LEVEL_OPTIONS_LIST = {"Low-Power" : 15,
                             "Legendary" : 80}
 
 class Character_Creation_Window(tk.Toplevel):
-    def __init__(self, master):
+    """Character is a 'character' object, which gives stats representing a character.
+        This window will modify this object
+        with what the player enters into this
+        window once they clicks the "Save"
+        button at the end."""
+
+    def __init__(self, master, character):
         super().__init__(master)
         self.master = master  # Giving us a reference to the root window
         self.character = character  # This is passed into the current window,
@@ -472,17 +490,18 @@ class Character_Editor_Window(tk.Toplevel):
         # button at the end.
         super().__init__(master)
         self.master = master
-
+        self.character = character
         ## Profile Data
         self.player_profile_details_stringvars = {}
-
         self.character_profile_stringvars = {}
 
-        for label, name in PLAYER_PROFILE_DETAILS:   ## E.G. Display Name, display_name
+        for label, name, tkinter_type, params in PLAYER_PROFILE_DETAILS:   # E.G. Display Name, display_name
             self.player_profile_details_stringvars[name] = tk.StringVar()
+            self.player_profile_details_stringvars[name].set(self.character.__dict__[name])
 
-        for label, name in CHARACTER_PROFILE_ENTRIES: # Encompasses
+        for label, name, tkinter_type, params in CHARACTER_PROFILE_ENTRIES: # Encompasses
             self.character_profile_stringvars[name] = tk.StringVar()
+            self.character_profile_stringvars[name].set(self.character.__dict__[name])
 
         self.create_widgets()
 
@@ -547,7 +566,7 @@ class Character_Editor_Window(tk.Toplevel):
     def create_widgets(self):
         row = 0
 
-        for label, name in PLAYER_PROFILE_DETAILS:
+        for label, name, tkinter_type, params in PLAYER_PROFILE_DETAILS:
             new_label = tk.Label(self, text=label)
             new_label.grid(column=0, row=row)
 
@@ -556,7 +575,7 @@ class Character_Editor_Window(tk.Toplevel):
             new_entry.grid(column=1, row=row)
             row = row + 1
 
-        for label, name in CHARACTER_PROFILE_ENTRIES:
+        for label, name, tkinter_type, params in CHARACTER_PROFILE_ENTRIES:
             new_label = tk.Label(self, text=label)
             new_label.grid(column=0, row=row)
 
@@ -692,7 +711,6 @@ class Character_Helper_App(tk.Frame):
 
         ## Holder variables
         self.character_editor_window = None
-
         self.create_widgets()
 
     def create_widgets(self):
@@ -714,6 +732,7 @@ class Character_Helper_App(tk.Frame):
                 print ("Character file found!!!")
                 character = Character(display_name = display_name)
                 character.load("characters/"+filename)
+                # print(character.get_character_sheet())
                 self.character_editor_window = Character_Editor_Window(self.master, character)
             else:
                 tk.messagebox.showinfo("Screw you!!!", "No character found.")

@@ -1,0 +1,83 @@
+COMBAT ACTIONS:
+[!melee,
+ !ranged,
+ !draw,
+ !sheath,
+ !inventory,
+ !cast,
+ !move,
+ !ready,
+ !pass,
+ !defend,
+ !trip,
+ !rush,
+ !disarm,
+ !grapple,
+ !stealth,
+ !jump]
+
+
+## SIMPLE COMBAT EXAMPLE
+========================
+
+!addinitiative Ulfric 21
+Added Ulfric in at initiative position 21!
+!addinitiative goblin_1 7
+Added goblin_1 in at initiative position 7!
+!startcombat
+The combat has begun! Order is [Ulfric 21, goblin7]. Current turn is Ulfric. What action would you like to take? [!melee, !ranged, !draw, !sheath, !inventory, !cast, !move, !ready, !pass, !defend]
+
+[Ulfric]: !melee goblin
+Ulfric swings at the goblin with an attack bonus of +13 with +3 strength and a +1 longsword. They rolled a d20 at +17 and got a natural 11 + 17 for a total of 28. They have hit the goblin, proceeding to damage step to deal bastard sword (d10) + 3 strength point of lethal damage.
+[Bot]: !rolld10+3
+Bastard sword result dealt 7+3 damage for 10 damage. Goblin takes 10 damage and is slain.
+[Bot]: Ulfric slays a goblin and gains 13 XP and 3 gold! Combat ends.
+
+
+
+## INTERMEDIATE COMBAT EXAMPLE
+======================================
+!surprise
+[Bot]: Surprise round! The players are taken by surprise!
+[Bot]: goblin_1 rolls initiative! [1d20+3 dex]
+[Bot]: !rolld20+3
+Rolled d20 and got natural 7+3 for 10
+[Bot]: goblin_2 rolls initiative! [1d20+3 dex]
+[Bot]: !rolld20+3
+Rolled d20 and got natural 11+3 for 14
+[Bot]: goblin_3 rolls initiative! [1d20+3 dex]
+[Bot]: !rolld20+3
+Rolled d20 and got natural 13+3 for 16
+[Bot]: Surprise round has begun! Attackers = [goblin_3 = 16, goblin_2 = 14, goblin_1 = 10]
+[Bot]: Goblin_3 attacks paige! [1d20+3 Attack Bonus +2 strength]
+!rolld20+5 = natural 17 +5 = 22
+[Bot]: Goblin_3 hits paige and deals 1d6 club damage with their club!
+!rolld6+1 strength = natural 3 + 1 = 4 bludgeoning damage
+[Bot]: Paige took 4 bludgeoning damage and is now at 14 hit points left.
+[Bot]: Goblin_2 attacks paige! [1d20+3 Attack Bonus +2 strength]
+!rolld20+5 = natural 2 +5 = 7
+Goblin_2 attacks paige and misses!
+[Bot]: Goblin_1 attacks paige! [1d20+3 Attack Bonus +2 strength]
+!rolld20+5 = natural 2 +5 = 7
+Goblin_1 attacks paige and misses!
+[Bot] Surprise round is over! All characters roll initiative!
+[Bot] Ulfric rolls initiative! (1d20+2 dex)
+!rolld20+2 = natural 17 + 2 dex = 19
+[Bot] Paige rolls initiative! (1d20+3 dex)
+!rolld20+3 = natural 17 + 3 dex = 20
+[Bot]: The new Initiative is: [Paige = 20, Ulfric = 19, goblin_3 = 16, goblin_2 = 14, goblin_1 = 10]
+!startcombat
+[Bot]: The combat has begun! Order is [Paige = 20, Ulfric = 19, goblin_3 = 16, goblin_2 = 14, goblin_1 = 10].
+Current turn is Paige. What action would you like to take? [!melee, !ranged, !draw, !sheath, !inventory, !cast, !move, !ready, !pass, !defend]
+[Paige]: !draw whip
+[Bot]: Paige draws her whip from her inventory! You have one movement action left. Current turn is [Paige]
+[Paige]: !melee goblin_1
+Paige whips at the goblin with an attack bonus of +7 with +2 strength and a +1 whip.
+!rolld20+10
+They rolled a d20 at +10 and got a natural 11 + 10 for a total of 21.
+ They have hit the goblin, proceeding to damage step to deal whip (d3) + 2 strength point of lethal damage.
+[Bot]: !rolld3+2
+Bastard sword result dealt 3+2 damage for 5 damage. Goblin takes 5 damage and is barely alive!
+[Bot]: Paige's turn has ended.
+[Bot]: Current turn is Ulfric. What action would you like to take? [!melee, !ranged, !draw, !sheath, !inventory, !cast, !move, !ready, !pass, !defend]
+
