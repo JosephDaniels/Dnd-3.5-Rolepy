@@ -65,7 +65,7 @@ class DM_helper(object):
             try:
                 username, character_name = line.split("=")
                 username, character_name = username.strip(), character_name.strip()  # Removes whitespace
-                character = Character()
+                character = Character(character_name)
                 self.logged_in_as[username] = character
             except ValueError:
                 print ("No Characters logged in previously. [BLANK FILE FOUND]")
@@ -220,18 +220,17 @@ def test(): # combat test
     
     dm = DM_helper()
     
-    paige_file = "characters/paige.txt"
-    paige = Character()
-    paige.load(paige_file)
+
+    paige = Character("paige")
+    paige.load()
     dm.add_character(paige)
-    
-    bandit_file = "npcs/bandit.txt"
-    bandit = Character()
-    bandit.load(bandit_file)
+
+    bandit = Character("bandit")
+    bandit.load()
     dm.add_character(bandit)
 
     bandit_2 = Character()
-    bandit_2.load(bandit_file)
+    bandit_2.load()
     bandit_2.username = "bandit_2" ## This is a hack to give unique bandits
     dm.add_character(bandit_2)
 

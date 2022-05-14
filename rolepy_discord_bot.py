@@ -275,11 +275,11 @@ async def do_login(message):
 
         else:  # Truly log their character in and load them in the system
             response = "Successfully logged %s in as the character %s." % (username, target_character)
-            character_sheet = Character(target_character)  #Loads a character file based off of name
-            print (character_sheet)
+            character = Character(target_character)  #Loads a character file based off of name
             # nick = character_sheet.username  # for changing their name in discord
-            dm.logged_in_as[username] = character_sheet  #Associates a given username with a character sheet
-            dm.add_character(character_sheet)
+            dm.logged_in_as[username] = character  #Associates a given username with a character sheet
+            dm.add_character(character)
+            print (character)
             print ("%s has logged in as %s." % (username, target_character))
 
     # if nick != None:  # change their nickname
@@ -304,7 +304,7 @@ async def do_logout(message):
     return response, message.channel
 
 async def do_whois(message):
-    # username = ("%s#%s") % (message.author.name, message.author.discriminator)
+    username = ("%s#%s") % (message.author.name, message.author.discriminator)
     char_sheet = dm.logged_in_as[username]  ## Finds your character sheet from your discord username
     profile, image_file = char_sheet.get_full_profile()  # This is their FULL profile
     await message.author.send(profile, file=discord.File(image_file))
@@ -334,7 +334,7 @@ async def do_showlogins(message):
 # async def do_poker_game(message):
 #     await play_poker_game(message)
 
-async def old_user_commands():
+async def combat_commands(message):
     if message.content == ("!begincombat") or message.content == ("!startcombat"):
         ## Start Combat
         ## Switch to combat mode
@@ -357,6 +357,14 @@ async def old_user_commands():
 
     # if message.content == ("!play poker"):
     #     await do_poker_game(message)
+
+async def do_status(message):
+    """ Returns the status of the character you are currently playing. """
+    username = "%s#%s" % (message.author.name, message.author.discriminator)
+    character = dm.logged_in_as[username]
+    response = character.get_status()
+    channel = message.channel
+    return response, channel
 
 def save_all(dm_instance):
     # This will save all characters currently logged into the system
@@ -385,16 +393,20 @@ CHAT_COMMANDS = [  # Execution table that based on the command input, it will th
     ("rps", do_rock_paper_scissors),
     ("whoisloggedin", do_showlogins),
     ("whoisplaying", do_showlogins),
-    ("whois", do_whois),
-    ("whoami", do_whoami),
-    ("me", do_whoami),
     ("murderdeathkill", do_murderdeathkill),
     ("tableflip", do_tableflip),
     ("fliptable", do_tableflip),
     ("unfliptable", do_unfliptable),
     ("breaktable", do_breaktable),
     ("sunglassesfingerguns", do_sunglassesfingerguns),
-    ("kickinthedoor", do_kickinthedoor)
+    ("kickinthedoor", do_kickinthedoor),
+    # ROLEPLAY COMMANDS
+    ("whois", do_whois),
+    ("whoami", do_whoami),
+    ("me", do_whoami),
+    ("status", do_status)
+    # COMBAT COMMANDS - Available during combat only
+
 ]
 
 @client.event

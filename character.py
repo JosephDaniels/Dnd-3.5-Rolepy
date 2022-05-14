@@ -50,12 +50,18 @@ a text file. Please see the load func for more information.
 If an attribute has a value of -1 then it has not been set or was corrupted somehow.
     """
     def __init__(self, display_name=""):
+
         ## PLAYER INFO
+        self.display_name = display_name  # e.g. Their first and last name with a space E.G "Ulfric Northsun"
 
         # PLAYER NAME
-        self.display_name = display_name # e.g. Their long name like "Ulfric Northsun"
-        self.username = Character.clean_up_display_name(display_name) # e.g. what they type to !login to the system e.g. barda_mardis which is derived from display name
-        self.filename = self.username+".txt" # It will be "your_username.txt"  something like that
+        if self.display_name != "":
+            self.username = Character.create_username_from(display_name)
+
+        else: # Blank character
+            self.username = "Unnamed_character"
+        # The username what they type to !login to the system
+        # e.g. what they type to !login to the system e.g. barda_mardis which is derived from display name
         self.discord_username = "" # The player's discord username such as Villager#1999
         self.character_class = [] # lowercase character class with associated level e.g. ["fighterLv1","rogueLv2"]
         self.alignment = "" # Lawful <-> Chaotic and Evil <-> Good E.G. "Lawful Good" or "Chaotic Evil" or "True Neutral"
@@ -117,13 +123,22 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
         self.date_modified = date.today()
         self.date_created = date.today() ## Changed when it has loaded
 
+        ## FINAL LOAD
+        self.filename = self.username + ".txt"  # It will be "your_username.txt"  something like that
+        if display_name != "":
+            self.load()
+
     @staticmethod
-    def clean_up_display_name(display_name):
+    def create_username_from(display_name):
         # Answer Input Validation
-        display_name = display_name.replace(" ", "_")  # Change spaces to underscores
-        internal_name = (display_name.translate({ord(i): None for i in '~.,?!@#$%^&*()-=+{}[]|'}))
-        internal_name = internal_name.lower()  # Something like Barda Mardis turns to barda mardis
-        return internal_name
+        ## lets say they typed barda Mardis as when they signed in
+
+        ## Barda Mardis would be the Display name or Full Name
+        # display_name = display_name.title() ## changes barda to Barda
+
+        ## Barda_Mardis would be the username
+        username = display_name.replace(" ", "_")  # Change spaces to underscores
+        return username
 
     def init_all_skills(self):
         for skill in ALL_STANDARD_SKILLS:
@@ -140,14 +155,14 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
             classes.append(char_class.strip('"'))
         return classes
 
-    def save(self, filename, show_all=True):
+    def save(self):
         self.date_modified = date.today()
-        data = self.get_character_sheet(show_all=show_all) ## Gets a whole character sheet
+        data = self.get_character_sheet(show_all=True) ## Gets a whole character sheet
         f = open(filename, mode='w+')
         f.write(data)
         f.close()
 
-    def load(self, filename):
+    def load(self):
         """reads a text file and reads the data, turning it into names, experience etc.
             any variables that start with an underscore are internal variables and should not be
             modified or overridden by external sources.
@@ -176,7 +191,7 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
             The load function expects a .txt file.
             """
         profile = {}
-        character_file = open(filename, encoding="latin-1").read()
+        character_file = open("characters/"+self.filename, encoding="latin-1").read()
         character_file = character_file.split("\n")
         for line in character_file: ## Reading each line in the character like strength = 18
             key, value = line.split("=") ## Splits the arguments by the equals sign
@@ -323,6 +338,19 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
             else: ## too much flowing through else exception
                 lines.append('%s = %s' % (key, value))
         return "\n".join(lines)
+
+    def get_status(self):
+        health_message = "Current Life: %i / %i Maximum HP." % (self.current_health, self.maximum_health)
+        death_message = " and you are currently OK."
+        if self.dying == True:
+            death_message = " and you are currently dying."
+        elif self.dead == True:
+            death_message = " and you are currently dead."
+        else:
+            death_message = " and you are currently OK."
+        response = "%s's current status: " % (self.display_name)
+        response = response+health_message+death_message
+        return response
 
     @staticmethod
     def _calculate_modifier(value):
@@ -538,6 +566,11 @@ def test_12():
 def test_13():
     print (ALL_ALIGNMENTS)
 
+def test_14():
+    c = Character("paige")
+    response, image_file = c.get_profile()
+    print (response, image_file)
+
 if __name__ == "__main__":
-    test_13() # Make a new character sheet
+    test_14() # Make a new character sheet
     print ("test completed")
