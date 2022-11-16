@@ -10,6 +10,8 @@ from datetime import date
 
 from TOKEN import TOKEN
 
+print (TOKEN)
+
 from help_messages import *
 from rolepy_dice import *  # ALL DICE HELPER THINGS SUCH AS "parse_dice_command" COME FROM HERE
 
@@ -39,18 +41,21 @@ VALID_CHARACTERS = {'StabbyStabby#1327' : ['vsevellar', 'zandrius', 'zandria', '
 
 # START THE ENGINES
 
-client = discord.Client()
+intents = discord.Intents.all()
+# intents.members = True
+
+client = discord.Client(intents=intents)
 
 dm = DM_helper()
 
 dm.load_last_session()
 
 ## This block detects how many suggestions are already found and updates the suggestion counter
-path, dirs, files = next(os.walk("suggestionbox/"))  # walk through the directory waka waka
-file_count = len(files)  # spits out the len of the journey
-print(" suggestions found: %i" % (file_count))
-
-suggestions = file_count
+# path, dirs, files = next(os.walk("suggestionbox/"))  # walk through the directory waka waka
+# file_count = len(files)  # spits out the len of the journey
+# print(" suggestions found: %i" % (file_count))
+#
+# suggestions = file_count
 
 @client.event
 async def on_ready():
