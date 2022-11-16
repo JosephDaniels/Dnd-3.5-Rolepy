@@ -10,8 +10,6 @@ from datetime import date
 
 from TOKEN import TOKEN
 
-print (TOKEN)
-
 from help_messages import *
 from rolepy_dice import *  # ALL DICE HELPER THINGS SUCH AS "parse_dice_command" COME FROM HERE
 
