@@ -45,12 +45,12 @@ class DM_helper(object):
 
     def roll_initiative(self, initiator):
         initiative_bonus = initiator.get_initiative_bonus()
-        print("%s rolls for initiative! [+%i initiative bonus]" % (initiator.username, initiative_bonus))
+        response = ("%s rolls for initiative! [+%i init bonus]" % (initiator.username, initiative_bonus))
         dice_result = rolld(20)
         initiative_result = dice_result + initiative_bonus
-        print("%s rolled %i. [natural %i + %i init bonus]" % (initiator.username, initiative_result,
-                                                              dice_result, initiative_bonus))
-        return initiative_result
+        response += "\n%s rolled %i. [natural %i + %i init bonus]" % (initiator.username, initiative_result,
+                                                              dice_result, initiative_bonus)
+        return response, initiative_result
 
     # def save_all_characters(self):
     #     for character in self.characters:
@@ -217,7 +217,6 @@ It will take their characters, use their initiative bonus and roll initiative fo
 
 
 def test(): # combat test
-    
     dm = DM_helper()
     
 
@@ -277,5 +276,16 @@ def test_3():
     dm.load_last_session()
     dm.save_logins()
 
+def test_4():
+    ## Test initiative!!!
+    dm = DM_helper()
+
+    paige = Character("paige")
+    paige.load()
+    dm.add_character(paige)
+
+    response, initiative_value = dm.roll_initiative(paige)
+    print(response)
+
 if __name__ == "__main__":
-    test_3()
+    test_4()
