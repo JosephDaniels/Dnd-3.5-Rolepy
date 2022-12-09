@@ -2,20 +2,19 @@ import discord
 
 import asyncio
 
-import os
-
-import atexit
-
 from datetime import date
-
+## SETUP
 from TOKEN import TOKEN
 
-from help_messages import *
-from rolepy_dice import *  # ALL DICE HELPER THINGS SUCH AS "parse_dice_command" COME FROM HERE
+import os, atexit ## Both handle meta events like system files and program exit
+import asyncio ## ASynchronous Events Library
 
+
+from help_messages import * # Bot message that sends a list of commands
 from DM_helper import *  # Module for running the game, lets us keep track of characters
-from NPC import *  # non-player character information
 
+# NOT USED -- from rolepy_dice import *  # ALL DICE HELPER THINGS SUCH AS "parse_dice_command" COME FROM HERE
+# from NPC import *  # non-player character information
 # from card_games import play_poker_game
 
 ADMINS = ['StabbyStabby#1327', 'alanwongis#3590']
@@ -154,7 +153,7 @@ async def do_rock_paper_scissors(message):
                " Rock! Paper! Scissors. . . %s!!! %s" % (message.author, bot_throw, bonus_message)
     return response, message.channel
 
-async def do_murderdeathkill(message):
+async def do_victory(message):
     response = "%s was victorious!" % (message.author)
     return response, message.channel
 
@@ -396,7 +395,7 @@ CHAT_COMMANDS = [  # Execution table that based on the command input, it will th
     ("rps", do_rock_paper_scissors),
     ("whoisloggedin", do_showlogins),
     ("whoisplaying", do_showlogins),
-    ("murderdeathkill", do_murderdeathkill),
+    ("victory", do_victory),
     ("tableflip", do_tableflip),
     ("fliptable", do_tableflip),
     ("unfliptable", do_unfliptable),
