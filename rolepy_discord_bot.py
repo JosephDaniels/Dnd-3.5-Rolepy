@@ -1,7 +1,6 @@
 import discord
 
 import asyncio
-
 from datetime import date
 ## SETUP
 from TOKEN import TOKEN
