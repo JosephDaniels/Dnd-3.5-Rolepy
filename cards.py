@@ -150,29 +150,29 @@ class Deck(object):
 class Card_Player(object):
     def __init__(self, player_name = ""):
         self.player_name = player_name
-        self.cards_in_hand = []
+        self.hand = []
 
     def add_to_hand(self, card):
-        self.cards_in_hand.append(card)
+        self.hand.append(card)
 
     def remove_from_hand(self, card):
-        self.cards_in_hand.remove(card)
+        self.hand.remove(card)
         return card
 
     def toss_hand(self):
-        cards = self.cards_in_hand
-        self.cards_in_hand = []
+        cards = self.hand
+        self.hand = []
         return cards
 
     def sort_hand(self):
-        self.cards_in_hand.sort()
+        self.hand.sort()
 
     def get_hand(self):
-        return str(self.cards_in_hand)
+        return str(self.hand)
 
     def print_hand(self):
         cards = ""
-        for card in self.cards_in_hand:
+        for card in self.hand:
             value, suit, = card
             _str = ("(%s) %s of %s\n" % (card, CARD_VALUE_NAMES[value], CARD_SUIT_NAMES[suit]))
             cards = cards+_str
@@ -205,7 +205,6 @@ class Card_Dealer(object):
 
     def deal_a_card_to(self, player, debug = False):
         card = self.deck.draw_a_card()
-
 
         card_suit = card.strip("A23456789TJQK")
         ## Gets the fancy full name
@@ -243,7 +242,7 @@ class Poker_Player(Card_Player):
 
     def check_royal_flush(self):
         if self.check_flush() and self.check_straight():
-            for card in self.cards_in_hand:
+            for card in self.hand:
                 if card in ROYAL_FLUSH:
                     return True
         else:
@@ -257,7 +256,7 @@ class Poker_Player(Card_Player):
 
     def count_same_valued_cards(self):
         same_cards = defaultdict(lambda: [])
-        for card in self.cards_in_hand:
+        for card in self.hand:
             value = card[0]  # Card value is the first element e.g. [K] S
             same_cards[value].append(card)  # Associates the value with the card
         ## Group non zero counts with their list of cards
@@ -270,7 +269,7 @@ class Poker_Player(Card_Player):
 
     def count_same_suited_cards(self):
         same_cards = defaultdict(lambda: [])
-        for card in self.cards_in_hand:
+        for card in self.hand:
             suit = card[1]  # Card value is the first element e.g. [K] S
             same_cards[suit].append(card)  # Associates the value with the card
         ## Group non zero counts with their list of cards
@@ -303,7 +302,7 @@ class Poker_Player(Card_Player):
             return False
 
     def check_straight(self):
-        values = [i[0] for i in self.cards_in_hand]
+        values = [i[0] for i in self.hand]
         value_counts = defaultdict(lambda: 0)
         for v in values:
             value_counts[v] += 1
@@ -318,7 +317,7 @@ class Poker_Player(Card_Player):
             return False
 
     def check_three_of_a_kind(self):
-        values = [i[0] for i in self.cards_in_hand]
+        values = [i[0] for i in self.hand]
         value_counts = defaultdict(lambda: 0)
         for v in values:
             value_counts[v] += 1
@@ -328,7 +327,7 @@ class Poker_Player(Card_Player):
             return False
 
     def check_two_pair(self):
-        values = [i[0] for i in self.cards_in_hand]
+        values = [i[0] for i in self.hand]
         value_counts = defaultdict(lambda: 0)
         for v in values:
             value_counts[v] += 1
@@ -338,7 +337,7 @@ class Poker_Player(Card_Player):
             return False
 
     def check_one_pair(self):
-        values = [i[0] for i in self.cards_in_hand]
+        values = [i[0] for i in self.hand]
         value_counts = defaultdict(lambda: 0)
         for v in values:
             value_counts[v] += 1
@@ -417,9 +416,9 @@ class Poker_Card_Dealer(Card_Dealer):
             cards.append(_str[:2])
             _str = _str[2:]
         for card in cards:
-            if card in player.cards_in_hand:
-                player.cards_in_hand.pop(card)
-        num_cards = self.hand_size-player.cards_in_hand
+            if card in player.hand:
+                player.hand.pop(card)
+        num_cards = self.hand_size-player.hand
         cards_received = []
         for card in num_cards:
             card = dealer.draw_a_card()
@@ -524,7 +523,7 @@ def test_3():  # Poker with new Poker Card Dealer object
         turn_player = dealer.get_turn_player()
         print("It's %s's turn to play. (Player %s's cards:%s" % (turn_player.player_name,
                                                                  turn_player.player_name,
-                                                                 turn_player.cards_in_hand))
+                                                                 turn_player.hand))
         break
 
 def test_4():  # Working with Poker Hand Rankings
