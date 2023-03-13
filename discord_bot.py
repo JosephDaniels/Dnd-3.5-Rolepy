@@ -7,6 +7,12 @@ from datetime import date
 
 import rolepy_dice
 
+import DM_helper
+
+dm = DM_helper()
+
+
+
 from TOKEN import TOKEN
 
 intents = discord.Intents.all()
