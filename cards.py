@@ -148,8 +148,8 @@ class Deck(object):
         pass
 
 class Card_Player(object):
-    def __init__(self, player_name = ""):
-        self.player_name = player_name
+    def __init__(self, name = ""):
+        self.name = name
         self.hand = []
 
     def add_to_hand(self, card):
@@ -197,7 +197,7 @@ class Card_Dealer(object):
     def add_player(self, player):
         self.players.append(player)
         if self.debug == True:
-            print ("%s was added to the player list." % (player.player_name))
+            print ("%s was added to the game." % (player.name))
 
     def remove_player(self, player):
         if player in self.players:
@@ -215,7 +215,7 @@ class Card_Dealer(object):
 
         player.add_to_hand(card)
         if debug == True:
-            print ("%s of %s was dealt to player %s" % (card_value, card_suit, player.player_name))
+            print ("%s of %s was dealt to player %s" % (card_value, card_suit, player.name))
 
     def deal_cards(self):
         for card in range(self.hand_size):
@@ -233,7 +233,7 @@ class Card_Dealer(object):
 class Poker_Player(Card_Player):
     def __init__(self,name):
         super().__init__(Card_Player)
-        self.player_name = name
+        self.name = name
         self.highest_card = None
 
     def get_high_card(self):
@@ -514,15 +514,15 @@ def test_2():  # Test a hand of poker 1v1
 
 def test_3():  # Poker with new Poker Card Dealer object
     dealer = Poker_Card_Dealer()
-    joey = Card_Player(player_name="Joey")
-    care = Card_Player(player_name="Care")
+    joey = Card_Player(name="Joey")
+    care = Card_Player(name="Care")
     dealer.add_player(joey)
     dealer.add_player(care)
     dealer.start_game()
     while dealer.game_in_progress == True:
         turn_player = dealer.get_turn_player()
-        print("It's %s's turn to play. (Player %s's cards:%s" % (turn_player.player_name,
-                                                                 turn_player.player_name,
+        print("It's %s's turn to play. (Player %s's cards:%s" % (turn_player.name,
+                                                                 turn_player.name,
                                                                  turn_player.hand))
         break
 
@@ -573,12 +573,12 @@ def test_6():  # Working with Poker Hand Rankings
             pass
 
     hand_type = HAND_RANKINGS[winner.get_hand_ranking()]
-    print ("Player %s has the best hand with a %s: [%s]" % (winner.player_name,
+    print ("Player %s has the best hand with a %s: [%s]" % (winner.name,
                                                             hand_type,
                                                             winner.print_hand()))
     for player in players:
         if player != winner:
-            print ("Player %s had %s." % (player.player_name, player.print_hand()))
+            print ("Player %s had %s." % (player.name, player.print_hand()))
 
 if __name__ == "__main__":
     test_4()
