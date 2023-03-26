@@ -25,7 +25,13 @@ DND_PLAYERS = ['StabbyStabby#1327',
                'Magromancer#6352',
                'NormL75#0235',
                'baronanansi#2600',
-               'alanwongis#3590']
+               'alanwongis#3590', #Alan Wong
+               'Doctr Plague#5957', #Edward Le
+               'Writer Brook#1904', #Francis
+               'HOTHOTHOTassmcgee#1391', #Kiera Sands
+               'Rhen#5421', #Alex Pratte
+               'jimjimmymc7#5394', #Jimmy
+               ]
 
 VALID_CHARACTERS = {'StabbyStabby#1327' : ['vsevellar', 'zandrius', 'zandria', 'thaddeus', 'paige'],
                     'Coruba#1432' : ['ulfric', 'barco', 'tebbo'],
@@ -367,6 +373,56 @@ async def do_status(message):
     channel = message.channel
     return response, channel
 
+async def do_roll_character(message):
+    strength = []
+    dexterity = []
+    constitution = []
+    intelligence = []
+    wisdom = []
+    charisma = []
+    stats = {"strength":0,
+             "dexterity":0,
+             "constitution":0,
+             "intelligence":0,
+             "wisdom":0,
+             "charisma":0}
+    ## Gets the results
+    rolls = [] #
+    results = []
+    dropped_dice = []
+    for stat in stats.keys():
+        dice = []
+        for roll in range(4):
+            num = random.randint(1,6)
+            dice.append(num)
+        rolls.append(dice)
+        result = sorted(dice)
+        low_dice = result.pop(0)
+        results.append(result)
+        dropped_dice.append(low_dice)
+
+        total = sum(result)
+        stats[stat] = total
+
+
+    ## Creates the message output
+    response = ""
+
+    response = ("""You have rolled:\n
+                   Strength = %s    %s (drop %i)\n
+                   Dexterity = %s   %s (drop %i)\n
+                   Constitution = %s    %s (drop %i)\n
+                   Intelligence = %s    %s (drop %i)\n
+                   Wisdom = %s  %s (drop %i)\n
+                   Charisma = %s    %s (drop %i)"""
+                                    % (stats["strength"], rolls[0], dropped_dice[0],
+                                       stats["dexterity"], rolls[1], dropped_dice[1],
+                                       stats["constitution"], rolls[2], dropped_dice[2],
+                                       stats["intelligence"], rolls[3], dropped_dice[3],
+                                       stats["wisdom"], rolls[4], dropped_dice[4],
+                                       stats["charisma"], rolls[5], dropped_dice[5],))
+    return response, message.channel
+
 def save_all(dm_instance):
     # This will save all characters currently logged into the system
     filename = "data/logged_in.txt"
@@ -380,6 +436,7 @@ def save_all(dm_instance):
 # This is the MEGA lookup table of commands
 
 CHAT_COMMANDS = [  # Execution table that based on the command input, it will throw control to the function
+    ("newcharacter", do_roll_character),
     ("greet", do_greet),
     ("hello", do_hello),
     ("help", do_help),  # Handles vanilla help and help [command]
