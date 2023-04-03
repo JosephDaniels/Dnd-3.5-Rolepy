@@ -43,7 +43,8 @@ CHARACTER_PROFILE_ENTRIES = [("Character Full Name", "display_name", "entry", []
                              ("Height","height","slider", ["0'0","8'0"]),
                              ("Weight","weight","slider", ["0lbs","500lbs"]),
                              ("Description","description","textbox", [512]),
-                             ("History","history","textbox", [2048]),
+                             ("Personal Backstory","personal_backstory","textbox", [2048]),
+                             ("Public Backstory","public_backstory","textbox", [2048]),
                              ("Favourite Weapon","favorite_weapon", "dropdown", [ALL_WEAPONS])
                              ]
 
@@ -524,7 +525,7 @@ class Character_Editor_Window(tk.Toplevel):
         answer = messagebox.askyesno("Do you accept?", "Do you accept these character details?")
 
         if answer:
-            # # gives master a easy reference to this object
+            # # # gives master a easy reference to this object
             # self.master.profile_window = self
             # # gets all the attribute data from the current window
             # self.master._set_profile_data_from_window()
@@ -722,7 +723,7 @@ class Character_Helper_App(tk.Frame):
     def open_character_editor_prompt(self):
         display_name = tk.simpledialog.askstring("Enter Character Name", "What is your character's name?")
         if display_name:
-            internal_name = Character.clean_up_display_name(display_name)
+            internal_name = Character.display_name
             filename = internal_name+".txt"
             print (filename)
             # Check if it exists already
@@ -741,14 +742,11 @@ class Character_Helper_App(tk.Frame):
             # self.entry_window = Entry_Window(self, message = "What is your character's name?")  # Prompt window to get their character's name
 
     def do_new_character(self):
-        display_name = tk.simpledialog.askstring("New Character Name", "What is your new character's name?")
-        if display_name:
-            # We don't want to allow similar filenames
-            filename = Character.clean_up_display_name(display_name)+".txt" # Change spaces to underscores
-
+        username = tk.simpledialog.askstring("New Character Name", "What is your new character's name?")
+        if username:
+            filename = username+".txt"
             ## COMPARING FILENAME TO CHARACTER NAME
             print ("Filename:",filename)
-            print("Character name:",display_name)
 
             existing_files = os.listdir("characters/") # A bunch of existing filenames
             print (existing_files)  # Showing us all characters that are already created
@@ -764,8 +762,9 @@ class Character_Helper_App(tk.Frame):
                 new_file.write(blank_file.read())
                 blank_file.close()
                 new_file.close()
+                print ("Made a new character with username: %s" % username)
                 ## Finally open the new character
-                character = Character(filename)
+                character = Character(username)
                 # Character editor window expects (self, root, character)
                 self.character_editor_window = Character_Editor_Window(self.master, character)
 

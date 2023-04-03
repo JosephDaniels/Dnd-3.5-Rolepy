@@ -1,3 +1,7 @@
+
+## Turning on will enable debug messages
+DEBUG = False
+
 import discord
 
 import asyncio
@@ -16,9 +20,9 @@ from DM_helper import *  # Module for running the game, lets us keep track of ch
 # from NPC import *  # non-player character information
 # from card_games import play_poker_game
 
-ADMINS = ['StabbyStabby#1327', 'alanwongis#3590']
+ADMINS = ['TheRealJordanVo#1327', 'alanwongis#3590']
 
-DND_PLAYERS = ['StabbyStabby#1327',
+DND_PLAYERS = ['TheRealJordanVo#1327',
                'Coruba#1432',
                'mystia#2889',
                'Frail Faintheart#5181',
@@ -33,7 +37,7 @@ DND_PLAYERS = ['StabbyStabby#1327',
                'jimjimmymc7#5394', #Jimmy
                ]
 
-VALID_CHARACTERS = {'StabbyStabby#1327' : ['vsevellar', 'zandrius', 'zandria', 'thaddeus', 'paige'],
+VALID_CHARACTERS = {'TheRealJordanVo#1327' : ['vsevellar', 'zandrius', 'zandria', 'thaddeus', 'paige'],
                     'Coruba#1432' : ['ulfric', 'barco', 'tebbo'],
                     'mystia#2889' : ['chai', 'manda'],
                     'Magromancer#6352' : ['cymancer'],
@@ -373,24 +377,20 @@ async def do_status(message):
     channel = message.channel
     return response, channel
 
-async def do_roll_character(message):
-    strength = []
-    dexterity = []
-    constitution = []
-    intelligence = []
-    wisdom = []
-    charisma = []
-    stats = {"strength":0,
-             "dexterity":0,
-             "constitution":0,
-             "intelligence":0,
-             "wisdom":0,
-             "charisma":0}
+# async def do_new_character(message):
+#     msg = message.content
+#     command, target = msg.split(" ")
+#     response = target
+#     channel = message.channel
+#     return response, channel
+
+async def do_roll_stats(message):
     ## Gets the results
     rolls = [] #
     results = []
     dropped_dice = []
-    for stat in stats.keys():
+    stats = {}
+    for stat in range(6):
         dice = []
         for roll in range(4):
             num = random.randint(1,6)
@@ -404,24 +404,21 @@ async def do_roll_character(message):
         total = sum(result)
         stats[stat] = total
 
-
-    ## Creates the message output
-    response = ""
-
-    response = ("""You have rolled:\n
-                   Strength = %s    %s (drop %i)\n
-                   Dexterity = %s   %s (drop %i)\n
-                   Constitution = %s    %s (drop %i)\n
-                   Intelligence = %s    %s (drop %i)\n
-                   Wisdom = %s  %s (drop %i)\n
-                   Charisma = %s    %s (drop %i)"""
-                                    % (stats["strength"], rolls[0], dropped_dice[0],
-                                       stats["dexterity"], rolls[1], dropped_dice[1],
-                                       stats["constitution"], rolls[2], dropped_dice[2],
-                                       stats["intelligence"], rolls[3], dropped_dice[3],
-                                       stats["wisdom"], rolls[4], dropped_dice[4],
-                                       stats["charisma"], rolls[5], dropped_dice[5],))
-    return response, message.channel
+    response = ("""You have rolled:
+    %s      %s
+    %s      %s
+    %s      %s
+    %s      %s
+    %s      %s
+    %s      %s"""
+                % (stats[0], rolls[0],
+                   stats[1], rolls[1],
+                   stats[2], rolls[2],
+                   stats[3], rolls[3],
+                   stats[4], rolls[4],
+                   stats[5], rolls[5],))
+    channel = message.channel
+    return response, channel
 
 def save_all(dm_instance):
     # This will save all characters currently logged into the system
@@ -436,19 +433,52 @@ def save_all(dm_instance):
 # This is the MEGA lookup table of commands
 
 CHAT_COMMANDS = [  # Execution table that based on the command input, it will throw control to the function
-    ("newcharacter", do_roll_character),
+
+    ## DM SYSTEM COMMANDS
+
+    # Makes a Character Profile
+    # ("newcharacter", do_new_character),
+    ("rollstats", do_roll_stats),
+
+    # Connects to The Character Database
+    ("login", do_login), # formats as login [user]
+    ("logout", do_logout),
+
+    ## ROLEPLAY COMMANDS ##
+    # ("look", do_look),
+    # ("use", do_use),
+    # ("open", do_open),
+    # ("get", do_get),
+    # ("attack", do_attack),
+    # ("defend", do_defend),
+
+    #User commands that access teh data
+    ("whois", do_whois),
+    ("whoami", do_whoami),
+    ("status", do_status),
+
+    ## SUGGESTION BOX ##
+    ("suggest", do_suggest),  ## REQUIRES FEEDBACK AND FIXING
+
+    ## BASIC COMMANDS ##
     ("greet", do_greet),
     ("hello", do_hello),
     ("help", do_help),  # Handles vanilla help and help [command]
     ("suggest", do_suggest), ## REQUIRES FEEDBACK AND FIXING
-    ("login", do_login),  # formats as login [user]
-    ("logout", do_logout),
+
+    ## Dice ##
     ("roll", do_roll),  # Handles both normal and wod rolls
+
+    ## Coins ##
     ("coinflip", do_coinflip),  # These are all the same but people screw up and call it differently
     ("flipcoin", do_coinflip),
     ("cointoss", do_coinflip),
+
+    ## Games ##
     ("rockpaperscissors", do_rock_paper_scissors), ## NEEDS VS BOT FIX
-    ("rps", do_rock_paper_scissors),
+
+    # Gambling Games
+
     ("whoisloggedin", do_showlogins),
     ("whoisplaying", do_showlogins),
     ("victory", do_victory),
@@ -458,13 +488,8 @@ CHAT_COMMANDS = [  # Execution table that based on the command input, it will th
     ("breaktable", do_breaktable),
     ("sunglassesfingerguns", do_sunglassesfingerguns),
     ("kickinthedoor", do_kickinthedoor),
-    # ROLEPLAY COMMANDS
-    ("whois", do_whois),
-    ("whoami", do_whoami),
-    ("me", do_whoami),
-    ("status", do_status)
-    # COMBAT COMMANDS - Available during combat only
 
+    # COMBAT COMMANDS - Available during combat only
 ]
 
 @client.event

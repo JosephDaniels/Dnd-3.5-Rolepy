@@ -39,9 +39,7 @@ Commands
 
 FUTURE FEATURES
 
-D20 with Advantage suggestion by Coruba
-
-New Character Maker suggestion by Coruba
+DERP
 
 SUGGESTION: !useskill by mystia
 what would be cool is if we could enter items with modifiers

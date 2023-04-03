@@ -49,19 +49,15 @@ a text file. Please see the load func for more information.
 
 If an attribute has a value of -1 then it has not been set or was corrupted somehow.
     """
-    def __init__(self, display_name=""):
+    def __init__(self, username):
+        self.username = username
+        if self.username == "":
+            print ("Tried to make a blank character with no username!")
 
-        ## PLAYER INFO
-        self.display_name = display_name  # e.g. Their first and last name with a space E.G "Ulfric Northsun"
-
-        # PLAYER NAME
-        if self.display_name != "":
-            self.username = Character.create_username_from(display_name)
-
-        else: # Blank character
-            self.username = "Unnamed_character"
         # The username what they type to !login to the system
         # e.g. what they type to !login to the system e.g. barda_mardis which is derived from display name
+
+        self.display_name = "" # e.g. Their first and last name with a space E.G "Zandrius Selwain"
         self.discord_username = "" # The player's discord username such as Villager#1999
         self.character_class = [] # lowercase character class with associated level e.g. ["fighterLv1","rogueLv2"]
         self.alignment = "" # Lawful <-> Chaotic and Evil <-> Good E.G. "Lawful Good" or "Chaotic Evil" or "True Neutral"
@@ -79,8 +75,8 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
 
         ## Possible text documents
         self.description = ""
-        self.public_history = ""  # What other players see when they look at your profile
-        self.personal_history = ""  # The full back story of your character that only you and the DM know
+        self.public_backstory = ""  # What other players see when they look at your profile
+        self.personal_backstory = ""  # The full back story of your character that only you and the DM know
 
         self.profile_image = None ## something like bobby.jpg or something
 
@@ -125,20 +121,8 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
 
         ## FINAL LOAD
         self.filename = self.username + ".txt"  # It will be "your_username.txt"  something like that
-        if display_name != "":
+        if username != "":
             self.load()
-
-    @staticmethod
-    def create_username_from(display_name):
-        # Answer Input Validation
-        ## lets say they typed barda Mardis as when they signed in
-
-        ## Barda Mardis would be the Display name or Full Name
-        # display_name = display_name.title() ## changes barda to Barda
-
-        ## Barda_Mardis would be the username
-        username = display_name.replace(" ", "_")  # Change spaces to underscores
-        return username
 
     def init_all_skills(self):
         for skill in ALL_STANDARD_SKILLS:
@@ -158,7 +142,7 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
     def save(self):
         self.date_modified = date.today()
         data = self.get_character_sheet(show_all=True) ## Gets a whole character sheet
-        f = open(filename, mode='w+')
+        f = open(self.filename, mode='w+')
         f.write(data)
         f.close()
 
@@ -335,7 +319,7 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
             elif value == -1: ## Non-valid value
                 if show_all == True:
                     lines.append("%s = %s" % (key, value))
-            else: ## too much flowing through else exception
+            else: ## too much flowing through else exception plz fix
                 lines.append('%s = %s' % (key, value))
         return "\n".join(lines)
 
