@@ -525,7 +525,7 @@ class Character_Editor_Window(tk.Toplevel):
         answer = messagebox.askyesno("Do you accept?", "Do you accept these character details?")
 
         if answer:
-            # # # gives master a easy reference to this object
+            # # # gives master an easy reference to this object
             # self.master.profile_window = self
             # # gets all the attribute data from the current window
             # self.master._set_profile_data_from_window()
@@ -541,12 +541,20 @@ class Character_Editor_Window(tk.Toplevel):
             # Handle Special case of pulling Race Data from Drop down
             self.character.race = self.race_menu_stringvar.get()
 
+            print ("Here is the character info...")
             print (self.character.dump_info())
+
+            # Create a new character file
+            new_file = open("characters/"+self.character.filename, "w", encoding="latin-1")
+            new_file.write(str(self.character.dump_info()))
+            new_file.close()
+
+            print ("Made a new character with username: %s" % self.character.username)
 
         elif answer == False:
             print ("Ooh should've saved those stats, they were good!")
-        else:  #cancel
-            print ("You cancelled me!! oppressor!!")
+
+        self.destroy()
 
     def do_cancel_character_profile(self):
         self.destroy()
@@ -742,9 +750,9 @@ class Character_Helper_App(tk.Frame):
             # self.entry_window = Entry_Window(self, message = "What is your character's name?")  # Prompt window to get their character's name
 
     def do_new_character(self):
-        username = tk.simpledialog.askstring("New Character Name", "What is your new character's name?")
+        username = tk.simpledialog.askstring("New Character", "What will be your username?")
+        filename = username + ".txt"
         if username:
-            filename = username+".txt"
             ## COMPARING FILENAME TO CHARACTER NAME
             print ("Filename:",filename)
 
@@ -754,17 +762,10 @@ class Character_Helper_App(tk.Frame):
             # INPUT VALIDATION CHECK 2 MAKE SURE IT DOESNT CLOBBER OTHER CHARACTERS
             if filename in existing_files:
                 print ("Exploded1!!!!")
-                tk.messagebox.showinfo("Screw you!!!", "That character name is already in use.")
+                tk.messagebox.showinfo("Screw you!!!", "That username is already in use.")
             else:
-                new_file = open("characters/"+filename, "w", encoding="latin-1")
-                blank_file = open("characters/blank.txt")
-                ## Copy the blank.txt into that new filename
-                new_file.write(blank_file.read())
-                blank_file.close()
-                new_file.close()
-                print ("Made a new character with username: %s" % username)
-                ## Finally open the new character
-                character = Character(username)
+                ## Open a blank character
+                character = Character(username = username, blank = True)
                 # Character editor window expects (self, root, character)
                 self.character_editor_window = Character_Editor_Window(self.master, character)
 

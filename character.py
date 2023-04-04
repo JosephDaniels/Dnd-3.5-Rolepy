@@ -49,16 +49,19 @@ a text file. Please see the load func for more information.
 
 If an attribute has a value of -1 then it has not been set or was corrupted somehow.
     """
-    def __init__(self, username):
-        self.username = username
-        if self.username == "":
-            print ("Tried to make a blank character with no username!")
+    def __init__(self, username = ""):
 
         # The username what they type to !login to the system
         # e.g. what they type to !login to the system e.g. barda_mardis which is derived from display name
+        if username != "":
+            self.username = username
 
+        self.player_name = ""
+        # The username what they type to !login to the system
+        # e.g. what they type to !login to the system e.g. barda_mardis which is derived from display name
         self.display_name = "" # e.g. Their first and last name with a space E.G "Zandrius Selwain"
         self.discord_username = "" # The player's discord username such as Villager#1999
+
         self.character_class = [] # lowercase character class with associated level e.g. ["fighterLv1","rogueLv2"]
         self.alignment = "" # Lawful <-> Chaotic and Evil <-> Good E.G. "Lawful Good" or "Chaotic Evil" or "True Neutral"
         self.race = "" # the name of their race in lowercase letters.
@@ -119,10 +122,13 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
         self.date_modified = date.today()
         self.date_created = date.today() ## Changed when it has loaded
 
-        ## FINAL LOAD
-        self.filename = self.username + ".txt"  # It will be "your_username.txt"  something like that
         if username != "":
+            ## FINAL LOAD
+            self.filename = self.username + ".txt"  # It will be "your_username.txt"  something like that
             self.load()
+
+        else:
+            self.filename = "blank.txt"
 
     def init_all_skills(self):
         for skill in ALL_STANDARD_SKILLS:
@@ -142,7 +148,7 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
     def save(self):
         self.date_modified = date.today()
         data = self.get_character_sheet(show_all=True) ## Gets a whole character sheet
-        f = open(self.filename, mode='w+')
+        f = open("characters/"+self.filename, mode='w+')
         f.write(data)
         f.close()
 
@@ -522,7 +528,7 @@ def test_7(): ## testing multiclass functionality
 
 def test_8(): ## make a blank character
     c = Character()
-    c.save("characters/blank.txt", show_all=True)
+    c.save()
 
 def test_9(): ## trying to validate all of ulfric's skills
     u = Character()
@@ -556,5 +562,5 @@ def test_14():
     print (response, image_file)
 
 if __name__ == "__main__":
-    test_14() # Make a new character sheet
+    test_8() # Make a blank character
     print ("test completed")
