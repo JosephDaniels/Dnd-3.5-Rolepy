@@ -130,6 +130,10 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
         else:
             self.filename = "blank.txt"
 
+    def set_username(self, username):
+        self.username = username
+        self.filename = self.username + ".txt"  # It will be "your_username.txt"  something like that
+
     def init_all_skills(self):
         for skill in ALL_STANDARD_SKILLS:
             self.skill = -1
@@ -561,6 +565,24 @@ def test_14():
     response, image_file = c.get_profile()
     print (response, image_file)
 
+def test_15():
+    ## Make a blank character
+    c = Character()
+    ## Write a username to the file
+    c.set_username("testboy")
+    ## Save character
+    c.save()
+    ## Load the character
+    c.load()
+
+def test_16():
+    ## Load an existing character
+    c = Character(username="testboy")
+    data = c.get_character_sheet(show_all=True)
+    print (data)
+
+    print ("Username was %s" % c.username)
+
 if __name__ == "__main__":
-    test_8() # Make a blank character
+    test_16() # Make a blank character, change username and save
     print ("test completed")

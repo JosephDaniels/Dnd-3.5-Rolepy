@@ -541,6 +541,11 @@ class Character_Editor_Window(tk.Toplevel):
             # Handle Special case of pulling Race Data from Drop down
             self.character.race = self.race_menu_stringvar.get()
 
+
+            ## LAST ERROR WAS HERE --->>
+            ## Not getting a username!?!? But how I give it the character instance on init
+            # print ("Your username is: '%s'" % self.character.username)
+
             print ("Here is the character info...")
             print (self.character.dump_info())
 
@@ -765,9 +770,11 @@ class Character_Helper_App(tk.Frame):
                 tk.messagebox.showinfo("Screw you!!!", "That username is already in use.")
             else:
                 ## Open a blank character
-                character = Character(username = username, blank = True)
+                c = Character()
+                c.set_username = username
+                c.save()
                 # Character editor window expects (self, root, character)
-                self.character_editor_window = Character_Editor_Window(self.master, character)
+                self.character_editor_window = Character_Editor_Window(self.master, c)
 
     def _set_profile_data_from_window(self, debug = False):
         self.profile_data = self.profile_window.profile_data
