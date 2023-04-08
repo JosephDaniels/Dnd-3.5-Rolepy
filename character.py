@@ -123,7 +123,7 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
         self.date_created = date.today() ## Changed when it has loaded
 
         if username != "":
-            ## FINAL LOAD
+            ## INITIAL LOAD
             self.filename = self.username + ".txt"  # It will be "your_username.txt"  something like that
             self.load()
 
@@ -570,10 +570,8 @@ def test_15():
     c = Character()
     ## Write a username to the file
     c.set_username("testboy")
-    ## Save character
-    c.save()
-    ## Load the character
-    c.load()
+
+    print (c.username)
 
 def test_16():
     ## Load an existing character
@@ -584,5 +582,5 @@ def test_16():
     print ("Username was %s" % c.username)
 
 if __name__ == "__main__":
-    test_16() # Make a blank character, change username and save
+    test_15() # Make a blank character, change username and save
     print ("test completed")

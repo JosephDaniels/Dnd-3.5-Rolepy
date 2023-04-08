@@ -525,41 +525,41 @@ class Character_Editor_Window(tk.Toplevel):
         answer = messagebox.askyesno("Do you accept?", "Do you accept these character details?")
 
         if answer:
-            # # # gives master an easy reference to this object
-            # self.master.profile_window = self
-            # # gets all the attribute data from the current window
+            # # gives master an easy reference to this object
+            self.master.profile_window = self
+            # gets all the attribute data from the current window
             # self.master._set_profile_data_from_window()
-            # self.destroy()
-            # self.open_attribute_window()
-
-            for string_var_name in self.player_profile_details_stringvars.keys():
-                self.character.__dict__[string_var_name] = self.player_profile_details_stringvars[string_var_name].get()
-
-            for string_var_name in self.character_profile_stringvars.keys():
-                self.character.__dict__[string_var_name] = self.character_profile_stringvars[string_var_name].get()
-
-            # Handle Special case of pulling Race Data from Drop down
-            self.character.race = self.race_menu_stringvar.get()
-
-
-            ## LAST ERROR WAS HERE --->>
-            ## Not getting a username!?!? But how I give it the character instance on init
-            # print ("Your username is: '%s'" % self.character.username)
-
-            print ("Here is the character info...")
-            print (self.character.dump_info())
-
-            # Create a new character file
-            new_file = open("characters/"+self.character.filename, "w", encoding="latin-1")
-            new_file.write(str(self.character.dump_info()))
-            new_file.close()
-
-            print ("Made a new character with username: %s" % self.character.username)
+            self.destroy()
+            self.open_attribute_window()
 
         elif answer == False:
             print ("Ooh should've saved those stats, they were good!")
 
         self.destroy()
+
+        for string_var_name in self.player_profile_details_stringvars.keys():
+            self.character.__dict__[string_var_name] = self.player_profile_details_stringvars[string_var_name].get()
+
+        for string_var_name in self.character_profile_stringvars.keys():
+            self.character.__dict__[string_var_name] = self.character_profile_stringvars[string_var_name].get()
+
+
+    # # Handle Special case of pulling Race Data from Drop down
+    # self.character.race = self.race_menu_stringvar.get()
+    #
+    # ## LAST ERROR WAS HERE --->>
+    # ## Not getting a username!?!? But how I give it the character instance on init
+    # # print ("Your username is: '%s'" % self.character.username)
+    #
+    # print("Here is the character info...")
+    # print(self.character.dump_info())
+    #
+    # # Create a new character file
+    # new_file = open("characters/" + self.character.filename, "w", encoding="latin-1")
+    # new_file.write(str(self.character.dump_info()))
+    # new_file.close()
+    #
+    # print("Made a new character with username: %s" % self.character.username)
 
     def do_cancel_character_profile(self):
         self.destroy()
@@ -734,20 +734,19 @@ class Character_Helper_App(tk.Frame):
         quit_button = tk.Button(self.frame, text="Quit", command=self.master.destroy).grid(column=1, row=6)
 
     def open_character_editor_prompt(self):
-        display_name = tk.simpledialog.askstring("Enter Character Name", "What is your character's name?")
-        if display_name:
-            internal_name = Character.display_name
-            filename = internal_name+".txt"
+        username = tk.simpledialog.askstring("Enter Character Name", "What is your character's name?")
+        if username:
+            char = Character(username)
+            filename = char.filename
             print (filename)
             # Check if it exists already
             existing_files = os.listdir("characters/")  # A bunch of existing filenames
             print (existing_files)
             if filename in existing_files:
                 print ("Character file found!!!")
-                character = Character(display_name = display_name)
-                character.load("characters/"+filename)
-                # print(character.get_character_sheet())
-                self.character_editor_window = Character_Editor_Window(self.master, character)
+                print ("Character successfully loaded. You are now playing %s." % char.display_name)
+                print(char.get_character_sheet())
+                self.character_editor_window = Character_Editor_Window(self.master, char)
             else:
                 tk.messagebox.showinfo("Screw you!!!", "No character found.")
         elif answer == False:

@@ -56,12 +56,12 @@ dm = DM_helper()
 
 dm.load_last_session()
 
-## This block detects how many suggestions are already found and updates the suggestion counter
-# path, dirs, files = next(os.walk("suggestionbox/"))  # walk through the directory waka waka
-# file_count = len(files)  # spits out the len of the journey
-# print(" suggestions found: %i" % (file_count))
-#
-# suggestions = file_count
+# This block detects how many suggestions are already found and updates the suggestion counter
+path, dirs, files = next(os.walk("suggestionbox/"))  # walk through the directory waka waka
+file_count = len(files)  # spits out the len of the journey
+print(" suggestions found: %i" % (file_count))
+
+suggestions = file_count
 
 @client.event
 async def on_ready():
@@ -491,6 +491,10 @@ CHAT_COMMANDS = [  # Execution table that based on the command input, it will th
 
     # COMBAT COMMANDS - Available during combat only
 ]
+
+@bot.command()
+async def getuser(ctx, role: discord.Role):
+    await ctx.send("\n".join(str(member) for member in role.members)
 
 @client.event
 async def on_message(message):  # This is the main entry point for the discord bot
