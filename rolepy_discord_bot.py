@@ -492,10 +492,6 @@ CHAT_COMMANDS = [  # Execution table that based on the command input, it will th
     # COMBAT COMMANDS - Available during combat only
 ]
 
-@bot.command()
-async def getuser(ctx, role: discord.Role):
-    await ctx.send("\n".join(str(member) for member in role.members)
-
 @client.event
 async def on_message(message):  # This is the main entry point for the discord bot
     member = message.author
