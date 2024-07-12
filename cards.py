@@ -4,47 +4,49 @@ Rewritten by Jordan Vo for use in his Roleplay Discord Bot
 
 import random
 
-from collections import defaultdict, OrderedDict
+from collections import defaultdict
 
 ROYAL_FLUSH = ["AS", "JS", "QS", "KS", "TS"]
 
-CARD_ORDER_DICT = {"2":2, "3":3, "4":4, "5":5, "6":6, "7":7, "8":8, "9":9, "T":10,"J":11, "Q":12, "K":13, "A":14}
+CARD_ORDER_DICT = {"2": 2, "3": 3, "4": 4, "5": 5, "6": 6, "7": 7, "8": 8, "9": 9, "T": 10, "J": 11, "Q": 12, "K": 13,
+                   "A": 14}
 
 CARD_VALUE_NAMES = {
-    "A" : "Ace",
-    "2" : "Two",
-    "3" : "Three",
-    "4" : "Four",
-    "5" : "Five",
-    "6" : "Six",
-    "7" : "Seven",
-    "8" : "Eight",
-    "9" : "Nine",
+    "A": "Ace",
+    "2": "Two",
+    "3": "Three",
+    "4": "Four",
+    "5": "Five",
+    "6": "Six",
+    "7": "Seven",
+    "8": "Eight",
+    "9": "Nine",
     "T": "Ten",
-    "J" : "Jack",
-    "Q" : "Queen",
-    "K" : "King"
+    "J": "Jack",
+    "Q": "Queen",
+    "K": "King"
 }
 
 CARD_SUIT_NAMES = {
-    "D" : "Diamonds",
-    "C" : "Clubs",
-    "H" : "Hearts",
-    "S" : "Spades"
+    "D": "Diamonds",
+    "C": "Clubs",
+    "H": "Hearts",
+    "S": "Spades"
 }
 
 HAND_RANKINGS = {
-    10  :   "Royal Flush",
-    9   :   "Straight Flush",
-    8   :   "Four of a Kind",
-    7   :   "Full House",
-    6   :   "Flush",
-    5   :   "Straight",
-    4   :   "Three of a Kind",
-    3   :   "Two Pair",
-    2   :   "One Pair",
-    1   :   "High Card"
+    10: "Royal Flush",
+    9: "Straight Flush",
+    8: "Four of a Kind",
+    7: "Full House",
+    6: "Flush",
+    5: "Straight",
+    4: "Three of a Kind",
+    3: "Two Pair",
+    2: "One Pair",
+    1: "High Card"
 }
+
 
 # def compare(card_1,card_2):
 #     if card_1.value > card_2.value:
@@ -61,8 +63,9 @@ class Card(object):
         self.value = int(name[0])
         self.suit = name[1]
 
+
 class Deck(object):
-    def __init__(self, new_deck_order = True):
+    def __init__(self, new_deck_order=True):
         self.cards = []
         self.make_the_deck()
         if new_deck_order == True:
@@ -78,7 +81,7 @@ class Deck(object):
         _str = ""
         for suit in CARD_SUIT_NAMES.keys():
             for card in CARD_VALUE_NAMES.keys():
-                _str = card+suit
+                _str = card + suit
                 self.cards.append(_str)
 
     def new_deck_order(self):
@@ -93,7 +96,7 @@ class Deck(object):
         hearts.reverse()
         spades = self.cards[39:52]
         spades.reverse()
-        self.cards = diamonds+clubs+hearts+spades
+        self.cards = diamonds + clubs + hearts + spades
 
     def mirror_stack_deck_order(self):
         """" Assumes the deck starts in this order:
@@ -107,7 +110,7 @@ class Deck(object):
         hearts.reverse()
         spades = self.cards[39:52]
         spades.reverse()
-        self.cards = clubs+diamonds+hearts+spades
+        self.cards = clubs + diamonds + hearts + spades
 
     def get_deck(self):
         return str(self.cards)
@@ -115,22 +118,22 @@ class Deck(object):
     def shuffle(self, debug=False):
         random.shuffle(self.cards)
         if debug == True:
-            print (self.cards)
+            print(self.cards)
 
     def draw_a_card(self):
         """ Pulls a card from the top of the deck. """
         card = ""
         card = self.cards[0]
-        self.cards.pop(0) # Remove card from the deck
+        self.cards.pop(0)  # Remove card from the deck
         return card
 
-    def pick_a_card(self, position = -1):
+    def pick_a_card(self, position=-1):
         """ Pulls a card from a specific position.
          If position is left unspecified,
          it pulls from a random position."""
         card = ""
         if position == -1:  # Default but nonvalid position
-            position = random.randint(1,52)
+            position = random.randint(1, 52)
         else:
             pass
         position = position - 1
@@ -138,7 +141,7 @@ class Deck(object):
             card = self.cards[position]
             self.cards.pop(position)
         except KeyError:
-            print ("Wasn't able to pick the random card at %i position." % (position))
+            print("Wasn't able to pick the random card at %i position." % (position))
         return card
 
     def return_card(self, card):
@@ -147,8 +150,9 @@ class Deck(object):
     def set_new_deck_order(self):
         pass
 
+
 class Card_Player(object):
-    def __init__(self, player_name = ""):
+    def __init__(self, player_name=""):
         self.player_name = player_name
         self.cards_in_hand = []
 
@@ -175,8 +179,9 @@ class Card_Player(object):
         for card in self.cards_in_hand:
             value, suit, = card
             _str = ("(%s) %s of %s\n" % (card, CARD_VALUE_NAMES[value], CARD_SUIT_NAMES[suit]))
-            cards = cards+_str
+            cards = cards + _str
         return cards
+
 
 class Card_Dealer(object):
     def __init__(self):
@@ -197,15 +202,14 @@ class Card_Dealer(object):
     def add_player(self, player):
         self.players.append(player)
         if self.debug == True:
-            print ("%s was added to the player list." % (player.player_name))
+            print("%s was added to the player list." % (player.player_name))
 
     def remove_player(self, player):
         if player in self.players:
             self.players.remove(player)
 
-    def deal_a_card_to(self, player, debug = False):
+    def deal_a_card_to(self, player, debug=False):
         card = self.deck.draw_a_card()
-
 
         card_suit = card.strip("A23456789TJQK")
         ## Gets the fancy full name
@@ -216,7 +220,7 @@ class Card_Dealer(object):
 
         player.add_to_hand(card)
         if debug == True:
-            print ("%s of %s was dealt to player %s" % (card_value, card_suit, player.player_name))
+            print("%s of %s was dealt to player %s" % (card_value, card_suit, player.player_name))
 
     def deal_cards(self):
         for card in range(self.hand_size):
@@ -227,12 +231,13 @@ class Card_Dealer(object):
         return self.players[self.current_player]
 
     def next_player(self):
-        self.current_player+=1
+        self.current_player += 1
         if self.current_player >= len(self.players):
             self.current_player = 0
 
+
 class Poker_Player(Card_Player):
-    def __init__(self,name):
+    def __init__(self, name):
         super().__init__(Card_Player)
         self.player_name = name
         self.highest_card = None
@@ -283,7 +288,7 @@ class Poker_Player(Card_Player):
 
     def check_four_of_a_kind(self):
         count_list = self.count_same_valued_cards()
-        if count_list[0][0] == 4: ## Four of a kind
+        if count_list[0][0] == 4:  ## Four of a kind
             self.highest_card = count_list[-1][1]
             return True
         return False
@@ -371,31 +376,32 @@ class Poker_Player(Card_Player):
             return 2
         return 1
 
+
 class Poker_Card_Dealer(Card_Dealer):
     def __init__(self):
         """ Defaults to standard Poker Rules.
          I made the check hand functions using Brian Caffey's code."""
         super().__init__()
-        self.poker_chips = {} ## Usernames associated with the amount of chips that they have.
-        self.load_poker_chips() ## Populates the poker chip amounts based off of data/poker_chips.txt
+        self.poker_chips = {}  ## Usernames associated with the amount of chips that they have.
+        self.load_poker_chips()  ## Populates the poker chip amounts based off of data/poker_chips.txt
         self.betting_level = 1
         self.MIN_MAX_BET_AMOUNTS = {
             # Max Bet Amounts, rising by level
-            1   :   (5, 100),
-            2   :   (10, 200),
-            3   :   (25, 500),
-            4   :   (50, 1000),
-            5   :   (100, 2500),
-            6   :   (250, 5000),
-            7   :   (500, 10000),
-            8   :   (1000, 25000),
-            9   :   (2500, 100000),
-            10  :   (5000, 250000),
-            11  :   (10000, 500000), #Five Hundred Thousand
-            12  :   (25000, 1000000), #One Million
-            13  :   (100000, 2000000), #Two Million
-            14  :   (250000, 5000000), #Five Million
-            15  :   (500000, 10000000) #Ten Million
+            1: (5, 100),
+            2: (10, 200),
+            3: (25, 500),
+            4: (50, 1000),
+            5: (100, 2500),
+            6: (250, 5000),
+            7: (500, 10000),
+            8: (1000, 25000),
+            9: (2500, 100000),
+            10: (5000, 250000),
+            11: (10000, 500000),  # Five Hundred Thousand
+            12: (25000, 1000000),  # One Million
+            13: (100000, 2000000),  # Two Million
+            14: (250000, 5000000),  # Five Million
+            15: (500000, 10000000)  # Ten Million
         }
         ## Poker Settings
         self.hand_size = 5
@@ -419,15 +425,13 @@ class Poker_Card_Dealer(Card_Dealer):
         for card in cards:
             if card in player.cards_in_hand:
                 player.cards_in_hand.pop(card)
-        num_cards = self.hand_size-player.cards_in_hand
+        num_cards = self.hand_size - player.cards_in_hand
         cards_received = []
         for card in num_cards:
             card = dealer.draw_a_card()
             player.add_to_hand(card)
             cards_received.append(card)
         return cards_received
-
-
 
     def add_bet(self, player, bet_amount):
         if player in self.players:
@@ -463,9 +467,11 @@ class Poker_Card_Dealer(Card_Dealer):
         self.game_in_progress = True
         self.deal_cards()
 
+
 def test_1():  # Just make a deck dagnabbit
     d = Deck()
     print(d.get_deck())
+
 
 def test_2():  # Test a hand of poker 1v1
     deck = Deck()
@@ -513,6 +519,7 @@ def test_2():  # Test a hand of poker 1v1
     print("Joey's hand: " + str(joeys_hand))
     print("Care's hand: " + str(cares_hand))
 
+
 def test_3():  # Poker with new Poker Card Dealer object
     dealer = Poker_Card_Dealer()
     joey = Card_Player(player_name="Joey")
@@ -527,10 +534,11 @@ def test_3():  # Poker with new Poker Card Dealer object
                                                                  turn_player.cards_in_hand))
         break
 
+
 def test_4():  # Working with Poker Hand Rankings
     d = Deck(new_deck_order=False)
     dealer = Poker_Card_Dealer()
-    hand = ["2S","KS","KC","KH","KD"]
+    hand = ["2S", "KS", "KC", "KH", "KD"]
     # hand_size = 5
     # for x in range(hand_size):
     #     card = dealer.deck.draw_a_card()
@@ -539,10 +547,11 @@ def test_4():  # Working with Poker Hand Rankings
     for card in hand:
         p.add_to_hand(card)
     hand_result = HAND_RANKINGS[p.get_hand_ranking()]
-    print ("Your hand is: %s. Best Hand: [%s]" % (hand, hand_result))
-    print ("High Card: %s" % (p.highest_card))
+    print("Your hand is: %s. Best Hand: [%s]" % (hand, hand_result))
+    print("High Card: %s" % (p.highest_card))
 
-def test_5(): ## testing print hand functionality
+
+def test_5():  ## testing print hand functionality
     d = Deck(new_deck_order=False)
     dealer = Poker_Card_Dealer()
     p = Card_Player("Joey")
@@ -551,6 +560,7 @@ def test_5(): ## testing print hand functionality
         card = dealer.deck.draw_a_card()
         p.add_to_hand(card)
     p.print_hand()
+
 
 def test_6():  # Working with Poker Hand Rankings
     d = Deck(new_deck_order=False)
@@ -574,12 +584,13 @@ def test_6():  # Working with Poker Hand Rankings
             pass
 
     hand_type = HAND_RANKINGS[winner.get_hand_ranking()]
-    print ("Player %s has the best hand with a %s: [%s]" % (winner.player_name,
-                                                            hand_type,
-                                                            winner.print_hand()))
+    print("Player %s has the best hand with a %s: [%s]" % (winner.player_name,
+                                                           hand_type,
+                                                           winner.print_hand()))
     for player in players:
         if player != winner:
-            print ("Player %s had %s." % (player.player_name, player.print_hand()))
+            print("Player %s had %s." % (player.player_name, player.print_hand()))
+
 
 if __name__ == "__main__":
     test_4()

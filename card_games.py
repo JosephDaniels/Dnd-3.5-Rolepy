@@ -5,6 +5,7 @@ from cards import *
 Originally intended for poker game use with Jordan Vo's Rolepy system.
 """
 
+
 async def play_poker_game(message):
     member = message.author
     username = "%s#%s" % (member.name, member.discriminator)
@@ -14,7 +15,8 @@ async def play_poker_game(message):
     waiting_for_bet = True
     await message.author.send("Starting a 1 on 1 game of poker.")
     while waiting_for_bet == True:
-        await member.send("%s, you currently have %i poker chips to bet with. How many would you like to bet?" % (member.name, chips))
+        await member.send(
+            "%s, you currently have %i poker chips to bet with. How many would you like to bet?" % (member.name, chips))
         try:
             msg = await client.wait_for('message', timeout=30.0)
             try:
@@ -34,9 +36,11 @@ async def play_poker_game(message):
                     dealer.add_bet(username, bet)
                     dealer.start_game()
                 elif bet < min_bet:
-                    await member.send('Sorry %s, you cannot bet less than the minimum bet. [Min bet:%s]' % (username, max_bet))
+                    await member.send(
+                        'Sorry %s, you cannot bet less than the minimum bet. [Min bet:%s]' % (username, max_bet))
                 elif bet > max_bet:
-                    await member.send('Sorry %s, you cannot bet more than the maximum bet. [Max bet:%s]' % (username, max_bet))
+                    await member.send(
+                        'Sorry %s, you cannot bet more than the maximum bet. [Max bet:%s]' % (username, max_bet))
         except asyncio.TimeoutError:
             await message.author.send("I waited for you to place a bet! [Timeout 30 seconds]")
             waiting_for_bet = False
@@ -48,8 +52,8 @@ async def play_poker_game(message):
         cards_in_hand = turn_player.print_hand()
         await message.author.send("It's %s's turn!" % (name))
         await message.author.send("Your cards are:\n %s"
-                    "Which cards which you like to trade this turn?\n"
-                          "[You can trade 3 cards at most.]" % (cards_in_hand))
+                                  "Which cards which you like to trade this turn?\n"
+                                  "[You can trade 3 cards at most.]" % (cards_in_hand))
         try:
             msg = await client.wait_for('message', timeout=10.0)
             if msg:

@@ -8,7 +8,7 @@ names = [
     "tom",
     "jerry",
     "Alderna Arvillain"
-    ]
+]
 
 # NPC Name Generator:
 # a generator that creates npcs with Race, hair, build, eye, age, gender, name
@@ -1780,7 +1780,7 @@ def npc_name_generator():
     lastnameprefix = random.choice(last_name_prefix[race])
     lastnamesuffix = random.choice(last_name_suffix[race])
 
-    #age = random.choice(ages)
+    # age = random.choice(ages)
     age = "adult"
 
     hair_color = random.choice(hair_color_by_race[race])
@@ -1792,19 +1792,20 @@ def npc_name_generator():
     eye_description = random.choice(eye_desc)
     eye_color = random.choice(eye_colors)
     string = ('%s %s%s is a %s %s %s %s with %s %s %s hair and %s %s eyes.' % (
-    name,
-    lastnameprefix,
-    lastnamesuffix,
-    size,
-    gender,
-    age,
-    race,
-    hair_length,
-    hair_description,
-    hair_color,
-    eye_description,
-    eye_color))
+        name,
+        lastnameprefix,
+        lastnamesuffix,
+        size,
+        gender,
+        age,
+        race,
+        hair_length,
+        hair_description,
+        hair_color,
+        eye_description,
+        eye_color))
     print(string)
+
 
 def save(filename, data):
     filename = filename
@@ -1812,20 +1813,22 @@ def save(filename, data):
     f.write(data)
     f.close()
 
+
 def save_all_race_names_to_text():
     data = ""
     for race in race_list:
         race = race.lower()
         for gender in genders:
-            #Get all the correct names for their gender
+            # Get all the correct names for their gender
             appropriate_name_list = names_by_gender[gender]
             # Gets name list e.g. get all female night elf names
             name_list = appropriate_name_list[race]
             filename = "npc_names/%s_%s_names.txt" % (gender, race)
             for name in name_list:
-                data = data+name+"\n"
+                data = data + name + "\n"
             save(filename, data)
             data = ""
+
 
 def save_all_lastnames_to_text():
     _data = ""
@@ -1835,14 +1838,14 @@ def save_all_lastnames_to_text():
         for prefix in last_name_prefixes:
             _data = _data + prefix + "\n"
         filename = "npc_names/%s_prefixes.txt" % (race)
-        save(filename,_data)
+        save(filename, _data)
         _data = ""
 
         last_name_suffixes = last_name_suffix[race]
         for suffix in last_name_suffixes:
             _data = _data + suffix + "\n"
         filename = "npc_names/%s_suffixes.txt" % (race)
-        save(filename,_data)
+        save(filename, _data)
         _data = ""
 
 
@@ -1852,22 +1855,23 @@ def save_all_hair_info_to_text():
         race = race.lower()
         hair_colours = hair_color_by_race[race]
         for hair_colour in hair_colours:
-            _data = _data+hair_colour+"\n"
+            _data = _data + hair_colour + "\n"
         filename = "npc_names/%s_hair_colours.txt" % (race)
-        save(filename,_data)
+        save(filename, _data)
         _data = ""
 
     for hair_length in hair_len:
-        _data = _data+hair_length+"\n"
+        _data = _data + hair_length + "\n"
         filename = "npc_names/hair_lengths.txt"
-        save(filename,_data)
+        save(filename, _data)
         _data = ""
 
     for description in hair_descriptions:
-        _data = _data+description+"\n"
+        _data = _data + description + "\n"
         filename = "npc_names/hair_descriptions.txt"
-        save(filename,_data)
+        save(filename, _data)
         _data = ""
+
 
 def save_all_size_info_to_text():
     _data = ""
@@ -1875,18 +1879,20 @@ def save_all_size_info_to_text():
         race = race.lower()
         race_builds = build_by_race[race]
         for build in race_builds:
-            _data = _data+build+"\n"
+            _data = _data + build + "\n"
         filename = "npc_names/%s_race_builds.txt" % (race)
         save(filename, _data)
         _data = ""
 
+
 def save_all_eye_descriptions():
     _data = ""
     for eye_description in eye_desc:
-        _data = _data+eye_description+"\n"
+        _data = _data + eye_description + "\n"
     filename = "npc_names/eye_descriptions.txt"
     save(filename, _data)
     _data = ""
+
 
 def save_all_eye_colours():
     _data = ""
@@ -1896,6 +1902,7 @@ def save_all_eye_colours():
     save(filename, _data)
     _data = ""
 
+
 def save_all_age_ranges():
     _data = ""
     for race in race_list:
@@ -1903,7 +1910,7 @@ def save_all_age_ranges():
         for age_range in age_ranges[race]:
             lower_range, upper_range = age_ranges[race][age_range]
             _str = "%s %s = %i - %i\n" % (race, age_range, lower_range, upper_range)
-            _data = _data+_str
+            _data = _data + _str
         filename = "npc_names/%s_age_ranges.txt" % (race)
         save(filename, _data)
         _data = ""
@@ -1912,34 +1919,34 @@ def save_all_age_ranges():
 def test_1():
     npc_name_generator()
 
+
 def test_2():
     save_all_race_names_to_text()
+
 
 def test_3():
     save_all_lastnames_to_text()
 
+
 def test_4():
     save_all_hair_info_to_text()
+
 
 def test_5():
     save_all_size_info_to_text()
 
+
 def test_6():
     save_all_eye_descriptions()
+
 
 def test_7():
     save_all_eye_colours()
 
+
 def test_8():
     save_all_age_ranges()
 
+
 if __name__ == "__main__":
     test_8()
-
-
-
-
-
-
-
-

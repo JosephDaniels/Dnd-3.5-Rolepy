@@ -1,19 +1,16 @@
 from datetime import date
 
-from skills import * ## import skill information
-
-from xp import * ## import xp chart
-
-from race import * ## import race data
+from skills import *  ## import skill information
+from xp import *  ## import xp chart
 
 SAVE_KEY_ABILITIES = {
-    "base_fortitude"    :   "constitution",
-    "base_reflex"       :   "dexterity",
-    "base_will"         :   "wisdom"
-    }
+    "base_fortitude": "constitution",
+    "base_reflex": "dexterity",
+    "base_will": "wisdom"
+}
 
-LAW_CHAOS_ALIGNMENT = ["Lawful","Neutral","Chaotic"]
-GOOD_EVIL_ALIGNMENT = ["Good","Neutral","Evil"]
+LAW_CHAOS_ALIGNMENT = ["Lawful", "Neutral", "Chaotic"]
+GOOD_EVIL_ALIGNMENT = ["Good", "Neutral", "Evil"]
 ALL_ALIGNMENTS = ['Lawful Good',
                   'Lawful Neutral',
                   'Lawful Evil',
@@ -36,8 +33,10 @@ ALL_ALIGNMENTS = ['Lawful Good',
 class Data(object):
     def __init__(self):
         return
+
     def __str__(self):
         return
+
 
 class Character(object):
     """
@@ -49,6 +48,7 @@ a text file. Please see the load func for more information.
 
 If an attribute has a value of -1 then it has not been set or was corrupted somehow.
     """
+
     def __init__(self, display_name=""):
 
         ## PLAYER INFO
@@ -58,14 +58,14 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
         if self.display_name != "":
             self.username = Character.create_username_from(display_name)
 
-        else: # Blank character
+        else:  # Blank character
             self.username = "Unnamed_character"
         # The username what they type to !login to the system
         # e.g. what they type to !login to the system e.g. barda_mardis which is derived from display name
-        self.discord_username = "" # The player's discord username such as Villager#1999
-        self.character_class = [] # lowercase character class with associated level e.g. ["fighterLv1","rogueLv2"]
-        self.alignment = "" # Lawful <-> Chaotic and Evil <-> Good E.G. "Lawful Good" or "Chaotic Evil" or "True Neutral"
-        self.race = "" # the name of their race in lowercase letters.
+        self.discord_username = ""  # The player's discord username such as Villager#1999
+        self.character_class = []  # lowercase character class with associated level e.g. ["fighterLv1","rogueLv2"]
+        self.alignment = ""  # Lawful <-> Chaotic and Evil <-> Good E.G. "Lawful Good" or "Chaotic Evil" or "True Neutral"
+        self.race = ""  # the name of their race in lowercase letters.
 
         ## PROFILE INFO
         self.age = -1
@@ -82,7 +82,7 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
         self.public_history = ""  # What other players see when they look at your profile
         self.personal_history = ""  # The full back story of your character that only you and the DM know
 
-        self.profile_image = None ## something like bobby.jpg or something
+        self.profile_image = None  ## something like bobby.jpg or something
 
         ## GAME INFO
         self.dying = False
@@ -114,14 +114,14 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
         self.base_will = -1
 
         ## SKILLS
-        self.init_all_skills() ## Initializes all skills at -1 before they are overridden properly
+        self.init_all_skills()  ## Initializes all skills at -1 before they are overridden properly
 
-        self.feats = [] ## feats will get added to this list
-        self.special_abilities = [] ## special class abilities are added to this list
+        self.feats = []  ## feats will get added to this list
+        self.special_abilities = []  ## special class abilities are added to this list
 
         ## META DATA
         self.date_modified = date.today()
-        self.date_created = date.today() ## Changed when it has loaded
+        self.date_created = date.today()  ## Changed when it has loaded
 
         ## FINAL LOAD
         self.filename = self.username + ".txt"  # It will be "your_username.txt"  something like that
@@ -144,8 +144,8 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
         for skill in ALL_STANDARD_SKILLS:
             self.skill = -1
 
-    def __lt__(self,other):
-        return True ## It's a hack so that it sorts properly during initiative
+    def __lt__(self, other):
+        return True  ## It's a hack so that it sorts properly during initiative
 
     @staticmethod
     def parse_character_class(st):
@@ -157,7 +157,7 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
 
     def save(self):
         self.date_modified = date.today()
-        data = self.get_character_sheet(show_all=True) ## Gets a whole character sheet
+        data = self.get_character_sheet(show_all=True)  ## Gets a whole character sheet
         f = open(filename, mode='w+')
         f.write(data)
         f.close()
@@ -191,12 +191,12 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
             The load function expects a .txt file.
             """
         profile = {}
-        character_file = open("characters/"+self.filename, encoding="latin-1").read()
+        character_file = open("characters/" + self.filename, encoding="latin-1").read()
         character_file = character_file.split("\n")
-        for line in character_file: ## Reading each line in the character like strength = 18
-            key, value = line.split("=") ## Splits the arguments by the equals sign
-            key, value = key.strip(), value.strip() ## remove whitespace
-            if key == "character_class": ## SPECIAL PARSING FOR CHARACTERS CLASSES WHICH ARE ARRAYS
+        for line in character_file:  ## Reading each line in the character like strength = 18
+            key, value = line.split("=")  ## Splits the arguments by the equals sign
+            key, value = key.strip(), value.strip()  ## remove whitespace
+            if key == "character_class":  ## SPECIAL PARSING FOR CHARACTERS CLASSES WHICH ARE ARRAYS
                 # the character's classes are formatted in the file as
                 #     character_class = clericLv1, druidLv10
                 # so split at the ',' and then each is split further on "Lv"
@@ -205,24 +205,25 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
                 parsed_classes = []
                 # check if the character class is blank
                 if len(value.strip("[]")) > 0:
-                    char_classes = value.strip('[]').split(",") # split on comma, will give each class and their associated level
-                    for raw_char_st in char_classes: ## Alan put this line it handles the full character string such as "fighterLv3" or "rogueLv2"
-                        char_class_name, level = raw_char_st.split("Lv") # split between class name and level
+                    char_classes = value.strip('[]').split(
+                        ",")  # split on comma, will give each class and their associated level
+                    for raw_char_st in char_classes:  ## Alan put this line it handles the full character string such as "fighterLv3" or "rogueLv2"
+                        char_class_name, level = raw_char_st.split("Lv")  # split between class name and level
                         try:
                             level = int(level)
                         except:
                             pass
-                        parsed_classes.append( (char_class_name, level) )
+                        parsed_classes.append((char_class_name, level))
                     value = parsed_classes
-            if "(" in key: # detected that the user typed something like knowledge(arcana)
+            if "(" in key:  # detected that the user typed something like knowledge(arcana)
                 main_key, sub_key = key.strip(")").split("(")
                 if main_key in MULTIAREA_SKILL_CATEGORIES:
-                    key = main_key+"_"+sub_key ## constructs the key e.g. knowledge_arcana
-            else:   
+                    key = main_key + "_" + sub_key  ## constructs the key e.g. knowledge_arcana
+            else:
                 try:
-                    value = int(value) ## tries to convert to a number
+                    value = int(value)  ## tries to convert to a number
                 except:
-                    pass ## doesn't matter, stays a string
+                    pass  ## doesn't matter, stays a string
             profile[key] = value
         self.__dict__.update(profile)
 
@@ -234,7 +235,7 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
         if self.profile_image == None:
             picture_status = "-No Profile Picture Found-"
         response = " Username: %s\n" \
-                   " Character Name: %s\n"\
+                   " Character Name: %s\n" \
                    " Race: %s\n" \
                    " Age: %i\n" \
                    " Gender: %s\n" \
@@ -254,7 +255,7 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
                    " Preferred Weapon, if any: %s\n" \
                    " Description: %s\n" \
                    " History: %s\n" \
-                   " Picture: %s " %\
+                   " Picture: %s " % \
                    (self.username, self.display_name, self.race,
                     self.age, self.gender,
                     self.eye_colour.capitalize(),
@@ -271,15 +272,15 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
                     self.height, self.weight, self.favorite_weapon,
                     self.description, self.public_history, picture_status)
         try:
-            image_file = "character_portraits/"+self.profile_image
-        except: ## Image file not found
+            image_file = "character_portraits/" + self.profile_image
+        except:  ## Image file not found
             picture_status = "-No Profile Picture Found-"
             print("Wasn't able to find this image file! : %s" % (self.profile_image))
         return response, image_file
 
     def dump_info(self):
         for k in self.__dict__.keys():
-            print (k, ":", self.__dict__[k])
+            print(k, ":", self.__dict__[k])
 
     def get_profile(self):
         """ Returns a string that tells you public information about the character."""
@@ -288,7 +289,7 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
         if self.profile_image == None:
             picture_status = "-No Profile Picture Found-"
         response = " Username: %s\n" \
-                   " Character Name: %s\n"\
+                   " Character Name: %s\n" \
                    " Race: %s\n" \
                    " Age: %i\n" \
                    " Gender: %s\n" \
@@ -300,7 +301,7 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
                    " Preferred Weapon, if any: %s\n" \
                    " Description: %s\n" \
                    " History: %s\n" \
-                   " Picture: %s " %\
+                   " Picture: %s " % \
                    (self.username, self.display_name, self.race,
                     self.age, self.gender,
                     self.eye_colour.capitalize(),
@@ -309,33 +310,34 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
                     self.height, self.weight, self.favorite_weapon,
                     self.description, self.public_history, picture_status)
         try:
-            image_file = "character_portraits/"+self.profile_image
-        except: ## Image file not found
+            image_file = "character_portraits/" + self.profile_image
+        except:  ## Image file not found
             picture_status = "-No Profile Picture Found-"
             print("Wasn't able to find this image file! : %s" % (self.profile_image))
         return response, image_file
 
-    def get_character_sheet(self, show_all = False):
+    def get_character_sheet(self, show_all=False):
         lines = []
         today = date.today()
-        for key in self.__dict__.keys(): ## Goes through all the attributes of the character - strength, dex, skills etc
-            value = self.__dict__[key] ## retrieves what the attribute corresponds to - so the value of strength or base_fortitude
-            #Depending on the type we'll format it correctly
+        for key in self.__dict__.keys():  ## Goes through all the attributes of the character - strength, dex, skills etc
+            value = self.__dict__[
+                key]  ## retrieves what the attribute corresponds to - so the value of strength or base_fortitude
+            # Depending on the type we'll format it correctly
             if type(value) == Data:  # got a data object not currently used for anything just yet
                 pass
-            elif key == "character_class": # Character class stuff
-                char_classes = [] # Holds the actual data after parsing
+            elif key == "character_class":  # Character class stuff
+                char_classes = []  # Holds the actual data after parsing
                 if value != "[]":
                     for char_class_and_level in value:
-                        char_class, level = char_class_and_level[0],char_class_and_level[1]
-                        char_classes.append("%sLv%i" % (char_class,level))
+                        char_class, level = char_class_and_level[0], char_class_and_level[1]
+                        char_classes.append("%sLv%i" % (char_class, level))
                     lines.append('%s = %s' % (key, char_classes))
                 else:
                     lines.append("character_class = []")
-            elif value == -1: ## Non-valid value
+            elif value == -1:  ## Non-valid value
                 if show_all == True:
                     lines.append("%s = %s" % (key, value))
-            else: ## too much flowing through else exception
+            else:  ## too much flowing through else exception
                 lines.append('%s = %s' % (key, value))
         return "\n".join(lines)
 
@@ -349,41 +351,44 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
         else:
             death_message = " and you are currently OK."
         response = "%s's current status: " % (self.display_name)
-        response = response+health_message+death_message
+        response = response + health_message + death_message
         return response
 
     @staticmethod
     def _calculate_modifier(value):
-        if value%2 == 1: ## Test if the attribute divides nicely
-            value = value-1 ## If not, remove one to make it even
-        modifier = int((value-10)/2) ## Attribute-1/2 is modifier formula
+        if value % 2 == 1:  ## Test if the attribute divides nicely
+            value = value - 1  ## If not, remove one to make it even
+        modifier = int((value - 10) / 2)  ## Attribute-1/2 is modifier formula
         return modifier
 
-    def get_melee_attack_bonus(self,misc_modifier=0):
+    def get_melee_attack_bonus(self, misc_modifier=0):
         relevant_attribute = "strength"
-        attribute_value = self.__dict__[relevant_attribute] ## looks up the exact value of the attribute for the character
+        attribute_value = self.__dict__[
+            relevant_attribute]  ## looks up the exact value of the attribute for the character
         attribute_modifier = Character._calculate_modifier(attribute_value)
-        attack_value = self.base_attack_bonus+attribute_modifier+misc_modifier
+        attack_value = self.base_attack_bonus + attribute_modifier + misc_modifier
         return attack_value
 
-    def get_ranged_attack_bonus(self,misc_modifier=0):
+    def get_ranged_attack_bonus(self, misc_modifier=0):
         relevant_attribute = "dexterity"
-        attribute_value = self.__dict__[relevant_attribute] ## looks up the exact value of the attribute for the character
+        attribute_value = self.__dict__[
+            relevant_attribute]  ## looks up the exact value of the attribute for the character
         attribute_modifier = Character._calculate_modifier(attribute_value)
-        attack_value = self.base_attack_bonus+attribute_modifier+misc_modifier
+        attack_value = self.base_attack_bonus + attribute_modifier + misc_modifier
         return attack_value
 
     def get_spell_save(self, casting_attribute, spell_level=0, misc_modifier=0):
-        attribute_value = self.__dict__[casting_attribute] ## looks up the exact value of the attribute for the character
+        attribute_value = self.__dict__[
+            casting_attribute]  ## looks up the exact value of the attribute for the character
         attribute_modifier = Character._calculate_modifier(attribute_value)
-        spell_save = 10+attribute_modifier+spell_level+misc_modifier
+        spell_save = 10 + attribute_modifier + spell_level + misc_modifier
         return spell_save
 
     def get_skill_ranks(self, skill):
         if self.__dict__[skill] == -1:
             print("Character doesn't have that skill. skill[%s]" % skill)
         else:
-            skill_ranks = self.__dict__[skill] ##Looks up the number of ranks you have in a certain skill
+            skill_ranks = self.__dict__[skill]  ##Looks up the number of ranks you have in a certain skill
             return int(skill_ranks)
 
     def get_skill_total(self, skill, misc_modifier=0):
@@ -392,40 +397,47 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
             print("Character %s doesn't have that skill. skill[%s]" % (self.username, skill))
         else:
             if "(" in skill:  # Case handling for someone typing something like knowledge(arcana)"
-                words = skill.strip(")") ## Removes the trailing bracket knowledge(arcana) -> knowledge(arcana
-                words = words.split("(") ## Splits the argument between the first bracket e.g. "knowledge", "arcana"
-                multi_area_skill, area_of_expertise = words[0], words[1] ## Puts them into a human sounding variable
-                relevant_attribute = SKILL_KEY_ABILITIES[multi_area_skill] ## gets a attribute for a skill E.G. spellcraft > intelligence
-                attribute_value = self.__dict__[relevant_attribute] ## looks up the exact value of the attribute for the character
+                words = skill.strip(")")  ## Removes the trailing bracket knowledge(arcana) -> knowledge(arcana
+                words = words.split("(")  ## Splits the argument between the first bracket e.g. "knowledge", "arcana"
+                multi_area_skill, area_of_expertise = words[0], words[1]  ## Puts them into a human sounding variable
+                relevant_attribute = SKILL_KEY_ABILITIES[
+                    multi_area_skill]  ## gets a attribute for a skill E.G. spellcraft > intelligence
+                attribute_value = self.__dict__[
+                    relevant_attribute]  ## looks up the exact value of the attribute for the character
                 attribute_modifier = Character._calculate_modifier(attribute_value)
-                skill_ranks = self.get_skill_ranks(skill) ## Looks up how many ranks you put on your character sheet
-                total = skill_ranks+attribute_modifier+misc_modifier ## adds the skill ranks to the attribute modifier
-            for skill_category in MULTIAREA_SKILL_CATEGORIES: # grabs stuff like knowledge, perform, profession
+                skill_ranks = self.get_skill_ranks(skill)  ## Looks up how many ranks you put on your character sheet
+                total = skill_ranks + attribute_modifier + misc_modifier  ## adds the skill ranks to the attribute modifier
+            for skill_category in MULTIAREA_SKILL_CATEGORIES:  # grabs stuff like knowledge, perform, profession
                 if skill_category in skill:
-                    relevant_attribute = SKILL_KEY_ABILITIES[skill_category]  ## gets a attribute for a skill E.G. spellcraft > intelligence
+                    relevant_attribute = SKILL_KEY_ABILITIES[
+                        skill_category]  ## gets a attribute for a skill E.G. spellcraft > intelligence
                     break
             else:
-                relevant_attribute = SKILL_KEY_ABILITIES[skill] ## gets a attribute for a skill E.G. spellcraft > intelligence
-            attribute_value = self.__dict__[relevant_attribute] ## looks up the exact value of the attribute for the character
+                relevant_attribute = SKILL_KEY_ABILITIES[
+                    skill]  ## gets a attribute for a skill E.G. spellcraft > intelligence
+            attribute_value = self.__dict__[
+                relevant_attribute]  ## looks up the exact value of the attribute for the character
             attribute_modifier = Character._calculate_modifier(attribute_value)
-            skill_ranks = self.get_skill_ranks(skill) ## Looks up how many ranks you put on your character sheet
-            total = skill_ranks+attribute_modifier+misc_modifier ## adds the skill ranks to the attribute modifier
+            skill_ranks = self.get_skill_ranks(skill)  ## Looks up how many ranks you put on your character sheet
+            total = skill_ranks + attribute_modifier + misc_modifier  ## adds the skill ranks to the attribute modifier
         return total
 
     def get_saving_throw(self, base_save, misc_modifier=0):
         """ returns a full saving throw with a target base save. Add the relevant attribute modifier automatically. """
-        relevant_attribute = SAVE_KEY_ABILITIES[base_save] # gets an attribute for a save E.G. fortitude > constitution
-        attribute_value = self.__dict__[relevant_attribute] ## looks up the exact value of the attribute for the character
+        relevant_attribute = SAVE_KEY_ABILITIES[base_save]  # gets an attribute for a save E.G. fortitude > constitution
+        attribute_value = self.__dict__[
+            relevant_attribute]  ## looks up the exact value of the attribute for the character
         attribute_modifier = Character._calculate_modifier(attribute_value)
         saving_throw = self.__dict__[base_save]
-        saving_throw_total = saving_throw+attribute_modifier+misc_modifier ## adds the skill ranks to the attribute modifier
+        saving_throw_total = saving_throw + attribute_modifier + misc_modifier  ## adds the skill ranks to the attribute modifier
         return saving_throw_total
 
     def get_initiative_bonus(self, misc_modifier=0):
         relevant_attribute = "dexterity"
-        attribute_value = self.__dict__[relevant_attribute] ## looks up the exact value of the attribute for the character
+        attribute_value = self.__dict__[
+            relevant_attribute]  ## looks up the exact value of the attribute for the character
         attribute_modifier = Character._calculate_modifier(attribute_value)
-        initiative_bonus = attribute_modifier+misc_modifier
+        initiative_bonus = attribute_modifier + misc_modifier
         return initiative_bonus
 
     def get_level(self):
@@ -437,15 +449,15 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
                 return level
 
     def get_coins(self):
-        copper = self.copper_coins      #10 copper to a silver
-        silver = self.silver_coins      #10 silver to a gold
+        copper = self.copper_coins  # 10 copper to a silver
+        silver = self.silver_coins  # 10 silver to a gold
         gold = self.gold_coins
-        platinum = self.platinum_coins  #10 gold to a platinum
+        platinum = self.platinum_coins  # 10 gold to a platinum
         return gold, silver, copper, platinum
 
     def get_net_worth(self):
         copper, silver, gold, platinum = self.get_coins()
-        net_worth = 0.01*copper+0.1*silver+gold+10*platinum
+        net_worth = 0.01 * copper + 0.1 * silver + gold + 10 * platinum
         return net_worth
 
     def set_saving_throws_from_class_levels(self):
@@ -453,41 +465,41 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
 
     def get_base_feat_count(self):
         level = self.get_level()
-        if level%3: ## get the remainder after divide by 3
-            remainder = level%3  # Remove the remainder
-            level = level-remainder
-        return level/3+1
+        if level % 3:  ## get the remainder after divide by 3
+            remainder = level % 3  # Remove the remainder
+            level = level - remainder
+        return level / 3 + 1
 
     def get_max_class_skill_ranks(self):
         level = self.get_level()
-        return level+3
+        return level + 3
 
     def get_max_cross_class_skill_ranks(self):
         level = self.get_level()
-        if (level+3)%2:
-            remainder = (level+3)%2
+        if (level + 3) % 2:
+            remainder = (level + 3) % 2
             level = level - remainder
-        return (level+3)/2
+        return (level + 3) / 2
 
     def validate_all_skills(self):
         # Validates all skills that are usable untrained. To be used after a character is filled in.
         # or just before.
         ### CURRENTLY BREAKS WHEN IT TRIES TO VALIDATE CRAFT KNOWLEDGE PROFESSION PERFORM
-        skills = self.__dict__.keys() ## a list of all skills available
+        skills = self.__dict__.keys()  ## a list of all skills available
         skills_usable = SKILL_USABLE_UNTRAINED.keys()
-        for skill in skills: ## finds all skills on the character sheet
-            for multiskill in MULTIAREA_SKILLS: ## for things like "knowledge" "craft, "profession"
-                if multiskill in skill: ## checks if a multi-area skill is detected
-                    pass ## skips these values for validation
+        for skill in skills:  ## finds all skills on the character sheet
+            for multiskill in MULTIAREA_SKILLS:  ## for things like "knowledge" "craft, "profession"
+                if multiskill in skill:  ## checks if a multi-area skill is detected
+                    pass  ## skips these values for validation
                 elif multiskill not in skill:
                     if skill in skills_usable:
-                        if self.__dict__[skill] >= 0: ## already has ranks, don't change it
+                        if self.__dict__[skill] >= 0:  ## already has ranks, don't change it
                             pass
-                        elif self.__dict__[skill] == -1: ## invalid detected
+                        elif self.__dict__[skill] == -1:  ## invalid detected
                             self.__dict__[skill] = 0
 
 
-def test_1(): ## Runs a known working character and sees if the methods work
+def test_1():  ## Runs a known working character and sees if the methods work
     paige_file = "characters/paige.txt"
     chara = Character()
     chara.load(paige_file)
@@ -505,53 +517,63 @@ def test_1(): ## Runs a known working character and sees if the methods work
     print("Base spell save is ", chara.get_spell_save("charisma"))
     print("Knowledge(Arcana) total is ", chara.get_skill_total("knowledge_arcana", misc_modifier=0))
 
-def test_2(): ## Runs a basic character sheet and see if it shows up
+
+def test_2():  ## Runs a basic character sheet and see if it shows up
     c = Character()
     print(c.get_character_sheet(show_all=True))
 
-def test_3(): ## Test the character cheet save functionality
+
+def test_3():  ## Test the character cheet save functionality
     b = Character()
     b.gold_coins = 1000000
     b.xp_points = 36000
     b.save("bobby.txt")
 
-def test_4(): ## Test the loading functionality from a save file
+
+def test_4():  ## Test the loading functionality from a save file
     b = Character()
     b.load("characters/bobby.txt")
     print(b.get_character_sheet(show_all=True))
 
-def test_5(): ## Test adding in an imp
+
+def test_5():  ## Test adding in an imp
     i = Character()
     i.load("npcs/imp.txt")
     print(i.get_character_sheet())
 
-def test_6(): ## attempting to use the character class tables from character.py
+
+def test_6():  ## attempting to use the character class tables from character.py
     c = Character()
     c.load("characters/noob.txt")
     character_class = c.character_class
     print(character_class)
 
-def test_7(): ## testing multiclass functionality
+
+def test_7():  ## testing multiclass functionality
     c = Character()
     c.load("characters/paige.txt")
     print(c.get_saving_throw("fortitude"))
 
-def test_8(): ## make a blank character
+
+def test_8():  ## make a blank character
     c = Character()
     c.save("characters/blank.txt", show_all=True)
 
-def test_9(): ## trying to validate all of ulfric's skills
+
+def test_9():  ## trying to validate all of ulfric's skills
     u = Character()
     u.load("characters/ulfric.txt")
     print(u.get_character_sheet(show_all=True))
 
-def test_10(): ## Runs a test for character sheet and get profile on a known valid character
+
+def test_10():  ## Runs a test for character sheet and get profile on a known valid character
     paige_file = "characters/paige.txt"
     chara = Character()
     chara.load(paige_file)
-    #chara.get_character_sheet()
+    # chara.get_character_sheet()
     print(chara.get_character_sheet())
     print(chara.get_profile())
+
 
 def test_11():
     paige_file = "characters/paige.txt"
@@ -559,18 +581,22 @@ def test_11():
     chara.load(paige_file)
     print(chara.get_character_sheet())
 
+
 def test_12():
     new_charfile = "characters/bobby.txt"
     chara = Character()
 
+
 def test_13():
-    print (ALL_ALIGNMENTS)
+    print(ALL_ALIGNMENTS)
+
 
 def test_14():
     c = Character("paige")
     response, image_file = c.get_profile()
-    print (response, image_file)
+    print(response, image_file)
+
 
 if __name__ == "__main__":
-    test_14() # Make a new character sheet
-    print ("test completed")
+    test_14()  # Make a new character sheet
+    print("test completed")
