@@ -354,6 +354,7 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
         response = response + health_message + death_message
         return response
 
+    ## battle stuff
     @staticmethod
     def _calculate_modifier(value):
         if value % 2 == 1:  ## Test if the attribute divides nicely
@@ -596,7 +597,11 @@ def test_14():
     response, image_file = c.get_profile()
     print(response, image_file)
 
+def test_15():
+    ## Straight up string representation
+    c = Character("paige")
+    print(c)
 
 if __name__ == "__main__":
-    test_14()  # Make a new character sheet
+    test_15()  # Make a new character sheet
     print("test completed")

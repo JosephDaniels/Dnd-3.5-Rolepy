@@ -29,6 +29,9 @@ class DM_helper(object):
 
         self.load_dnd_classes()
 
+    def __str__(self):
+        return self.get_character()
+
     def ready_for_combat(self):
         """ Tells all the current playing characters to ready for combat.
         Players can then ready up and once everyone has the combat will begin."""

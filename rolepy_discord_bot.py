@@ -12,33 +12,24 @@ from help_messages import *
 
 ADMINS = ['StabbyStabby#1327', 'alanwongis#3590']
 
-DND_PLAYERS = ['StabbyStabby#1327',
-               'Coruba#1432',
-               'mystia#2889',
-               'Frail Faintheart#5181',
-               'Magromancer#6352',
-               'NormL75#0235',
-               'baronanansi#2600',
-               'alanwongis#3590']
 
-VALID_CHARACTERS = {'StabbyStabby#1327': ['vsevellar', 'zandrius', 'zandria', 'thaddeus', 'paige'],
-                    'Coruba#1432': ['ulfric', 'barco', 'tebbo'],
-                    'mystia#2889': ['chai', 'manda'],
-                    'Magromancer#6352': ['cymancer'],
-                    'NormL75#0235': ['kaelyn'],
-                    'baronanansi#2600': ['barda'],
-                    'alanwongis#3590': ['bob', 'akbar']}
 
-# START THE ENGINES
-
+### START THE ENGINES ###
 intents = discord.Intents.all()
-# intents.members = True
+discord.Intents.all()
 
-client = discord.Client(intents=intents)
+## Used for whispering in-game information to the players so that only they see it.
 
-dm = DM_helper()
 
-dm.load_last_session()
+#intents.members = True # what does this do bro
+
+client = discord.Client(intents=intents) # What
+
+## LOAD VIRTUAL DM ASSISTANT
+
+dm = DM_helper() ## <--- Helps with rolls, characters, enemies and loot!
+
+dm.load_last_session() ## <--- Loads up all the information from last time.
 
 
 ## This block detects how many suggestions are already found and updates the suggestion counter
@@ -237,7 +228,6 @@ async def do_help(message):
         response = (HELP_GENERAL_MESSAGE)
     return response, message.author
 
-
 async def do_suggest(message):
     username = "%s#%s" % (message.author.name, message.author.discriminator)
     global suggestions  ## This is the global text file
@@ -260,12 +250,12 @@ async def do_suggest(message):
         await message.author.send("Thanks! Received suggestion#%i: '%s'" % (suggestions, msg.content))
     return "", message.author
 
-
 async def do_login(message):
     nick = None
     response = ""
+
     username = "%s#%s" % (message.author.name, message.author.discriminator)
-    command_line = message.content  # E.g. !login chai
+    command_line = message.content  # E.g. !login Vsevellar
 
     try:
         command_line = command_line.split(" ")  # splits the argument into two pieces IE login character
@@ -274,11 +264,6 @@ async def do_login(message):
         response = "Failed to login."
         return response, message.channel
 
-    # Error Check 1 - You're not one of my friends
-    if username not in DND_PLAYERS:
-        response = "You are not allowed to play DnD. Please contact DM Joey for permission."
-    else:
-        # Error Check 2 - Don't try to steal my character!!!
         if target_character not in VALID_CHARACTERS[username]:  # checks if the target character is valid for the user
             response = "You cannot login as %s, %s is not your character." % (target_character, target_character)
 
@@ -326,13 +311,23 @@ async def do_whois(message):
     await message.author.send(profile, file=discord.File(image_file))
     return "", message.channel
 
-
 async def do_whoami(message):
     username = ("%s#%s") % (message.author.name, message.author.discriminator)
     char_sheet = dm.logged_in_as[username]  ## Finds your character sheet from your discord username
     response, image_file = char_sheet.get_full_profile()  # This is their FULL profile
     await message.author.send(response, file=discord.File(image_file))
 
+#TODO
+async def do_character(message):
+    username = ("%s#%s") % (message.author.name, message.author.discriminator)
+    character = dm.logged_in_as[username]  ## Finds your character sheet from your discord username
+    response = character # This is their FULL profile
+    await message.author.send(response)
+
+async def do_gold(message):
+    username = ("%s#%s") % (message.author.name, message.author.discriminator)
+    # await message.author.send('Aw fooey u gots no gold =[')
+    await message.author.send('Sweet! You have all the riches =]')
 
 async def do_showlogins(message):
     user_characters = []
@@ -400,20 +395,21 @@ def save_all(dm_instance):
 # This is the MEGA lookup table of commands
 
 CHAT_COMMANDS = [  # Execution table that based on the command input, it will throw control to the function
-    ("greet", do_greet),
-    ("hello", do_hello),
+
+    ### HALP ###
     ("help", do_help),  # Handles vanilla help and help [command]
-    ("suggest", do_suggest),  ## REQUIRES FEEDBACK AND FIXING
-    ("login", do_login),  # formats as login [user]
-    ("logout", do_logout),
-    ("roll", do_roll),  # Handles both normal and wod rolls
+
+    # ROLEPLAY
+
+    # DICE
+    ("roll", do_roll),  # Handles both normal and wod rolls TODO Seperate out WoD Dice Commands + make a new bot
+
+    # COINS
     ("coinflip", do_coinflip),  # These are all the same but people screw up and call it differently
     ("flipcoin", do_coinflip),
     ("cointoss", do_coinflip),
-    ("rockpaperscissors", do_rock_paper_scissors),  ## NEEDS VS BOT FIX
-    ("rps", do_rock_paper_scissors),
-    ("whoisloggedin", do_showlogins),
-    ("whoisplaying", do_showlogins),
+
+    # FUN COMMANDS
     ("murderdeathkill", do_murderdeathkill),
     ("tableflip", do_tableflip),
     ("fliptable", do_tableflip),
@@ -421,12 +417,37 @@ CHAT_COMMANDS = [  # Execution table that based on the command input, it will th
     ("breaktable", do_breaktable),
     ("sunglassesfingerguns", do_sunglassesfingerguns),
     ("kickinthedoor", do_kickinthedoor),
+
+    # TEST COMMANDS
+    ("greet", do_greet),
+    ("hello", do_hello),
+    ("suggest", do_suggest),  ## TODO REQUIRES FEEDBACK AND FIXING
+
+    ## DEPRECATED
+    ("login", do_login),  # formats as login [user]
+    ("logout", do_logout),
+
+    ##### GAMES #####
+
+    # ROCK PAPER SCISSORS (Does not work lol)
+    ("rockpaperscissors", do_rock_paper_scissors),  ## NEEDS VS BOT FIX
+    ("rps", do_rock_paper_scissors),
+
+    ## Admin Commands
+    ("whoisloggedin", do_showlogins),
+    ("whoisplaying", do_showlogins),
+
     # ROLEPLAY COMMANDS
-    ("whois", do_whois),
-    ("whoami", do_whoami),
-    ("me", do_whoami),
-    ("status", do_status)
+    ("whois", do_whois), # Shows me their profile. #
+    ("whoami", do_whoami), # Shows my profile. #
+    ("me", do_whoami), # Shorter version. #
+    ("character", do_character), # My Character Sheet #
+    ("status", do_status), # My Vitals. #
+    ("gold", do_gold) # My Precious #
+
+
     # COMBAT COMMANDS - Available during combat only
+    # TODO MAKE COMBAT WORK #
 
 ]
 
