@@ -724,18 +724,17 @@ class Character_Helper_App(tk.Frame):
         quit_button = tk.Button(self.frame, text="Quit", command=self.master.destroy).grid(column=1, row=6)
 
     def open_character_editor_prompt(self):
-        display_name = tk.simpledialog.askstring("Enter Character Name", "What is your character's name?")
-        if display_name:
-            internal_name = Character.clean_up_display_name(display_name)
-            filename = internal_name + ".txt"
+        name = tk.simpledialog.askstring("Enter Character Name", "What is your character's name?")
+        if name:
+            filename = name + ".txt"
             print(filename)
             # Check if it exists already
             existing_files = os.listdir("characters/")  # A bunch of existing filenames
             print(existing_files)
             if filename in existing_files:
                 print("Character file found!!!")
-                character = Character(display_name=display_name)
-                character.load("characters/" + filename)
+                character = Character(name=name)
+                character.load()
                 # print(character.get_character_sheet())
                 self.character_editor_window = Character_Editor_Window(self.master, character)
             else:
@@ -745,14 +744,14 @@ class Character_Helper_App(tk.Frame):
             # self.entry_window = Entry_Window(self, message = "What is your character's name?")  # Prompt window to get their character's name
 
     def do_new_character(self):
-        display_name = tk.simpledialog.askstring("New Character Name", "What is your new character's name?")
-        if display_name:
+        name = tk.simpledialog.askstring("New Character Name", "What is your new character's name?")
+        if name:
             # We don't want to allow similar filenames
-            filename = Character.clean_up_display_name(display_name) + ".txt"  # Change spaces to underscores
+            filename = name + ".txt"  # Change spaces to underscores
 
             ## COMPARING FILENAME TO CHARACTER NAME
             print("Filename:", filename)
-            print("Character name:", display_name)
+            print("Character name:", name)
 
             existing_files = os.listdir("characters/")  # A bunch of existing filenames
             print(existing_files)  # Showing us all characters that are already created

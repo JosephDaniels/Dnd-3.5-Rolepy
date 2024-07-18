@@ -1,4 +1,5 @@
-display_name = bob the pillager
+name = bob
+full_name = bob the pillager
 age = 83
 gender = female
 eye_colour = blue

@@ -49,17 +49,9 @@ a text file. Please see the load func for more information.
 If an attribute has a value of -1 then it has not been set or was corrupted somehow.
     """
 
-    def __init__(self, display_name=""):
-
-        ## PLAYER INFO
-        self.display_name = display_name  # e.g. Their first and last name with a space E.G "Ulfric Northsun"
-
+    def __init__(self, name=""):
         # PLAYER NAME
-        if self.display_name != "":
-            self.username = Character.create_username_from(display_name)
-
-        else:  # Blank character
-            self.username = "Unnamed_character"
+        self.name = name
         # The username what they type to !login to the system
         # e.g. what they type to !login to the system e.g. barda_mardis which is derived from display name
         self.discord_username = ""  # The player's discord username such as Villager#1999
@@ -124,20 +116,20 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
         self.date_created = date.today()  ## Changed when it has loaded
 
         ## FINAL LOAD
-        self.filename = self.username + ".txt"  # It will be "your_username.txt"  something like that
-        if display_name != "":
+        self.filename = self.name + ".txt"  # It will be "your_username.txt"  something like that
+        if name != "":
             self.load()
 
     @staticmethod
-    def create_username_from(display_name):
+    def create_username_from(name):
         # Answer Input Validation
         ## lets say they typed barda Mardis as when they signed in
 
         ## Barda Mardis would be the Display name or Full Name
-        # display_name = display_name.title() ## changes barda to Barda
+        # name = name.title() ## changes barda to Barda
 
         ## Barda_Mardis would be the username
-        username = display_name.replace(" ", "_")  # Change spaces to underscores
+        username = name.replace(" ", "_")  # Change spaces to underscores
         return username
 
     def init_all_skills(self):
@@ -158,7 +150,7 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
     def save(self):
         self.date_modified = date.today()
         data = self.get_character_sheet(show_all=True)  ## Gets a whole character sheet
-        f = open(filename, mode='w+')
+        f = open("characters/"+self.filename, mode='w+')
         f.write(data)
         f.close()
 
@@ -168,7 +160,7 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
             modified or overridden by external sources.
             EXAMPLE FORMAT:
             name = zandrius
-            display_name = zandrius_selwynn
+            name = zandrius_selwynn
             character_class = "fighterLv1,"wizardLv1","rogueLv1",
             strength = 12
             dexterity = 13
@@ -256,7 +248,7 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
                    " Description: %s\n" \
                    " History: %s\n" \
                    " Picture: %s " % \
-                   (self.username, self.display_name, self.race,
+                   (self.username, self.name, self.race,
                     self.age, self.gender,
                     self.eye_colour.capitalize(),
                     self.hair_colour.capitalize(),
@@ -302,7 +294,7 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
                    " Description: %s\n" \
                    " History: %s\n" \
                    " Picture: %s " % \
-                   (self.username, self.display_name, self.race,
+                   (self.username, self.name, self.race,
                     self.age, self.gender,
                     self.eye_colour.capitalize(),
                     self.hair_colour.capitalize(),
@@ -350,7 +342,7 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
             death_message = " and you are currently dead."
         else:
             death_message = " and you are currently OK."
-        response = "%s's current status: " % (self.display_name)
+        response = "%s's current status: " % (self.name)
         response = response + health_message + death_message
         return response
 
@@ -499,6 +491,8 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
                         elif self.__dict__[skill] == -1:  ## invalid detected
                             self.__dict__[skill] = 0
 
+    def update_filename(self):
+        self.filename = self.name +".txt"
 
 def test_1():  ## Runs a known working character and sees if the methods work
     paige_file = "characters/paige.txt"
@@ -514,7 +508,7 @@ def test_1():  ## Runs a known working character and sees if the methods work
     gold, silver, copper, platinum = chara.get_coins()
     character_net_worth = chara.get_net_worth()
     print("%s has %i gold, %i silver and %i copper pieces for a total of %i gold."
-          % (chara.display_name, gold, silver, copper, character_net_worth))
+          % (chara.name, gold, silver, copper, character_net_worth))
     print("Base spell save is ", chara.get_spell_save("charisma"))
     print("Knowledge(Arcana) total is ", chara.get_skill_total("knowledge_arcana", misc_modifier=0))
 
@@ -602,6 +596,25 @@ def test_15():
     c = Character("paige")
     print(c)
 
+def test_16():
+    ## Load up a good existing character sheet
+    c = Character("chai")
+    char_info = "" ## Make a new character sheet
+    ## Then strip out all the fields
+    for key in c.__dict__.keys():
+        key = key + (" = \n")
+        char_info = char_info+key
+    filename = "blank_character.txt"
+    f = open("characters/"+filename, mode='w+')
+    f.write(char_info)
+    f.close()
+
+def test_17():
+    c = Character()
+    c.name = "derpy"
+    c.update_filename()
+    c.save()
+
 if __name__ == "__main__":
-    test_15()  # Make a new character sheet
-    print("test completed")
+    test_17()  # Make a new character sheet
+    print("test 17 completed")
