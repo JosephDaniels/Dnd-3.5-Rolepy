@@ -1,0 +1,59 @@
+{
+  "name": "Renjiro, The Ronin",
+  "level": 6,
+  "class_name": "Samurai/Ninja",
+  "subclass": "Hybrid",
+  "background": "Ex-Samurai, turned wandering master of domination, restraint, and tactical submission.",
+  "alignment": "Lawful Neutral",
+  "stats": {
+    "STR": 13,
+    "DEX": 18,
+    "CON": 15,
+    "INT": 12,
+    "WIS": 16,
+    "CHA": 17
+  },
+  "modifiers": {
+    "STR": 1,
+    "DEX": 4,
+    "CON": 2,
+    "INT": 1,
+    "WIS": 3,
+    "CHA": 3
+  },
+  "proficiency_bonus": 3,
+  "hp": {
+    "current": 48,
+    "max": 48
+  },
+  "armor_class": 17,
+  "skills": [
+    "Acrobatics +7",
+    "Stealth +7",
+    "Athletics +4",
+    "Insight +6",
+    "Intimidation +6",
+    "Sleight of Hand +6"
+  ],
+  "spell_abilities": [],
+  "features": [
+    "Fighting Spirit (3/day)",
+    "Elegant Discipline",
+    "Menacing Kata",
+    "Shadow Step",
+    "Poison Knowledge",
+    "Ambush Specialist",
+    "Pressure Point Play (1/short rest)",
+    "Binding Mastery",
+    "Rope of Shame",
+    "Mental Collar"
+  ],
+  "current_equipment": [
+    "Custom Shibari Rope",
+    "Poison Vials",
+    "Smoke Bombs",
+    "Twin Katanas",
+    "Hidden Wrist Blades"
+  ],
+  "personality": "Quiet, commanding, cruelly calm. Applies brutal discipline with precision and grace."
+}

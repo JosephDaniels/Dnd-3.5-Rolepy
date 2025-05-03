@@ -17,54 +17,26 @@ HELP_ROLL = """ Just type the number and type of dice you want to roll and it wi
 
 E.G.  !rolld20+3   OR    !roll6d6+17    OR JUST    !rolld3"""
 
-# !login [username]\n !logout\n
-# !help [command]\n
-# !suggest\n
-# !rollwod [num_dice]\n !rollwod9again [num_dice]\n
-# !rollwod8again [num_dice]\n !rollchancedie\n
-# !rockpaperscissors\n
-# ROLEPLAY COMMANDS\n
-# !whois [username]\n !whoami\n !me\n !whosloggedin\n
 
-HELP_GENERAL_MESSAGE = """Need some help using the Roleplay Bot?
-I'm here to help. If you have any issues please contact GM Joey for solutions.
-Most commands are in the format of [command] [target] with a space between them.
-Here's a list of available commands. More to come!!!
+HELP_GENERAL_MESSAGE = """
+**Available Commands**
+!help — Show this message.
+!roll <XdY+Z> — Roll dice (e.g. !roll 2d6+3).
+!coinflip — Flip a coin.
+!login <character> — Log in as your character (requires a .json file in the /characters folder).
+!logout — Log out of your current character.
+!additem <item> <quantity> — Add an item to your character’s inventory.
+!status — View your character’s current health and status.
 
-USER COMMANDS
-!greet
-!hello
-!help
-
-DICE COMMANDS
-!rolld3
-!rolld4
-!rolld6
-!rolld8
-!rolld10
-!rolld12
-!rolld16
-!rolld20
-!rolld24
-!rolld100
-!rolld1000
-!coinflip or !flipcoin or !cointoss
-
-JUST FOR FUN COMMANDS
-!tableflip
-!fliptable
-!breaktable
-!unfliptable
-!sunglassesfingerguns
-!kickinthedoor
+More features coming soon!
 """
 
 HELP_LAST_UPDATED = """
-Last updated 11/22/2021
+Last updated 05/03/2025
 Update Notes:
-Added !rockpaperscissors - you can now play against the bot
-Added !whois - look up people's profiles if they are logged in
-If you want your character added to the database you need to help me out.
-I can do all the back end stuff if you guys add your own characters.
-Please see the post in the bot development channel!! Thank you!!
+God it's been a while since I updated this pos
+
+I want it to be functional after all this time, everyone brace for impact
+and i hope u never read this message
+and if u do u read this ur a real one
 """

@@ -1,261 +1,110 @@
 import asyncio
-import atexit
-
 import discord
+import json
+import os
 
-from DM_helper import *  # Module for running the game, lets us keep track of characters
-from NPC import *  # non-player character information
+from DM_helper import *  # Core game systems
 from TOKEN import TOKEN
 from help_messages import *
 
-# from card_games import play_poker_game
-
 ADMINS = ['StabbyStabby#1327', 'alanwongis#3590']
 
-### START THE ENGINES ###
 intents = discord.Intents.all()
-discord.Intents.all()
+client = discord.Client(intents=intents)
 
-## Used for whispering in-game information to the players so that only they see it.
-
-# intents.members = True # what does this do bro
-
-client = discord.Client(intents=intents)  # What
-
-## LOAD VIRTUAL DM ASSISTANT
-
-dm = DM_helper()  ## <--- Helps with rolls, characters, enemies and loot!
-
-dm.load_last_session()  ## <--- Loads up all the information from last time.
+# Initialize virtual DM
+dm = DM_helper()
+dm.load_last_session()
 
 
-## This block detects how many suggestions are already found and updates the suggestion counter
-# path, dirs, files = next(os.walk("suggestionbox/"))  # walk through the directory waka waka
-# file_count = len(files)  # spits out the len of the journey
-# print(" suggestions found: %i" % (file_count))
-# suggestions = file_count
+def dump_character(character):
+    path = f"characters/{character.username.lower()}.json"
+    with open(path, 'w') as f:
+        json.dump(character.__dict__, f, indent=2)
+
 
 @client.event
 async def on_ready():
-    print('We have logged in as {0.user}'.format(client))
+    print(f'Logged in as {client.user}')
 
 
 async def do_coinflip(message):
     result = coinflip()
-    response = "%s flips a coin! Result is %s." % (message.author, result)
-    return response, message.channel
+    return f"{message.author} flips a coin! Result is {result}.", message.channel
 
 
 async def do_roll(message):
-    username = "%s#%s" % (message.author.name, message.author.discriminator)
-    command_line = message.content  # E.g. !roll3d8
-    dice_total, num_dice, results, dice_type, modifier = parse_dice_command(command_line)  # Pulls the
-    response = "%s rolled a %i on a %i%s. Results: %s%s" % (username,
-                                                            dice_total,
-                                                            num_dice,
-                                                            dice_type,
-                                                            results,
-                                                            modifier)
+    username = f"{message.author.name}#{message.author.discriminator}"
+    command_line = message.content
+    dice_total, num_dice, results, dice_type, modifier = parse_dice_command(command_line)
+    response = f"{username} rolled a {dice_total} on a {num_dice}{dice_type}. Results: {results}{modifier}"
     return response, message.channel
-
-
-async def do_tableflip(message):
-    username = ("%s#%s") % (message.author.name, message.author.discriminator)
-    response = (username + " grabs the table by the edges, flipping it over like"
-                           " an absolute savage and ruining everything!"
-                           " Paper, dice and doritos crash into the ground!")
-    return response, message.channel
-
-
-async def do_unfliptable(message):
-    username = ("%s#%s") % (message.author.name, message.author.discriminator)
-    response = (username + " sheepishly returns the table to an upright position,"
-                           " collecting up the dice and brushing Dorito crumbs off"
-                           " the now orange-dusted character sheets.")
-    return response, message.channel
-
-
-async def do_breaktable(message):
-    username = ("%s#%s") % (message.author.name, message.author.discriminator)
-    result = rolld(2)
-    print(result)
-    if (result == 1):
-        await message.channel.send(
-            username + " dropkicks his foot straight through the table, splintering it into two seperate halves!")
-    if (result == 2):
-        await message.channel.send(
-            username + " hammers their fist down upon  the innocent table in an unbridled display of nerd rage. It cracks directly in half!")
-
-
-async def do_sunglassesfingerguns(message):
-    username = ("%s#%s") % (message.author.name, message.author.discriminator)
-    response = ("%s is looking too damn cool with their sunglasses and fingerguns."
-                " Watch out, here comes %s!" % (username, username))
-    return response, message.channel
-
-
-async def do_kickinthedoor(message):
-    username = ("%s#%s") % (message.author.name, message.author.discriminator)
-    result = rolld(2)
-    print(result)
-    if (result == 1):
-        await message.channel.send(
-            username + " delivers a swift kick to the door, but the sturdy door doesn't budge. Their foot crumples as the force of the blow reverberates back through their leg. You hop up and down on one foot for 1d4 rounds in agony.")
-    if (result == 2):
-        await message.channel.send(
-            username + " delivers a hearty kick to the door. The door flies off its hinges under the weight of their mighty boot.")
-    return "", message.channel
-
-
-async def do_greet(message):
-    channel = message.channel
-    await channel.send('Say hello!')
-
-    def check(m):
-        return m.content == 'hello' and m.channel == channel
-
-    try:
-        msg = await client.wait_for('message', timeout=30.0, check=check)
-        await channel.send('Hello {.author}!'.format(msg))
-    except asyncio.TimeoutError:
-        await message.author.send("I waited for you to say hello... </3")
-    return "", message.author
-
-
-async def do_hello(message):
-    msg = "Hello, welcome to The Joey DnD RP Server, %s." % (message.author)
-    await message.author.send(msg, file=discord.File('images/BaldursGate2Enhanced.jpg'))
-    return "", message.author
 
 
 async def do_help(message):
-    # if message.content == '!help login':
-    #     response = (HELP_LOGIN_MESSAGE)
-    # if message.content == '!help whois':
-    #     response = (HELP_WHOIS_MESSAGE)
-    if message.content == ('!help'):
-        response = (HELP_GENERAL_MESSAGE)
-    return response, message.author
-
-
-async def do_suggest(message):
-    username = "%s#%s" % (message.author.name, message.author.discriminator)
-    global suggestions  ## This is the global text file
-    await message.author.send("Please type your message to be added to the suggestion box. You have 5 minutes.")
-    try:
-        msg = await client.wait_for('message', timeout=300.0, check=None)
-    except asyncio.TimeoutError:
-        await message.author.send("Sorry but your suggestion has timed out. (5 Minutes Elapsed)")
-        msg = None
-    if msg != None:
-        suggestions += 1
-        data = msg.content
-        today = date.today()
-        data = data + " -- Suggestion written by %s on %s." % (username, today)
-        filename = "suggestionbox/suggestion%i.txt" % (suggestions)
-        f = open(filename, mode='w+')
-        f.write(data)
-        f.close()
-        print("Suggestion#%i just got saved. Thanks %s!" % (suggestions, username))
-        await message.author.send("Thanks! Received suggestion#%i: '%s'" % (suggestions, msg.content))
-    return "", message.author
+    help_lines = ["**Available Commands:**"]
+    for cmd, _, desc in CHAT_COMMANDS:
+        help_lines.append(f"- `!{cmd}` – {desc}")
+    help_text = "\n".join(help_lines)
+    return help_text, message.author
 
 
 async def do_login(message):
-    nick = None
-    response = ""
-
-    username = "%s#%s" % (message.author.name, message.author.discriminator)
-    command_line = message.content  # E.g. !login Vsevellar
-
+    username = f"{message.author.name}#{message.author.discriminator}"
     try:
-        command_line = command_line.split(" ")  # splits the argument into two pieces IE login character
-        target_character = command_line[1]  # target character is the second side of the argument
-    except ValueError:  # means that the command failed to parse
-        response = "Failed to login."
-        return response, message.channel
+        _, target_character = message.content.split(" ", 1)
+    except ValueError:
+        return "Usage: !login <character_name>", message.channel
 
-        if target_character not in VALID_CHARACTERS[username]:  # checks if the target character is valid for the user
-            response = "You cannot login as %s, %s is not your character." % (target_character, target_character)
+    if username in dm.logged_in_as:
+        return f"{username}, you are already logged in as {dm.logged_in_as[username].username}.", message.channel
 
-        # Exception, you're already logged in. In the future I'm going to swap your character for you.
-        if username in dm.logged_in_as.keys():  # Already logged in
-            response = "%s, you are already logged in as %s." % (username,
-                                                                 target_character)
+    character_path = f"characters/{target_character.lower()}.json"
+    if not os.path.exists(character_path):
+        return f"Character file {character_path} not found.", message.channel
 
-        else:  # Truly log their character in and load them in the system
-            response = "Successfully logged %s in as the character %s." % (username, target_character)
-            character = Character(target_character)  # Loads a character file based off of name
-            # nick = character_sheet.username  # for changing their name in discord
-            dm.logged_in_as[username] = character  # Associates a given username with a character sheet
-            dm.add_character(character)
-            print(character)
-            print("%s has logged in as %s." % (username, target_character))
+    with open(character_path, 'r') as f:
+        data = json.load(f)
 
-    # if nick != None:  # change their nickname
-    #     if username in ADMINS:
-    #         print ("tried to change your name but you are too powerful, %s" % (username))
-    #     else:
-    #         await message.author.edit(nick=nick)
+    character = Character()
+    character.__dict__.update(data)
+    character.username = target_character
 
-    return response, message.channel
+    # Ensure defaults exist
+    if not hasattr(character, "inventory"):
+        character.inventory = {}
+    if not hasattr(character, "equipment"):
+        character.equipment = {}
+
+    dm.logged_in_as[username] = character
+    dm.add_character(character)
+    print(f"{username} has logged in as {target_character}.")
+    return f"Successfully logged in as {target_character}.", message.channel
 
 
 async def do_logout(message):
-    member = message.author
-    username = "%s#%s" % (member.name, member.discriminator)
-    if username in dm.logged_in_as.keys():  # checks if the username is in the logged_in_as dictionary keys ie Bobby#2451
-        character = dm.logged_in_as[username]  # retrieves the the character obj they are logged in as
-        print(dm.logged_in_as)
-        response = "%s, your character %s has been logged out." % (username, character.username)
-        dm.logged_in_as.pop(username)  # remove them from the logged in
-        # await message.author.edit(nick=username)  # restore username, doesn't work currently
-    else:
-        response = "You're not logged in!"
-    return response, message.channel
+    username = f"{message.author.name}#{message.author.discriminator}"
+    if username in dm.logged_in_as:
+        char = dm.logged_in_as.pop(username)
+        return f"{username}, your character {char.username} has been logged out.", message.channel
+    return "You're not logged in!", message.channel
 
 
-async def do_whois(message):
-    username = ("%s#%s") % (message.author.name, message.author.discriminator)
-    char_sheet = dm.logged_in_as[username]  ## Finds your character sheet from your discord username
-    profile, image_file = char_sheet.get_full_profile()  # This is their FULL profile
-    await message.author.send(profile, file=discord.File(image_file))
-    return "", message.channel
+async def do_status(message):
+    username = f"{message.author.name}#{message.author.discriminator}"
+    character = dm.logged_in_as.get(username)
+    if character:
+        return character.get_status(), message.channel
+    return "You're not logged in!", message.channel
 
 
 async def do_whoami(message):
-    username = ("%s#%s") % (message.author.name, message.author.discriminator)
-    char_sheet = dm.logged_in_as[username]  ## Finds your character sheet from your discord username
-    response, image_file = char_sheet.get_full_profile()  # This is their FULL profile
-    await message.author.send(response, file=discord.File(image_file))
+    username = f"{message.author.name}#{message.author.discriminator}"
+    if username in dm.logged_in_as:
+        char = dm.logged_in_as[username]
+        return f"You are currently logged in as **{char.username}**.", message.channel
+    return "You're not logged in.", message.channel
 
-
-async def do_character(message):
-    username = ("%s#%s") % (message.author.name, message.author.discriminator)
-    character = dm.logged_in_as[username]  ## Finds your character sheet from your discord username
-    response = character  # This is their FULL profile
-    await message.author.send(response)
-
-
-async def do_gold(message):
-    username = ("%s#%s") % (message.author.name, message.author.discriminator)
-    # await message.author.send('Aw fooey u gots no gold =[')
-    await message.author.send('Sweet! You have all the riches =]')
-
-
-async def do_showlogins(message):
-    user_characters = []
-    for key in dm.logged_in_as.keys():  ## grabs all users who are logged in
-        user_characters.append((key, dm.logged_in_as[key].display_name))  ## appends their current character to a list
-    if user_characters == []:
-        msg = "Noone is logged in at the moment."
-    else:  # players on the list
-        msg = "Characters currently logged in: "
-        for username, charname in user_characters:
-            msg = "%s\n%s as %s\n" % (msg, username, charname)
-    return msg, message.author
-
-    return response, message.author
 
 async def do_additem(message):
     username = f"{message.author.name}#{message.author.discriminator}"
@@ -269,11 +118,11 @@ async def do_additem(message):
         return "Usage: !additem <item> <quantity>", message.channel
 
     character = dm.logged_in_as[username]
+    key = item.lower()
 
     if not hasattr(character, "inventory"):
         character.inventory = {}
 
-    key = item.lower()
     if key in character.inventory:
         original, count = character.inventory[key]
         character.inventory[key] = (original, count + qty)
@@ -281,137 +130,130 @@ async def do_additem(message):
         character.inventory[key] = (item, qty)
 
     return f"Added {qty}x {item} to {character.username}'s inventory.", message.channel
-async def combat_commands(message):
-    if message.content == ("!begincombat") or message.content == ("!startcombat"):
-        ## Start Combat
-        ## Switch to combat mode
-        pass
-
-    if message.content.startswith('!addcombatant'):
-        ## Check if they have DM power
-        if not (str(message.author) in ADMINS):
-            await message.author.send("Hey!! You're not allowed to add combatants to the initiative. Nice try, chump.")
-
-        else:
-            combatant_name = message.content.split(" ")[1].strip()  ## grabs the second element and removes whitespace
-            if combatant_name in dm.logged_in_as.values():
-                pass
-                ## to do, during the login by the user, retrieve all their info
-            enemy = NPC(combatant_name)  ## tries to make an npc of the type specified
-            dm.add_to_combat(enemy)
-
-    ## GAME COMMANDS
-
-    # if message.content == ("!play poker"):
-    #     await do_poker_game(message)
 
 
-async def do_status(message):
-    """ Returns the status of the character you are currently playing. """
-    username = "%s#%s" % (message.author.name, message.author.discriminator)
+async def do_removeitem(message):
+    username = f"{message.author.name}#{message.author.discriminator}"
+    if username not in dm.logged_in_as:
+        return "You're not logged in!", message.channel
+
+    try:
+        _, item, qty = message.content.split(" ", 2)
+        qty = int(qty)
+    except ValueError:
+        return "Usage: !removeitem <item> <quantity>", message.channel
+
     character = dm.logged_in_as[username]
-    response = character.get_status()
-    channel = message.channel
-    return response, channel
+    key = item.lower()
+
+    if not hasattr(character, "inventory") or key not in character.inventory:
+        return f"{character.username} doesn't have any {item}.", message.channel
+
+    original, count = character.inventory[key]
+    if qty >= count:
+        del character.inventory[key]
+        return f"Removed all of {original} from {character.username}'s inventory.", message.channel
+    else:
+        character.inventory[key] = (original, count - qty)
+        return f"Removed {qty}x {original} from {character.username}'s inventory.", message.channel
 
 
-def save_all(dm_instance):
-    # This will save all characters currently logged into the system
-    filename = "data/logged_in.txt"
-    _data = ""
-    for key in dm_instance.logged_in_as.keys():
-        _data = _data + ("%s = %s\n" % (key, dm_instance.logged_in_as[key].username))
-    f = open(filename, mode='w+')
-    f.write(_data)
-    f.close()
+async def do_equip(message):
+    username = f"{message.author.name}#{message.author.discriminator}"
+    if username not in dm.logged_in_as:
+        return "You're not logged in!", message.channel
+
+    try:
+        _, item, slot = message.content.split(" ", 2)
+    except ValueError:
+        return "Usage: !equip <item> <slot>", message.channel
+
+    character = dm.logged_in_as[username]
+    key = item.lower()
+
+    if not hasattr(character, "inventory") or key not in character.inventory:
+        return f"{character.username} doesn't have a(n) {item}.", message.channel
+
+    if not hasattr(character, "equipment"):
+        character.equipment = {}
+
+    character.equipment[slot.lower()] = item
+    return f"{character.username} equips {item} in the {slot} slot.", message.channel
 
 
-# This is the MEGA lookup table of commands
+async def do_inventory(message):
+    username = f"{message.author.name}#{message.author.discriminator}"
+    if username not in dm.logged_in_as:
+        return "You're not logged in!", message.channel
 
-CHAT_COMMANDS = [  # Execution table that based on the command input, it will throw control to the function
+    character = dm.logged_in_as[username]
+    lines = []
 
-    ### HALP ###
-    ("help", do_help),  # Handles vanilla help and help [command]
+    # Show equipment
+    if hasattr(character, "equipment") and character.equipment:
+        lines.append(f"**{character.username}'s Equipment:**")
+        for slot, item in character.equipment.items():
+            lines.append(f"- {slot.capitalize()}: {item}")
+    else:
+        lines.append(f"**{character.username} has nothing equipped.**")
 
-    # ROLEPLAY
+    # Show inventory
+    if hasattr(character, "inventory") and character.inventory:
+        lines.append(f"\n**Inventory:**")
+        for key, (name, qty) in character.inventory.items():
+            lines.append(f"- {name}: {qty}")
+    else:
+        lines.append("\nInventory is empty.")
 
-    # DICE
-    ("roll", do_roll),  # Handles both normal and wod rolls TODO Seperate out WoD Dice Commands + make a new bot
+    return "\n".join(lines), message.channel
 
-    # COINS
-    ("coinflip", do_coinflip),  # These are all the same but people screw up and call it differently
-    ("flipcoin", do_coinflip),
-    ("cointoss", do_coinflip),
 
-    # FUN COMMANDS
-    ("tableflip", do_tableflip),
-    ("fliptable", do_tableflip),
-    ("unfliptable", do_unfliptable),
-    ("breaktable", do_breaktable),
-    ("sunglassesfingerguns", do_sunglassesfingerguns),
-    ("kickinthedoor", do_kickinthedoor),
+async def do_dump(message):
+    username = f"{message.author.name}#{message.author.discriminator}"
+    if username not in dm.logged_in_as:
+        return "You're not logged in!", message.channel
 
-    # TEST COMMANDS
-    ("additem", do_additem),
-    ("greet", do_greet),
-    ("hello", do_hello),
-    ("suggest", do_suggest),  ## TODO REQUIRES FEEDBACK AND FIXING
+    character = dm.logged_in_as[username]
+    dump_character(character)
+    return f"{character.username}'s data has been saved to disk.", message.channel
 
-    ## DEPRECATED
-    ("login", do_login),  # formats as login [user]
-    ("logout", do_logout),
 
-    ##### GAMES #####
-
-    # ROCK PAPER SCISSORS (Does not work lol)
-    # ("rockpaperscissors", do_rock_paper_scissors),  ## NEEDS VS BOT FIX
-    # ("rps", do_rock_paper_scissors),
-
-    ## Admin Commands
-    ("whoisloggedin", do_showlogins),
-    ("whoisplaying", do_showlogins),
-
-    # ROLEPLAY COMMANDS
-    ("whois", do_whois),  # Shows me their profile. #
-    ("whoami", do_whoami),  # Shows my profile. #
-    ("me", do_whoami),  # Shorter version. #
-    ("character", do_character),  # My Character Sheet #
-    ("status", do_status),  # My Vitals. #
-    ("gold", do_gold)  # My Precious #
-
-    # COMBAT COMMANDS - Available during combat only
-    # TODO MAKE COMBAT WORK #
-
+# Annotated command list
+CHAT_COMMANDS = [
+    ("help", do_help, "Show a list of available commands"),
+    ("roll", do_roll, "Roll dice, e.g. !roll 2d6+1"),
+    ("coinflip", do_coinflip, "Flip a coin"),
+    ("flipcoin", do_coinflip, "Flip a coin (alias)"),
+    ("cointoss", do_coinflip, "Flip a coin (alias)"),
+    ("login", do_login, "Login as a character, e.g. !login Rynn"),
+    ("logout", do_logout, "Logout of your current character"),
+    ("additem", do_additem, "Add an item to your inventory, e.g. !additem sword 1"),
+    ("removeitem", do_removeitem, "Remove an item from your inventory, e.g. !removeitem sword 1"),
+    ("equip", do_equip, "Equip an item to a slot, e.g. !equip sword hand"),
+    ("inventory", do_inventory, "View your inventory and currently equipped items"),
+    ("status", do_status, "View your character's current status"),
+    ("whoami", do_whoami, "Check which character you are logged in as"),
+    ("dump", do_dump, "Save your character data to disk"),
 ]
 
 
 @client.event
-async def on_message(message):  # This is the main entry point for the discord bot
-    member = message.author
-    username = "%s#%s" % (member.name, member.discriminator)
-
-    command_found = False
+async def on_message(message):
+    if message.author.bot:
+        return
 
     if message.content.startswith("!"):
-        for chat_command, do_func in CHAT_COMMANDS:
-            if message.content.startswith("!" + chat_command):
-                response, response_channel = await do_func(
-                    message)  # Response channel is either pub channel or personal
-                command_found = True
-                break
-        if not command_found:
-            response = ("Sorry, that command didn't work. Command = [%s]" % (message.content))
-            response_channel = message.channel
-        if response != "":
-            await response_channel.send(response)
-    else:
-        pass
+        for command_entry in CHAT_COMMANDS:
+            cmd = command_entry[0]
+            func = command_entry[1]
 
+            if message.content.startswith("!" + cmd):
+                response, target = await func(message)
+                if response:
+                    await target.send(response)
+                return
 
-@atexit.register
-def goodbye():
-    save_all(dm)
-    print('All logged in characters have been saved.')
+        await message.channel.send(f"Unknown command: {message.content}")
 
 
 client.run(TOKEN)
