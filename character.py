@@ -10,7 +10,9 @@ SAVE_KEY_ABILITIES = {
 }
 
 LAW_CHAOS_ALIGNMENT = ["Lawful", "Neutral", "Chaotic"]
+
 GOOD_EVIL_ALIGNMENT = ["Good", "Neutral", "Evil"]
+
 ALL_ALIGNMENTS = ['Lawful Good',
                   'Lawful Neutral',
                   'Lawful Evil',
@@ -52,6 +54,8 @@ If an attribute has a value of -1 then it has not been set or was corrupted some
     def __init__(self, name=""):
         # PLAYER NAME
         self.name = name
+        self.full_name = ""
+        self.title = ""
         # The username what they type to !login to the system
         # e.g. what they type to !login to the system e.g. barda_mardis which is derived from display name
         self.discord_username = ""  # The player's discord username such as Villager#1999

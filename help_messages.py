@@ -17,27 +17,46 @@ HELP_ROLL = """ Just type the number and type of dice you want to roll and it wi
 
 E.G.  !rolld20+3   OR    !roll6d6+17    OR JUST    !rolld3"""
 
-HELP_GENERAL_MESSAGE = """Need some help using the Roleplay Bot?\n
+# !login [username]\n !logout\n
+# !help [command]\n
+# !suggest\n
+# !rollwod [num_dice]\n !rollwod9again [num_dice]\n
+# !rollwod8again [num_dice]\n !rollchancedie\n
+# !rockpaperscissors\n
+# ROLEPLAY COMMANDS\n
+# !whois [username]\n !whoami\n !me\n !whosloggedin\n
+
+HELP_GENERAL_MESSAGE = """Need some help using the Roleplay Bot?
 I'm here to help. If you have any issues please contact GM Joey for solutions.
 Most commands are in the format of [command] [target] with a space between them.
-Here's a list of available commands. More to come!!!\n
-USER COMMANDS
-!greet\n !hello\n
-!help\n !help [command]\n !suggest\n
-!login [username]\n !logout\n
-DICE COMMANDS\n
-!rollwod [num_dice]\n !rollwod9again [num_dice]\n
-!rollwod8again [num_dice]\n !rollchancedie\n
-!rolld3\n !rolld4\n !rolld6\n !rolld8\n !rolld10\n !rolld12\n
-!rolld16\n !rolld20\n !rolld24\n !rolld100\n !rolld1000\n 
+Here's a list of available commands. More to come!!!
 
-!coinflip or !flipcoin or !cointoss\n
-!rockpaperscissors\n
-ROLEPLAY COMMANDS\n
-!whois [username]\n !whoami\n !me\n !whosloggedin\n
+USER COMMANDS
+!greet
+!hello
+!help
+
+DICE COMMANDS
+!rolld3
+!rolld4
+!rolld6
+!rolld8
+!rolld10
+!rolld12
+!rolld16
+!rolld20
+!rolld24
+!rolld100
+!rolld1000
+!coinflip or !flipcoin or !cointoss
+
 JUST FOR FUN COMMANDS
-!tableflip\n !fliptable\n !breaktable\n !unfliptable\n 
-!sunglassesfingerguns\n !kickinthedoor\n
+!tableflip
+!fliptable
+!breaktable
+!unfliptable
+!sunglassesfingerguns
+!kickinthedoor
 """
 
 HELP_LAST_UPDATED = """

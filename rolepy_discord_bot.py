@@ -12,61 +12,32 @@ from help_messages import *
 
 ADMINS = ['StabbyStabby#1327', 'alanwongis#3590']
 
-
-
 ### START THE ENGINES ###
 intents = discord.Intents.all()
 discord.Intents.all()
 
 ## Used for whispering in-game information to the players so that only they see it.
 
+# intents.members = True # what does this do bro
 
-#intents.members = True # what does this do bro
-
-client = discord.Client(intents=intents) # What
+client = discord.Client(intents=intents)  # What
 
 ## LOAD VIRTUAL DM ASSISTANT
 
-dm = DM_helper() ## <--- Helps with rolls, characters, enemies and loot!
+dm = DM_helper()  ## <--- Helps with rolls, characters, enemies and loot!
 
-dm.load_last_session() ## <--- Loads up all the information from last time.
+dm.load_last_session()  ## <--- Loads up all the information from last time.
 
 
 ## This block detects how many suggestions are already found and updates the suggestion counter
 # path, dirs, files = next(os.walk("suggestionbox/"))  # walk through the directory waka waka
 # file_count = len(files)  # spits out the len of the journey
 # print(" suggestions found: %i" % (file_count))
-#
 # suggestions = file_count
-
 
 @client.event
 async def on_ready():
     print('We have logged in as {0.user}'.format(client))
-
-
-def handle_roll_wod(message, eight_again=False, nine_again=False):
-    cmd, dice_pool = message.content.split(" ")
-    dice_pool = int(dice_pool)
-    username = message.author
-    dice_results, successes, rerolls = roll_wod_dice(dice_pool, eight_again, nine_again)
-
-    extra_text = ""
-    if eight_again == True:
-        extra_text = " with eight-again"
-    elif nine_again == True:
-        extra_text = " with nine-again"
-
-    if successes == 0:
-        return "%s rolled %i dice and failed their roll%s. Dice Results: %s" % (
-            username, dice_pool, extra_text, dice_results)
-    elif successes > 0:
-        if rerolls > 0:
-            return "%s rolled %i dice and received %i successes%s. They had %i rerolled dice. Dice Results: %s" % (
-                username, dice_pool, successes, extra_text, rerolls, dice_results)
-        else:
-            return "%s rolled %i dice and had %i successes%s. Dice Results: %s" % (
-                username, dice_pool, successes, extra_text, dice_results)
 
 
 async def do_coinflip(message):
@@ -78,74 +49,13 @@ async def do_coinflip(message):
 async def do_roll(message):
     username = "%s#%s" % (message.author.name, message.author.discriminator)
     command_line = message.content  # E.g. !roll3d8
-    if message.content.startswith("!rollwod"):
-        try:
-            command, dice_pool = message.content.split(" ")
-        except ValueError:
-            response = "Sorry that didn't work. Try again."
-            return response, message.channel
-        if command == "!rollwod":
-            response = handle_roll_wod(message, dice_pool)
-        elif command == ("!rollwod8again"):
-            response = handle_roll_wod(message, dice_pool, eight_again=True)
-        elif command == ("!rollwod9again"):
-            response = handle_roll_wod(message, dice_pool, nine_again=True)
-
-    elif message.content.startswith('!rollchancedie'):
-        dice_result = rolld(10)
-        if dice_result == 1:
-            response = "%s rolled a chance die and suffered a dramatic failure. [Rolled 1 on a d10]" % (username)
-        elif dice_result == 10:
-            response = "%s rolled a chance die and managed to succeed. [Rolled 10 on a d10]" % (username)
-        else:
-            response = "%s rolled a chance die and failed. [Rolled %s on a d10]" % (username, dice_result)
-
-    else:  # Handles both single dice and multiple dice
-        cmd = message.content
-        dice_total, num_dice, results, dice_type, modifier = parse_dice_command(command_line)  # Pulls the
-        response = "%s rolled a %i on a %i%s. Results: %s%s" % (username,
-                                                                dice_total,
-                                                                num_dice,
-                                                                dice_type,
-                                                                results,
-                                                                modifier)
-    return response, message.channel
-
-
-async def do_rock_paper_scissors(message):
-    """ Gives a random result, rock, paper or scissors.
-        If you give it an argument, it will try to play against you.
-        If you win, lose or tie, it will tell you.
-        Everything gets returned in the response variable."""
-    bonus_message = ""  # victory, tie or loss message
-    victory_message = " You win!!!"
-    lose_message = " You lose!!!"
-    if message == "!rockpaperscissors" or "!rps":  # Solo play
-        bot_throw = rock_paper_scissors()  # returns a string = 'rock' 'paper' or 'scissors'
-
-    ### THIS ENTIRE VS AI PART DOESN'T WORK!!!!
-    else:  # Against the bot
-        print("against the bot block")
-        player_throw = message.content.split(" ")[1].strip()  # should be 'rock' 'paper' or 'scissors'
-        bot_throw = rock_paper_scissors()  # should be 'rock' 'paper' or 'scissors'
-        if player_throw == bot_throw:  ## detects a tie
-            bonus_message = " It's a tie. Thats means we both lose."
-        elif player_throw == "rock" and bot_throw == "scissors":
-            bonus_message = "Rock breaks scissors." + victory_message
-        elif player_throw == "paper" and bot_throw == "rock":
-            bonus_message = "Paper covers rock." + victory_message
-        elif player_throw == "scissors" and bot_throw == "paper":
-            bonus_message = "Scissors cuts paper." + victory_message
-        else:
-            bonus_message = lose_message
-        bonus_message = " (Player threw %s. Bot threw %s.)" % (player_throw, bot_throw) + bonus_message
-    response = "%s is playing Rock, Paper, Scissors! Are you ready...?" \
-               " Rock! Paper! Scissors. . . %s!!! %s" % (message.author, bot_throw, bonus_message)
-    return response, message.channel
-
-
-async def do_murderdeathkill(message):
-    response = "%s was victorious!" % (message.author)
+    dice_total, num_dice, results, dice_type, modifier = parse_dice_command(command_line)  # Pulls the
+    response = "%s rolled a %i on a %i%s. Results: %s%s" % (username,
+                                                            dice_total,
+                                                            num_dice,
+                                                            dice_type,
+                                                            results,
+                                                            modifier)
     return response, message.channel
 
 
@@ -209,7 +119,6 @@ async def do_greet(message):
         await channel.send('Hello {.author}!'.format(msg))
     except asyncio.TimeoutError:
         await message.author.send("I waited for you to say hello... </3")
-
     return "", message.author
 
 
@@ -220,13 +129,14 @@ async def do_hello(message):
 
 
 async def do_help(message):
-    if message.content == '!help login':
-        response = (HELP_LOGIN_MESSAGE)
-    if message.content == '!help whois':
-        response = (HELP_WHOIS_MESSAGE)
+    # if message.content == '!help login':
+    #     response = (HELP_LOGIN_MESSAGE)
+    # if message.content == '!help whois':
+    #     response = (HELP_WHOIS_MESSAGE)
     if message.content == ('!help'):
         response = (HELP_GENERAL_MESSAGE)
     return response, message.author
+
 
 async def do_suggest(message):
     username = "%s#%s" % (message.author.name, message.author.discriminator)
@@ -249,6 +159,7 @@ async def do_suggest(message):
         print("Suggestion#%i just got saved. Thanks %s!" % (suggestions, username))
         await message.author.send("Thanks! Received suggestion#%i: '%s'" % (suggestions, msg.content))
     return "", message.author
+
 
 async def do_login(message):
     nick = None
@@ -311,23 +222,26 @@ async def do_whois(message):
     await message.author.send(profile, file=discord.File(image_file))
     return "", message.channel
 
+
 async def do_whoami(message):
     username = ("%s#%s") % (message.author.name, message.author.discriminator)
     char_sheet = dm.logged_in_as[username]  ## Finds your character sheet from your discord username
     response, image_file = char_sheet.get_full_profile()  # This is their FULL profile
     await message.author.send(response, file=discord.File(image_file))
 
-#TODO
+
 async def do_character(message):
     username = ("%s#%s") % (message.author.name, message.author.discriminator)
     character = dm.logged_in_as[username]  ## Finds your character sheet from your discord username
-    response = character # This is their FULL profile
+    response = character  # This is their FULL profile
     await message.author.send(response)
+
 
 async def do_gold(message):
     username = ("%s#%s") % (message.author.name, message.author.discriminator)
     # await message.author.send('Aw fooey u gots no gold =[')
     await message.author.send('Sweet! You have all the riches =]')
+
 
 async def do_showlogins(message):
     user_characters = []
@@ -343,10 +257,30 @@ async def do_showlogins(message):
 
     return response, message.author
 
+async def do_additem(message):
+    username = f"{message.author.name}#{message.author.discriminator}"
+    if username not in dm.logged_in_as:
+        return "You're not logged in!", message.channel
 
-# async def do_poker_game(message):
-#     await play_poker_game(message)
+    try:
+        _, item, qty = message.content.split(" ", 2)
+        qty = int(qty)
+    except ValueError:
+        return "Usage: !additem <item> <quantity>", message.channel
 
+    character = dm.logged_in_as[username]
+
+    if not hasattr(character, "inventory"):
+        character.inventory = {}
+
+    key = item.lower()
+    if key in character.inventory:
+        original, count = character.inventory[key]
+        character.inventory[key] = (original, count + qty)
+    else:
+        character.inventory[key] = (item, qty)
+
+    return f"Added {qty}x {item} to {character.username}'s inventory.", message.channel
 async def combat_commands(message):
     if message.content == ("!begincombat") or message.content == ("!startcombat"):
         ## Start Combat
@@ -410,7 +344,6 @@ CHAT_COMMANDS = [  # Execution table that based on the command input, it will th
     ("cointoss", do_coinflip),
 
     # FUN COMMANDS
-    ("murderdeathkill", do_murderdeathkill),
     ("tableflip", do_tableflip),
     ("fliptable", do_tableflip),
     ("unfliptable", do_unfliptable),
@@ -419,6 +352,7 @@ CHAT_COMMANDS = [  # Execution table that based on the command input, it will th
     ("kickinthedoor", do_kickinthedoor),
 
     # TEST COMMANDS
+    ("additem", do_additem),
     ("greet", do_greet),
     ("hello", do_hello),
     ("suggest", do_suggest),  ## TODO REQUIRES FEEDBACK AND FIXING
@@ -430,21 +364,20 @@ CHAT_COMMANDS = [  # Execution table that based on the command input, it will th
     ##### GAMES #####
 
     # ROCK PAPER SCISSORS (Does not work lol)
-    ("rockpaperscissors", do_rock_paper_scissors),  ## NEEDS VS BOT FIX
-    ("rps", do_rock_paper_scissors),
+    # ("rockpaperscissors", do_rock_paper_scissors),  ## NEEDS VS BOT FIX
+    # ("rps", do_rock_paper_scissors),
 
     ## Admin Commands
     ("whoisloggedin", do_showlogins),
     ("whoisplaying", do_showlogins),
 
     # ROLEPLAY COMMANDS
-    ("whois", do_whois), # Shows me their profile. #
-    ("whoami", do_whoami), # Shows my profile. #
-    ("me", do_whoami), # Shorter version. #
-    ("character", do_character), # My Character Sheet #
-    ("status", do_status), # My Vitals. #
-    ("gold", do_gold) # My Precious #
-
+    ("whois", do_whois),  # Shows me their profile. #
+    ("whoami", do_whoami),  # Shows my profile. #
+    ("me", do_whoami),  # Shorter version. #
+    ("character", do_character),  # My Character Sheet #
+    ("status", do_status),  # My Vitals. #
+    ("gold", do_gold)  # My Precious #
 
     # COMBAT COMMANDS - Available during combat only
     # TODO MAKE COMBAT WORK #
