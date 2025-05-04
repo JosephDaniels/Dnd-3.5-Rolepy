@@ -1,84 +1,50 @@
 {
-  "name": "Rynn Delon Dragonwhisper",
-  "username": "Rynn",
-  "alignment": "Neutral Good",
-  "character_class": [
-    {
-      "name": "Fighter",
-      "subclass": "Monster Slayer",
-      "level": 6
+    "name": "Rynn",
+    "inventory": {
+        "items": {
+            "apple": 2
+        },
+        "slots": {
+            "nude": {
+                "rings": null,
+                "piercings": null
+            },
+            "underwear": {
+                "chest": null,
+                "crotch": null,
+                "left_foot": null,
+                "right_foot": null
+            },
+            "clothing": {
+                "eyes": null,
+                "face": null,
+                "head": null,
+                "neck": null,
+                "shirt": null,
+                "belt": null,
+                "left_wrist": null,
+                "right_wrist": null,
+                "pants": null,
+                "left_hand": null,
+                "right_hand": null
+            },
+            "armour": {
+                "head": null,
+                "neck": null,
+                "shoulders": null,
+                "chest": null,
+                "arms": null,
+                "legs": null,
+                "feet": null,
+                "hands": null
+            },
+            "weapons": {
+                "right_hand": "dagger",
+                "left_hand": null,
+                "sheath": null,
+                "off_sheath": null,
+                "quiver": null
+            }
+        }
     }
-  ],
-  "race": "Human",
-  "age": 27,
-  "gender": "Female",
-  "eye_colour": "Green",
-  "hair_colour": "Apple Red",
-  "skin_colour": "Fair and Freckled",
-  "height": "",
-  "weight": "",
-  "favorite_weapon": null,
-  "description": "Her skin bears the bronze kiss of long days beneath a sunlit sky, warmed and freckled from a youth spent toiling in fields. There's a softness to her cheeks that never quite faded, no matter how many campaigns she led or monsters she slew. But that softness is contrasted by the warrior's definition, shoulders honed by longbows, arms taut from drawing blades, thighs that speak of hours astride both warhorses and battlefield ridgelines.",
-  "public_history": "Proud redheaded warrior - Queen of the West",
-  "profile_image": null,
-  "strength": 19,
-  "dexterity": 15,
-  "constitution": 14,
-  "intelligence": 14,
-  "wisdom": 8,
-  "charisma": 17,
-  "maximum_health": 48,
-  "current_health": 10,
-  "armor_class": 10,
-  "base_attack_bonus": 0,
-  "initiative": 0,
-  "xp_points": 21000,
-  "base_fortitude": 0,
-  "base_reflex": 0,
-  "base_will": 0,
-  "platinum_coins": 0,
-  "gold_coins": 124,
-  "silver_coins": 6,
-  "copper_coins": 4,
-  "feats": [],
-  "special_abilities": [],
-  "inventory": {
-    "Healing Potion Phial (2d8+8)": 1,
-    "Neural Surge Capacitor": 1
-  },
-  "dying": false,
-  "dead": false,
-  "date_created": "2025-05-03",
-  "date_modified": "2025-05-03",
-  "body_slots": {
-    "eyes": [],
-    "face": [],
-    "hat": [],
-    "neck": [],
-    "shoulders": [],
-    "chest": [],
-    "upper_undergarment": [],
-    "top": [],
-    "arms": [],
-    "left_wrist": [],
-    "right_wrist": [],
-    "left_hand": [],
-    "right_hand": [],
-    "midsection": [],
-    "waist": [],
-    "lower_undergarment": [],
-    "bottoms": [],
-    "crotch": [],
-    "left_thigh": [],
-    "right_thigh": [],
-    "knees": [],
-    "left_ankle": [],
-    "right_ankle": [],
-    "left_foot": [],
-    "right_foot": [],
-    "rings": [],
-    "piercings": []
-  },
-  "proficiency_bonus": 3,
-  "equipment": {}
 }

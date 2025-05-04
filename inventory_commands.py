@@ -65,24 +65,19 @@ async def do_equip(message, dm):
     character.save_to_json()
     return f"{character.name} equips {item} to {slot}.", message.channel
 
-async def do_unequip(message, dm):
+async def do_unequip(message, char):
     args = message.content.split()
     if len(args) < 2:
-        return "Please specify the slot to unequip. Example: `!unequip right_hand`"
+        await message.channel.send("Usage: !unequip <slot>")
+        return
 
     slot = args[1].lower()
-
-    char = dm.get(message.author.id)  # or dm_helper.lookup(message.author.id), whatever your helper uses
-    # char = get_character_by_user(message.author.id)  # However you're fetching the character
-    if slot not in char.body_slots:
-        return f"'{slot}' is not a valid equipment slot."
-
-    if not char.body_slots[slot]:
-        return f"Nothing is equipped in the {slot.replace('_', ' ')} slot."
-
-    char.unequip_item(slot)
-    char.save_to_json()
-    return f"{char.name} has unequipped their gear from the {slot.replace('_', ' ')} slot."
+    try:
+        char.unequip_item(slot)
+        char.save_to_json()
+        await message.channel.send(f"{char.name} unequipped their item from {slot}.")
+    except ValueError as e:
+        await message.channel.send(f"Error: {str(e)}")
 async def do_inventory(message, dm):
     character = dm.logged_in_as[f"{message.author.name}#{message.author.discriminator}"]
     lines = []

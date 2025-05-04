@@ -2,18 +2,6 @@ import os
 import json
 from datetime import date
 
-SAVE_KEY_ABILITIES = {
-    "base_fortitude": "constitution",
-    "base_reflex": "dexterity",
-    "base_will": "wisdom"
-}
-
-ALL_ALIGNMENTS = [
-    "Lawful Good", "Neutral Good", "Chaotic Good",
-    "Lawful Neutral", "True Neutral", "Chaotic Neutral",
-    "Lawful Evil", "Neutral Evil", "Chaotic Evil"
-]
-
 class Character:
     LAYER_LABELS = {
         0: "nude",
@@ -25,12 +13,12 @@ class Character:
     def __init__(self, name=""):
         self.name = name
         self.username = ""
-        self.alignment = "True Neutral"
+        self.alignment = None
         self.character_class = []
 
         # Profile info
         self.race = ""
-        self.age = 0
+        self.age = -1
         self.gender = ""
         self.eye_colour = ""
         self.hair_colour = ""
@@ -83,13 +71,7 @@ class Character:
             "knees": [], "left_ankle": [], "right_ankle": [], "left_foot": [], "right_foot": [],
             "rings": [], "piercings": []
         }
-    def get_inventory_weight(self):
-        total_weight = 0.0
-        for item_name, quantity in self.inventory.items():
-            # Placeholder: lookup table or external weight data can be used
-            item_weight = 1.0  # default 1 lb per item
-            total_weight += item_weight * quantity
-        return total_weight
+
     def equip_item(self, slot, item_name, layer, description="", weight=0):
         if slot not in self.body_slots:
             raise ValueError(f"Invalid slot: {slot}")
@@ -104,19 +86,41 @@ class Character:
             removed = self.body_slots[slot].pop()
             item_name = removed.get("item")
             if item_name:
-                self.inventory[item_name] = self.inventory.get(item_name, 0) + 1
+                self.add_item_to_inventory(item_name)
         self.date_modified = str(date.today())
+
+    def add_item_to_inventory(self, item_name, quantity=1):
+        val = self.inventory.get(item_name, 0)
+        if isinstance(val, list) and len(val) == 2 and isinstance(val[1], int):
+            val = val[1]
+        self.inventory[item_name] = val + quantity
+
     def remove_all_gear(self):
         for slot in self.body_slots:
             while self.body_slots[slot]:
                 self.unequip_item(slot)
         self.date_modified = str(date.today())
+
     def remove_item_from_inventory(self, item_name):
         if item_name in self.inventory:
-            if self.inventory[item_name] > 1:
-                self.inventory[item_name] -= 1
+            if isinstance(self.inventory[item_name], list) and len(self.inventory[item_name]) == 2:
+                quantity = self.inventory[item_name][1]
+            else:
+                quantity = self.inventory[item_name]
+
+            if quantity > 1:
+                self.inventory[item_name] = quantity - 1
             else:
                 del self.inventory[item_name]
+
+    def get_inventory_weight(self):
+        total_weight = 0.0
+        for item_name, quantity in self.inventory.items():
+            if isinstance(quantity, list):
+                quantity = quantity[1]
+            item_weight = 1.0
+            total_weight += item_weight * quantity
+        return total_weight
 
     def get_status(self):
         state = "and you are currently OK."
@@ -125,13 +129,6 @@ class Character:
         elif self.dead:
             state = "and you are currently dead."
         return f"{self.name}'s current status: {self.current_health} / {self.maximum_health} HP, {state}"
-
-    def get_nakedness_level(self):
-        highest_layer = 0
-        for slot_items in self.body_slots.values():
-            for item in slot_items:
-                highest_layer = max(highest_layer, item.get("layer", 0))
-        return f"You are currently dressed at the '{self.LAYER_LABELS.get(highest_layer, 'unknown')}' layer."
 
     def get_equipped_gear(self):
         output = f"{self.name}'s Equipped Gear:\n"
@@ -150,7 +147,7 @@ class Character:
             f"INT: {self.intelligence}, WIS: {self.wisdom}, CHA: {self.charisma}\n"
             f"HP: {self.current_health} / {self.maximum_health}, AC: {self.armor_class}\n"
             f"Weapon: {self.favorite_weapon or 'None'}\n"
-            f"Description: {self.description}\n"
+            f"Bio: {self.description}\n"
             f"History: {self.public_history}\n"
         )
         image_path = f"character_portraits/{self.profile_image}" if self.profile_image else None
@@ -160,8 +157,18 @@ class Character:
         if not self.name:
             raise ValueError("Character must have a name before saving.")
         path = f"characters/{self.name.lower()}.json"
+        data = self.__dict__.copy()
+
+        clean_inventory = {}
+        for k, v in self.inventory.items():
+            if isinstance(v, int):
+                clean_inventory[k] = v
+            elif isinstance(v, list) and len(v) == 2 and isinstance(v[1], int):
+                clean_inventory[k] = v[1]
+        data["inventory"] = clean_inventory
+
         with open(path, "w", encoding="utf-8") as f:
-            json.dump(self.__dict__, f, indent=4)
+            json.dump(data, f, indent=4)
         print(f"Saved character to {path}")
 
     @classmethod
@@ -180,42 +187,14 @@ class Character:
             if key == "inventory":
                 cleaned_inventory = {}
                 for item_name, item_val in value.items():
-                    if isinstance(item_val, list) and len(item_val) == 2:
-                        cleaned_inventory[item_name] = item_val[1]
-                    elif isinstance(item_val, int):
+                    if isinstance(item_val, int):
                         cleaned_inventory[item_name] = item_val
+                    elif isinstance(item_val, list):
+                        try:
+                            cleaned_inventory[item_name] = int(item_val[-1])
+                        except (ValueError, IndexError):
+                            cleaned_inventory[item_name] = 1
                 setattr(char, key, cleaned_inventory)
             elif hasattr(char, key):
                 setattr(char, key, value)
-        return char
-
-    @classmethod
-    def from_txt_file(cls, filename):
-        char = cls()
-        txt_path = f"characters/{filename}"
-        if not os.path.exists(txt_path):
-            raise FileNotFoundError(f"{txt_path} not found.")
-
-        with open(txt_path, encoding="latin-1") as f:
-            lines = f.readlines()
-
-        for line in lines:
-            if "=" not in line:
-                continue
-            key, value = line.strip().split("=", 1)
-            key = key.strip()
-            value = value.strip()
-
-            if key == "character_class":
-                value = value.strip("[]").split(",")
-                value = [v.strip() for v in value if v.strip()]
-            else:
-                try:
-                    value = int(value)
-                except ValueError:
-                    pass
-
-            setattr(char, key, value)
-
-        char.date_modified = str(date.today())
         return char

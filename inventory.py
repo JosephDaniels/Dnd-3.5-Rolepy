@@ -1,63 +1,72 @@
-Inventory(object):
+import json
+from equipment import Item
 
+class Inventory:
+    def __init__(self):
+        self.items = {}  # {item_name: [Item, quantity]}
+        self.equipped = {}  # {slot: Item}
+        self.capacity = 100.0  # Total weight capacity
 
-def __init__(self):
-    ## All inventory slots expect an item object of type wearable
-    ## see equip_item() for more details
-    inventory_items = []
-    carrying_capacity = 0  # Maximum defined by character strength and limited by what your bags can hold
-    underwear = {
-        chest = None,  # bra for example
-                crotch = None,  # panties for example
-                         feet = None
-    }
-    wear = {  ## Long dresses and robes might take up both torso and pants slot
-        eyes = None,  # glasses for example
-               face = None,  # masks only
-                      head = None,  # hats only
-                             neck = None,  # scarves and necklaces
-                                    chest = None,  # shirts and dresses
-                                            waist = None,  # belt slot
-                                                    wrist = None,  # bracelets
-                                                            legs = None,  # pantaloons
-                                                                   feet = None,  # shoes, boots, slippers
-                                                                          hands = None  # gloves
-    ring_1 = None
-    ring_2 = None
-    }
-    overwear = {
-        chest = None,  # jackets and coats
-                back = None,  # capes and cloaks
-    }
-    armour = {
-        head = None,  # helmet
-               neck = None,  # gorget
-                      shoulders = None,  # pauldrons
-                                  chest = None,  # breast plate or chain mail
-                                          arms = None,  # arm plate and bracers
-                                                 legs = None,  # leg plate
-                                                        feet = None,  # armored footwear, replaces shoes
-                                                               hands = None  # gauntlets
-    }
-    weapon_loadout = {
-        right_hand = None,
-                     left_hand = None,
-                                 sheath = None,
-                                          2
-    nd_sheath = None
-    quiver = None
-    }
+    def add_item(self, item: Item, quantity=1):
+        if item.name in self.items:
+            self.items[item.name][1] += quantity
+        else:
+            self.items[item.name] = [item, quantity]
 
-    def equip_item(self, item, item_layer, equip_location):
-        if item in inventory_items:  # You physically have the item
-            if item.valid_equip_location == equip_location:
-                item_layer[equip_location] = item
-            inventory_items.pop(item)
+    def remove_item(self, item_name, quantity=1):
+        if item_name in self.items:
+            self.items[item_name][1] -= quantity
+            if self.items[item_name][1] <= 0:
+                del self.items[item_name]
 
+    def equip_item(self, item_name, slot):
+        if item_name not in self.items:
+            return f"You don't have {item_name}."
 
-def test():
-    pass
+        item, _ = self.items[item_name]
+        if item.equip_slot != slot:
+            return f"{item_name} cannot be equipped to {slot}."
 
+        self.equipped[slot] = item
+        self.remove_item(item_name)
+        return f"Equipped {item_name} to {slot}."
 
-if __name__ == "__main__":
-    test()
+    def unequip_item(self, slot):
+        if slot not in self.equipped:
+            return f"Nothing equipped in {slot}."
+
+        item = self.equipped.pop(slot)
+        self.add_item(item)
+        return f"Unequipped {item.name} from {slot}."
+
+    def total_weight(self):
+        total = 0.0
+        for item, qty in self.items.values():
+            total += item.weight * qty
+        return total
+
+    def save(self, path):
+        data = {
+            "items": {name: [item.to_dict(), qty] for name, (item, qty) in self.items.items()},
+            "equipped": {slot: item.to_dict() for slot, item in self.equipped.items()}
+        }
+        with open(path, 'w', encoding='utf-8') as f:
+            json.dump(data, f, indent=4)
+
+    def load(self, path):
+        with open(path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+            self.items = {name: [Item.from_dict(d), qty] for name, (d, qty) in data["items"].items()}
+            self.equipped = {slot: Item.from_dict(d) for slot, d in data["equipped"].items()}
+
+    def display(self):
+        lines = ["Equipped:"]
+        for slot, item in self.equipped.items():
+            lines.append(f"  {slot.title()}: {item.name}")
+
+        lines.append("\nInventory:")
+        for name, (item, qty) in self.items.items():
+            lines.append(f"  {name}: {qty} ({item.weight} lb each)")
+
+        lines.append(f"\nTotal weight: {self.total_weight()} / {self.capacity} lb")
+        return "\n".join(lines)

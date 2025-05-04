@@ -4,6 +4,9 @@ from TOKEN import TOKEN
 from DM_helper import *
 from help_messages import *
 
+# Load your main character at bot startup
+current_char = Character.from_json("rynn.json")  # Adjust filename as needed
+
 # External command modules
 from character_commands import (
     do_login, do_logout, do_status, do_whoami, do_save, do_profile
@@ -52,8 +55,8 @@ CHAT_COMMANDS = [
     ("save", lambda msg: do_save(msg, dm), "Save your character data to disk"),
     ("additem", lambda msg: do_additem(msg, dm), "Add an item to your inventory"),
     ("removeitem", lambda msg: do_removeitem(msg, dm), "Remove an item from your inventory"),
-    ("equip", lambda msg: do_equip(msg, dm), "Equip an item to a slot"),
-    ("unequip", lambda msg: do_unequip(msg, dm), "Unequip a gear item."),
+    ("equip", lambda msg: do_equip(msg, current_char), "Equip an item to a slot"),
+    ("unequip", lambda msg: do_unequip(msg, current_char), "Unequip a gear item"),
     ("inventory", lambda msg: do_inventory(msg, dm), "View your inventory and equipment"),
     ("profile", lambda msg: do_profile(msg, dm), "View your full character sheet and portrait"),
 ]
