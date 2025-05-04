@@ -89,10 +89,55 @@ class MentalStatus:
             return "Fine"
 
 if __name__ == "__main__":
-    mental = MentalStatus()
-    for attr in MentalStatus.POSITIVE_BARS + MentalStatus.NEGATIVE_BARS:
-        value = getattr(mental, attr)
-        label = evaluate_state(value, attr)
-        print(f"{attr.capitalize()}: {value} -> {label}")
+    import random
+    import time
 
-    print("\nOverall Mood:", mental.overall_mood())
+    mental = MentalStatus()
+    for stat in MentalStatus.POSITIVE_BARS + MentalStatus.NEGATIVE_BARS:
+        setattr(mental, stat, 50)
+
+    journal = []
+    round_counter = 0
+
+    events = [
+        ("Found a beautiful view", {"happiness": +10}),
+        ("Had an argument", {"anger": +15}),
+        ("Read an inspiring book", {"inspiration": +10}),
+        ("Got rejected", {"shame": +20}),
+        ("Pet a dog", {"relaxation": +15}),
+        ("Tripped in public", {"disgust": +10}),
+        ("Talked with a friend", {"social": +15}),
+        ("Stared at the ceiling for hours", {"boredom": +10}),
+        ("Walked into a dark alley", {"fear": +15})
+    ]
+
+    while round_counter < 20:
+        round_counter += 1
+        timestamp = f"Round {round_counter}"
+        event_text, deltas = random.choice(events)
+        print(f"=== {timestamp} ===")  # Cleaned newline
+        print(f"🎲 Event: {event_text}")
+        delta_log = []
+        for stat, change in deltas.items():
+            old = getattr(mental, stat)
+            new = max(0, min(100, old + change))
+            setattr(mental, stat, new)
+            symbol = "+" if change > 0 else ""
+            delta_log.append(f"{stat} {symbol}{change}")
+        print("Effects: " + ", ".join(delta_log))
+
+        mental.update_per_round()
+        mood = mental.overall_mood()
+        journal.append(f"[{timestamp}] Event: {event_text} | Mood: {mood}")
+
+        print("Stats:")
+        for attr in MentalStatus.POSITIVE_BARS + MentalStatus.NEGATIVE_BARS:
+            val = getattr(mental, attr)
+            label = evaluate_state(val, attr)
+            print(f"  {attr.capitalize():<12}: {val:>5.1f} -> {label:<20}")
+        print(f"🧠 Overall Mood: {mood}")  # Fixed formatting
+        time.sleep(0.4)
+
+    print("📖 JOURNAL LOG 📖")
+    for entry in journal:
+        print(entry)
