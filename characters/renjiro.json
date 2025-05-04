@@ -1,42 +1,31 @@
 {
   "name": "Renjiro, The Ronin",
-  "level": 6,
+  "race": "Human",
+  "age": 38,
+  "gender": "Male",
+  "alignment": "Lawful Neutral",
   "class_name": "Samurai/Ninja",
   "subclass": "Hybrid",
+  "level": 6,
   "background": "Ex-Samurai, turned wandering master of domination, restraint, and tactical submission.",
-  "alignment": "Lawful Neutral",
-  "stats": {
-    "STR": 13,
-    "DEX": 18,
-    "CON": 15,
-    "INT": 12,
-    "WIS": 16,
-    "CHA": 17
-  },
-  "modifiers": {
-    "STR": 1,
-    "DEX": 4,
-    "CON": 2,
-    "INT": 1,
-    "WIS": 3,
-    "CHA": 3
-  },
-  "proficiency_bonus": 3,
-  "hp": {
-    "current": 48,
-    "max": 48
-  },
+  "description": "Quiet, commanding, cruelly calm. Applies brutal discipline with precision and grace.",
+  "public_history": "Former Samurai, now a traveling master of combat and restraint.",
+  "strength": 13,
+  "dexterity": 18,
+  "constitution": 15,
+  "intelligence": 12,
+  "wisdom": 16,
+  "charisma": 17,
+  "maximum_health": 48,
+  "current_health": 48,
   "armor_class": 17,
-  "skills": [
-    "Acrobatics +7",
-    "Stealth +7",
-    "Athletics +4",
-    "Insight +6",
-    "Intimidation +6",
-    "Sleight of Hand +6"
-  ],
-  "spell_abilities": [],
-  "features": [
+  "base_attack_bonus": 3,
+  "initiative": 4,
+  "xp_points": 15000,
+  "base_fortitude": 2,
+  "base_reflex": 4,
+  "base_will": 3,
+  "special_abilities": [
     "Fighting Spirit (3/day)",
     "Elegant Discipline",
     "Menacing Kata",
@@ -48,12 +37,15 @@
     "Rope of Shame",
     "Mental Collar"
   ],
-  "current_equipment": [
-    "Custom Shibari Rope",
-    "Poison Vials",
-    "Smoke Bombs",
-    "Twin Katanas",
-    "Hidden Wrist Blades"
-  ],
-  "personality": "Quiet, commanding, cruelly calm. Applies brutal discipline with precision and grace."
+  "inventory": {
+    "Custom Shibari Rope": 1,
+    "Poison Vials": 3,
+    "Smoke Bombs": 2,
+    "Twin Katanas": 1,
+    "Hidden Wrist Blades": 1
+  },
+  "equipment": {
+    "main_hand": "Twin Katanas",
+    "left_wrist": "Hidden Wrist Blades"
+  }
 }

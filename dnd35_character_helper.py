@@ -9,6 +9,12 @@ WELCOME_MESSAGE = " Hi there!\n" \
                   "DND of course standing for Demons and Daggers.\n" \
                   "Please select an option below."
 
+ALL_ALIGNMENTS = [
+    "Lawful Good", "Neutral Good", "Chaotic Good",
+    "Lawful Neutral", "True Neutral", "Chaotic Neutral",
+    "Lawful Evil", "Neutral Evil", "Chaotic Evil"
+]
+
 import os
 # HEY THIS IS THE OFFICIAL LIBRARY STUFF!! NO TOUCHY!!! NO TOUCHY!
 import random
@@ -17,7 +23,7 @@ from functools import partial
 from tkinter import ttk, messagebox, simpledialog
 
 # My own libraries, go ahead and improve them!
-from character import Character, ALL_ALIGNMENTS
+from character import Character
 from race import *
 from weapons import *  # Gets all weapons, NOT CURRENTLY DONE
 

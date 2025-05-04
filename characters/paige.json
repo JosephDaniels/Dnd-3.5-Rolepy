@@ -1,0 +1,19 @@
+{
+  "name": "Paige Belmont",
+  "username": "paige",
+  "alignment": "Lawful Neutral",
+  "character_class": [
+    {"name": "Rogue", "level": 1},
+    {"name": "Fighter", "level": 1},
+    {"name": "Sorcerer", "level": 1}
+  ],
+  "race": "Human",
+  "age": 21,
+  "eye_colour": "dark brown",
+  "hair_colour": "jet black",
+  "skin_colour": "pale",
+  "height": "5'2",
+  "weight": "128lbs",
+  "favorite_weapon": "Belmont Family Chain-Whip+2",
+  "profile_image": "paige.png",
+  "description": "A fearsome looking warrior woman wearing gothic vampire hunting garb. She has weapons on her black corset

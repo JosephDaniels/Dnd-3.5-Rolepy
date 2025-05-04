@@ -1,144 +1,84 @@
 {
   "name": "Rynn Delon Dragonwhisper",
-  "level": 6,
-  "subclass": "Monster Slayer",
-  "experience": {
-    "current": 21000,
-    "next_level": 23000
-  },
+  "username": "Rynn",
   "alignment": "Neutral Good",
-  "background": "War Orphan",
-  "stats": {
-    "STR": 19,
-    "DEX": 15,
-    "CON": 14,
-    "INT": 14,
-    "WIS": 8,
-    "CHA": 17
+  "character_class": [
+    {
+      "name": "Fighter",
+      "subclass": "Monster Slayer",
+      "level": 6
+    }
+  ],
+  "race": "Human",
+  "age": 27,
+  "gender": "Female",
+  "eye_colour": "Green",
+  "hair_colour": "Apple Red",
+  "skin_colour": "Fair and Freckled",
+  "height": "",
+  "weight": "",
+  "favorite_weapon": null,
+  "description": "Her skin bears the bronze kiss of long days beneath a sunlit sky, warmed and freckled from a youth spent toiling in fields. There's a softness to her cheeks that never quite faded, no matter how many campaigns she led or monsters she slew. But that softness is contrasted by the warrior's definition, shoulders honed by longbows, arms taut from drawing blades, thighs that speak of hours astride both warhorses and battlefield ridgelines.",
+  "public_history": "Proud redheaded warrior - Queen of the West",
+  "profile_image": null,
+  "strength": 19,
+  "dexterity": 15,
+  "constitution": 14,
+  "intelligence": 14,
+  "wisdom": 8,
+  "charisma": 17,
+  "maximum_health": 48,
+  "current_health": 10,
+  "armor_class": 10,
+  "base_attack_bonus": 0,
+  "initiative": 0,
+  "xp_points": 21000,
+  "base_fortitude": 0,
+  "base_reflex": 0,
+  "base_will": 0,
+  "platinum_coins": 0,
+  "gold_coins": 124,
+  "silver_coins": 6,
+  "copper_coins": 4,
+  "feats": [],
+  "special_abilities": [],
+  "inventory": {
+    "Healing Potion Phial (2d8+8)": 1,
+    "Neural Surge Capacitor": 1
   },
-  "modifiers": {
-    "STR": 4,
-    "DEX": 2,
-    "CON": 2,
-    "INT": 2,
-    "WIS": -1,
-    "CHA": 3
+  "dying": false,
+  "dead": false,
+  "date_created": "2025-05-03",
+  "date_modified": "2025-05-03",
+  "body_slots": {
+    "eyes": [],
+    "face": [],
+    "hat": [],
+    "neck": [],
+    "shoulders": [],
+    "chest": [],
+    "upper_undergarment": [],
+    "top": [],
+    "arms": [],
+    "left_wrist": [],
+    "right_wrist": [],
+    "left_hand": [],
+    "right_hand": [],
+    "midsection": [],
+    "waist": [],
+    "lower_undergarment": [],
+    "bottoms": [],
+    "crotch": [],
+    "left_thigh": [],
+    "right_thigh": [],
+    "knees": [],
+    "left_ankle": [],
+    "right_ankle": [],
+    "left_foot": [],
+    "right_foot": [],
+    "rings": [],
+    "piercings": []
   },
   "proficiency_bonus": 3,
-  "hit_dice": "1d10",
-  "hp": {
-    "current": 10,
-    "max": 48
-  },
-  "saves": [
-    "STR",
-    "CON"
-  ],
-  "skills": [
-    "Acrobatics",
-    "Athletics",
-    "Perception",
-    "Nature"
-  ],
-  "fighting_style": "Great Weapon Fighting",
-  "features": [
-    "Second Wind"
-  ],
-  "spell_abilities": [
-    "Detect Magic",
-    "Protection from Evil and Good"
-  ],
-  "appearance": {
-    "hair": "Medium-length red hair, pinned back into a ponytail",
-    "eyes": "Green",
-    "complexion": "Light, with amber freckles",
-    "demeanor": "Confident and intelligent",
-    "build": "Athletic and lithe"
-  },
-  "personality": "Fierce warrior with a soft spot for the weak and helpless.",
-  "current_equipment": [
-    "Rusty Short Sword",
-    "Healing Potion Phial (2d8+8)",
-    "Neural Surge Capacitor"
-  ],
-  "stored_equipment": {
-    "weapons": [
-      {
-        "name": "Bastard Sword",
-        "damage": "1d8+3 (1h) / 1d10+3 (2h)",
-        "type": "Martial",
-        "weight": 3
-      },
-      {
-        "name": "Harpoon",
-        "type": "Thrown"
-      }
-    ],
-    "armor": [
-      {
-        "name": "Leather Armor",
-        "ac": 11,
-        "weight": 10,
-        "pieces": [
-          "Leather Pants",
-          "Leather Top"
-        ]
-      },
-      {
-        "name": "Wooden Shield",
-        "ac": 2,
-        "weight": 6
-      },
-      {
-        "name": "Leather Boots",
-        "ac": 0,
-        "weight": 3
-      },
-      {
-        "name": "Leather Belt",
-        "ac": 0,
-        "weight": 2
-      },
-      {
-        "name": "Leather Bracers",
-        "ac": 0,
-        "weight": 1,
-        "note": "Circumstantial AC to wrists"
-      }
-    ],
-    "clothing": [
-      "Hair Ribbon x2",
-      "Soft white hemmed cotton stockings",
-      "Thigh-high black leather boots (reinforced)",
-      "Custom garter belt (dagger lily charm)",
-      "Silk thong (charcoal)",
-      "Leather wrap miniskirt",
-      "Pleated red miniskirt",
-      "Midnight black corset top",
-      "Charcoal combat halter",
-      "Ghost white sheer mesh overwrap",
-      "Oxblood tactical bustier (with dagger sheath)"
-    ],
-    "tools": [
-      "Whet Stone",
-      "Map (Axewood to Kettleblight)",
-      "Journal + Charcoal Pencil",
-      "Rope",
-      "Torch",
-      "Fire Starting Kit",
-      "Cut Toad Net (Small)"
-    ],
-    "potions": [
-      "All-In-One Potion (Restoration, Quickdraw, Echo Heal)"
-    ],
-    "misc": [
-      "Bog Witch Baby Perfume Spritzer"
-    ]
-  },
-  "wealth": {
-    "gold": 124,
-    "silver": 6,
-    "copper": 4
-  },
-  "class_name": "Fighter"
+  "equipment": {}
 }
