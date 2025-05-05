@@ -1,3 +1,7 @@
+#add libido
+#there should be two bars - sleep and stamina. stamina is short term, sleep is long term
+
+
 # constitution.py
 import time
 
