@@ -1,0 +1,121 @@
+# Command Overview and Status
+
+Below is a categorized list of all bot commands, with a note on whether each is **Fully Implemented** (complete end-to-end behavior) or **Stub / Needs Work** (placeholder or missing core logic).
+
+---
+
+## 1. User Commands
+
+Located in `user_commands.py`
+
+| Command    | Description                                  | Status            |
+| ---------- | -------------------------------------------- | ----------------- |
+| `!login`   | Load a character from JSON and set as active | Fully Implemented |
+| `!logout`  | Unset the active character                   | Fully Implemented |
+| `!status`  | Display current character stats              | Fully Implemented |
+| `!whoami`  | Show active character name and stats         | Fully Implemented |
+| `!profile` | Send full character sheet and portrait       | Fully Implemented |
+
+---
+
+## 2. Inventory Commands
+
+Located in `inventory_commands.py`
+
+| Command       | Description                                              | Status            |
+| ------------- | -------------------------------------------------------- | ----------------- |
+| `!additem`    | Add an item to inventory                                 | Fully Implemented |
+| `!removeitem` | Remove an item from inventory                            | Fully Implemented |
+| `!equip`      | Equip an item (moves from inventory to equipment)        | Fully Implemented |
+| `!unequip`    | Unequip an item (moves from equipment back to inventory) | Fully Implemented |
+| `!inventory`  | List inventory and equipped items                        | Fully Implemented |
+
+---
+
+## 3. Dice Commands
+
+Located in `dice_commands.py`
+
+| Command     | Description          | Status            |
+| ----------- | -------------------- | ----------------- |
+| `!roll`     | Roll dice expression | Fully Implemented |
+| `!coinflip` | Flip a coin          | Fully Implemented |
+
+---
+
+## 4. Combat Commands
+
+Located in `combat_commands.py`
+
+| Command   | Description                           | Status            |
+| --------- | ------------------------------------- | ----------------- |
+| `!attack` | Attack a target                       | Stub / Needs Work |
+| `!defend` | Take a defensive stance               | Stub / Needs Work |
+| `!look`   | Look around or at a specific location | Stub / Needs Work |
+| `!search` | Search an area or object              | Stub / Needs Work |
+| `!open`   | Open a container or door              | Stub / Needs Work |
+| `!pickup` | Pick up an item (alias: `get`)        | Stub / Needs Work |
+| `!drop`   | Drop an item                          | Stub / Needs Work |
+| `!unlock` | Attempt to unlock a target            | Stub / Needs Work |
+| `!hide`   | Conceal your character                | Stub / Needs Work |
+| `!move`   | Move toward a destination             | Stub / Needs Work |
+
+---
+
+## 5. NPC Commands
+
+Located in `npc_commands.py`
+
+| Command       | Description                                    | Status            |
+| ------------- | ---------------------------------------------- | ----------------- |
+| `!npc`        | Add a new NPC description to the registry      | Stub / Needs Work |
+| `!npc_list`   | List all NPCs                                  | Stub / Needs Work |
+| `!npc_detail` | Show full details for a specific NPC by number | Stub / Needs Work |
+
+---
+
+## 6. Scene Commands
+
+Located in `scene_commands.py`
+
+| Command          | Description                                               | Status            |
+| ---------------- | --------------------------------------------------------- | ----------------- |
+| `!setscene`      | Set or start a new scene for the guild                    | Fully Implemented |
+| `!describe`      | Add or update a description for the current scene         | Fully Implemented |
+| `!scene`         | Show current scene name, description, background, and map | Fully Implemented |
+| `!resetscene`    | Clear scene name, description, background, and map        | Fully Implemented |
+| `!setbackground` | Set a background image URL for the current scene          | Fully Implemented |
+| `!background`    | Show the background image URL                             | Fully Implemented |
+| `!setmap`        | Set a map image URL for the current scene                 | Fully Implemented |
+| `!map`           | Show the map image URL                                    | Fully Implemented |
+
+---
+
+## 7. DM Commands
+
+Located in `dm_commands.py`
+
+| Command    | Description                             | Status            |
+| ---------- | --------------------------------------- | ----------------- |
+| `!askdm`   | Query the AI Dungeon Master             | Stub / Needs Work |
+| `!explore` | Get a DM-driven environment description | Stub / Needs Work |
+
+---
+
+## 8. Help Commands
+
+Located in `help_commands.py`
+
+| Command                  | Description                                 | Status            |
+| ------------------------ | ------------------------------------------- | ----------------- |
+| `!help`                  | Show general help overview and categories   | Fully Implemented |
+| `!help <category>`       | List commands in a given category           | Fully Implemented |
+| `!help login`            | Detailed login instructions                 | Fully Implemented |
+| `!help whois`            | Detailed usage for `!whois`                 | Fully Implemented |
+| `!help roll` / `dice`    | Detailed dice roll help                     | Fully Implemented |
+| `!help general`          | Show general overview of available commands | Fully Implemented |
+| `!help last` / `updated` | Show last update notes                      | Fully Implemented |
+
+---
+
+Commands marked **Stub / Needs Work** currently only output placeholder text or lack full game logic. Everything else is end-to-end functional.

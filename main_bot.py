@@ -2,84 +2,148 @@ import discord
 from discord.ext import commands
 from TOKEN import TOKEN
 from DM_helper import DM_helper, Character
-from user_commands import (
-    do_login,
-    do_logout,
-    do_status,
-    do_whoami,
-    do_save,
-    do_profile
-)
-from inventory_commands import (
-    do_additem, do_removeitem, do_equip, do_unequip, do_inventory
-)
-from dice_commands import (
-    do_coinflip, do_roll
-)
-from character_commands import CharacterCommands
+from user_commands import do_login, do_logout, do_status, do_whoami, do_profile
+from inventory_commands import do_additem, do_removeitem, do_equip, do_unequip, do_inventory
+from dice_commands import do_roll, do_coinflip
+from npc_commands import NPCCommands
+from combat_commands import CombatCommands
+from dm_commands import DMCommands
+from help_commands import HelpCommands
 
 intents = discord.Intents.default()
-intents.messages = True
-intents.guilds = True
 intents.message_content = True
 
-bot = commands.Bot(command_prefix='!', intents=intents, help_command=None)
+class MyBot(commands.Bot):
+    def __init__(self):
+        super().__init__(command_prefix='!', intents=intents, help_command=None)
+        self.dm = DM_helper()
+        self.dm.logged_in_as = {}
+        self.dm.logged_out = set()
 
-dm = DM_helper()
-dm.logged_in_as = {}
+    async def setup_hook(self):
+        await self.add_cog(NPCCommands(self))
+        await self.add_cog(CombatCommands(self))
+        await self.add_cog(DMCommands(self))
+        await self.add_cog(HelpCommands(self))
 
-@bot.event
-async def on_message(message):
-    if message.author.bot:
-        return
+    async def on_ready(self):
+        print(f'Logged in as {self.user}')
 
-    username = f"{message.author.name}#{message.author.discriminator}"
-    if username not in dm.logged_in_as:
-        try:
-            default_char = Character.from_json("characters/rynn_dragonwhisper.json")
-            dm.logged_in_as[username] = default_char
-            dm.add_character(default_char)
-            print(f"Auto-logged in {username} as Rynn")
-        except Exception as e:
-            print(f"Auto-login failed for {username}: {e}")
+    async def on_message(self, message):
+        if message.author.bot:
+            return
+        username = f"{message.author.name}#{message.author.discriminator}"
+        if username not in self.dm.logged_in_as and username not in self.dm.logged_out:
+            try:
+                default_char = Character.from_json("characters/rynn_dragonwhisper.json")
+                self.dm.logged_in_as[username] = default_char
+                self.dm.add_character(default_char)
+                print(f"Auto-logged in {username} as Rynn")
+            except:
+                pass
+        await self.process_commands(message)
 
-    await bot.process_commands(message)
+bot = MyBot()
 
-@bot.event
-async def on_ready():
-    print(f'Logged in as {bot.user}')
+@bot.command()
+async def login(ctx):
+    username = f"{ctx.author.name}#{ctx.author.discriminator}"
+    # clear any logout state
+    ctx.bot.dm.logged_out.discard(username)
+    res = await do_login(ctx.message, ctx.bot.dm)
+    if isinstance(res, tuple):
+        content, target = res
+        if content:
+            await target.send(content)
 
-CHAT_COMMANDS = [
-    ("help", None, "Show a list of available commands"),
-    ("roll", do_roll, "Roll dice, e.g. !roll 2d6+1"),
-    ("coinflip", do_coinflip, "Flip a coin"),
-    ("login", lambda ctx: do_login(ctx, dm), "Login as a character"),
-    ("logout", lambda ctx: do_logout(ctx, dm), "Logout of your character"),
-    ("status", lambda ctx: do_status(ctx, dm), "View your character's status"),
-    ("whoami", lambda ctx: do_whoami(ctx, dm), "Check your current character"),
-    ("save", lambda ctx: do_save(ctx, dm), "Save your character"),
-    ("additem", lambda ctx: do_additem(ctx, dm), "Add item to inventory"),
-    ("removeitem", lambda ctx: do_removeitem(ctx, dm), "Remove item from inventory"),
-    ("equip", lambda ctx: do_equip(ctx, dm), "Equip an item"),
-    ("unequip", lambda ctx: do_unequip(ctx, dm), "Unequip an item"),
-    ("inventory", lambda ctx: do_inventory(ctx, dm), "View inventory"),
-    ("profile", lambda ctx: do_profile(ctx, dm), "View full character sheet"),
-    ("npc", lambda ctx: do_npc(ctx, dm), "Generate NPC"),
-    ("setscene", lambda ctx: do_setscene(ctx, dm), "Set scene description"),
-    ("npc_list", lambda ctx: do_npc_list(ctx, dm), "List NPCs"),
-    ("npc_detail", lambda ctx: do_npc_detail(ctx, dm), "NPC details")
-]
+@bot.command()
+async def logout(ctx):
+    username = f"{ctx.author.name}#{ctx.author.discriminator}"
+    res = await do_logout(ctx.message, ctx.bot.dm)
+    if isinstance(res, tuple):
+        content, target = res
+        if content:
+            await target.send(content)
+        ctx.bot.dm.logged_out.add(username)
 
-@bot.command(name='help')
-async def do_help(ctx):
-    help_lines = ["**Available Commands:**"]
-    for cmd, _, desc in CHAT_COMMANDS:
-        help_lines.append(f"- `!{cmd}` – {desc}")
-    help_text = "\n".join(help_lines)
-    await ctx.author.send(help_text)
+@bot.command()
+async def status(ctx):
+    res = await do_status(ctx.message, bot.dm)
+    if isinstance(res, tuple):
+        content, target = res
+        if content:
+            await target.send(content)
 
-async def setup_cogs():
-    await bot.add_cog(CharacterCommands(bot))
+@bot.command()
+async def whoami(ctx):
+    res = await do_whoami(ctx.message, bot.dm)
+    if isinstance(res, tuple):
+        content, target = res
+        if content:
+            await target.send(content)
 
-bot.loop.create_task(setup_cogs())
+@bot.command()
+async def profile(ctx):
+    res = await do_profile(ctx.message, bot.dm)
+    if isinstance(res, tuple):
+        content, target = res
+        if content:
+            await target.send(content)
+
+@bot.command()
+async def additem(ctx):
+    res = await do_additem(ctx.message, bot.dm)
+    if isinstance(res, tuple):
+        content, target = res
+        if content:
+            await target.send(content)
+
+@bot.command()
+async def removeitem(ctx):
+    res = await do_removeitem(ctx.message, bot.dm)
+    if isinstance(res, tuple):
+        content, target = res
+        if content:
+            await target.send(content)
+
+@bot.command()
+async def equip(ctx):
+    res = await do_equip(ctx.message, bot.dm)
+    if isinstance(res, tuple):
+        content, target = res
+        if content:
+            await target.send(content)
+
+@bot.command()
+async def unequip(ctx):
+    res = await do_unequip(ctx.message, bot.dm)
+    if isinstance(res, tuple):
+        content, target = res
+        if content:
+            await target.send(content)
+
+@bot.command(name='inventory')
+async def inventory_cmd(ctx):
+    res = await do_inventory(ctx.message, bot.dm)
+    if isinstance(res, tuple):
+        content, target = res
+        if content:
+            await target.send(content)
+
+@bot.command()
+async def roll(ctx):
+    res = await do_roll(ctx.message)
+    if isinstance(res, tuple):
+        content, target = res
+        if content:
+            await target.send(content)
+
+@bot.command()
+async def coinflip(ctx):
+    res = await do_coinflip(ctx.message)
+    if isinstance(res, tuple):
+        content, target = res
+        if content:
+            await target.send(content)
+
 bot.run(TOKEN)
