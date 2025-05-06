@@ -74,7 +74,6 @@ SKILLS = {
     "Survival": "WIS based skill. Survival improves your ability to track, and survive.",
     "Larceny": "DEX based skill. Allows you to pick locks and pockets and break into structures, crack safes, etc.",
     "Disable device": "INT based skill. Allows you to disarm and dissassemble traps and other objects.",
-
     "Barter": "CHA/WIS based skill. Allows you to get better deals in shops and in trades with NPCs.",
     "Speech": "CHA based skill. Improves eloquence of speech and relations with NPCs.",
     "Gamble": "WIS based skill. You know when to fold 'em, and you're luckier in any gambling situation.",
