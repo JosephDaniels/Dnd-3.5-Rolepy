@@ -1,3 +1,6 @@
+
+## PERSONALITY LEL
+
 class Personality:
     """Encapsulates all character personality traits with detailed descriptions."""
     TRAITS = [

@@ -1,3 +1,7 @@
+#main_bot.py
+
+## This is the dnd 35 AI DM assistant
+
 import discord
 from discord.ext import commands
 from TOKEN import TOKEN

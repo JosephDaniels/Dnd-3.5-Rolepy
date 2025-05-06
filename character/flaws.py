@@ -1,3 +1,7 @@
+## flaws.py
+
+## I am perfect like cell from dragon ball z and therefore have none
+
 class Flaws:
     """Encapsulates all character flaws with detailed descriptions."""
     FLAWS = [
