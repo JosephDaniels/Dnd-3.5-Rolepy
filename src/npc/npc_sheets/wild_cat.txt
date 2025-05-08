@@ -1,0 +1,36 @@
+{
+  "name": "Wild Cat",
+  "type": "Animal",
+  "hd": "1d8",
+  "hp": 4,
+  "ac": 14,
+  "initiative": 2,
+  "speed": "30 ft., climb 20 ft.",
+  "attacks": [
+    {
+      "type": "claws",
+      "attack_bonus": 1,
+      "damage": "1d3"
+    },
+    {
+      "type": "bite",
+      "attack_bonus": 1,
+      "damage": "1d4"
+    }
+  ],
+  "stats": {
+    "str": 10,
+    "dex": 15,
+    "con": 11,
+    "int": 2,
+    "wis": 12,
+    "cha": 6
+  },
+  "skills": {
+    "Hide": 6,
+    "Move Silently": 6,
+    "Climb": 8
+  },
+  "feats": ["Alertness"],
+  "notes": "Territorial and quick to pounce."
+}

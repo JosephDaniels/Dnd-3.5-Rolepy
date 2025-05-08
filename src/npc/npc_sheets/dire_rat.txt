@@ -1,0 +1,32 @@
+{
+  "name": "Dire Rat",
+  "type": "Animal",
+  "hd": "1d8+1",
+  "hp": 5,
+  "ac": 15,
+  "initiative": 3,
+  "speed": "40 ft.",
+  "attacks": [
+    {
+      "type": "bite",
+      "attack_bonus": 2,
+      "damage": "1d4",
+      "special": "disease"
+    }
+  ],
+  "stats": {
+    "str": 10,
+    "dex": 17,
+    "con": 12,
+    "int": 1,
+    "wis": 12,
+    "cha": 4
+  },
+  "skills": {
+    "Hide": 6,
+    "Move Silently": 4,
+    "Listen": 3
+  },
+  "feats": ["Weapon Finesse"],
+  "notes": "Carries filth fever."
+}

@@ -1,0 +1,16 @@
+Name: Stray Cat
+Type: Tiny Animal
+Hit Dice: 1d4 (2 hp)
+Initiative: +2
+Speed: 30 ft., climb 20 ft.
+AC: 14 (+2 Dex, +2 size), touch 14, flat-footed 12
+Base Attack/Grapple: +0/-12
+Attack: Claw +4 melee (1d2–4)
+Full Attack: 2 claws +4 melee (1d2–4) and bite –1 melee (1d3–4)
+Special Qualities: Low-light vision, scent
+Abilities: Str 3, Dex 15, Con 10, Int 2, Wis 12, Cha 7
+Skills: Balance +10, Climb +10, Hide +14, Listen +3, Move Silently +6, Spot +3
+Feats: Weapon Finesse
+Environment: Urban or rural
+Alignment: Neutral
+Notes: Quiet observer. Will flee combat unless cornered.

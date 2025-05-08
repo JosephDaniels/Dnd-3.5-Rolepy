@@ -1,0 +1,24 @@
+{
+  "name": "Mouse",
+  "type": "Tiny Animal",
+  "hd": "1d2",
+  "hp": 1,
+  "ac": 14,
+  "initiative": 3,
+  "speed": "20 ft.",
+  "attacks": [],
+  "stats": {
+    "str": 2,
+    "dex": 16,
+    "con": 10,
+    "int": 1,
+    "wis": 10,
+    "cha": 4
+  },
+  "skills": {
+    "Hide": 10,
+    "Move Silently": 8
+  },
+  "feats": ["Run"],
+  "notes": "Mostly harmless. Often eaten."
+}

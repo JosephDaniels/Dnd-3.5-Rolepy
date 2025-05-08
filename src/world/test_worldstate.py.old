@@ -1,0 +1,77 @@
+from world import WorldState
+
+world = WorldState()
+
+# Add a region
+world.add_region(
+    name="Duskwind Reach",
+    dialect="Duskan Lowspeech",
+    description="A rugged borderland marked by jagged hills, forgotten shrines, and a sky that rarely clears."
+)
+
+# Add a biome
+world.add_biome(
+    name="Boreal Rainforest",
+    features={
+        "climate": "Cold, wet, and mist-drenched",
+        "flora": ["black pine", "ghost moss", "vetchroot"],
+        "fauna": ["dire elk", "shadow lynx", "ashen ravens"]
+    }
+)
+
+# Add a province
+world.add_province(
+    name="Gravemarch Province",
+    capital="Aetherholt",
+    notes="Once a necropolis, now a thriving city built atop the bones of old empires."
+)
+
+# Add settlements
+world.add_settlement(
+    province_name="Gravemarch Province",
+    name="Aetherholt",
+    settlement_type="City",
+    population=12000,
+    biome="Boreal Rainforest",
+    features=["obsidian bell tower", "arcane college", "ruined catacombs"],
+    notes="Known for its reformed necromancers and undead labor laws."
+)
+
+world.add_settlement(
+    province_name="Gravemarch Province",
+    name="Greave's Hollow",
+    settlement_type="Thorp",
+    population=83,
+    biome="Boreal Rainforest",
+    features=["collapsed mine", "stone circle"],
+    notes="Superstitious, isolated, and possibly cursed."
+)
+
+# Add points of interest
+world.add_point_of_interest(
+    name="Shrine of the Waking Flame",
+    poi_type="Temple",
+    region="Duskwind Reach",
+    biome="Boreal Rainforest",
+    danger_level=3,
+    description="An overgrown temple where fire blooms unnaturally from water."
+)
+
+world.add_point_of_interest(
+    name="Blackmaw Sink",
+    poi_type="Cave",
+    region="Duskwind Reach",
+    biome="Boreal Rainforest",
+    danger_level=7,
+    description="A collapsed abyss that breathes out noxious gas and the sound of whispers."
+)
+
+# Set dynamic weather
+world.set_weather("Duskwind Reach", {
+    "current": "Freezing rain",
+    "temperature": "-2\u00b0C",
+    "visibility": "Low",
+    "effects": ["disadvantage on ranged attacks", "extinguishes open flames"]
+})
+
+print("\U0001F30D World populated with flavor. Check world.json to see your handiwork.")

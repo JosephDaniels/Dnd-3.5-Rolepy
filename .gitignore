@@ -1,5 +1,5 @@
 .idea/
 __pycache__/
-TOKEN.py
+src/TOKEN.py
 TOKEN.pyc
 *.pyc

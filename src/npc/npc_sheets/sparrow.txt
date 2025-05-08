@@ -1,0 +1,14 @@
+Name: Common Sparrow
+Type: Diminutive Animal
+Hit Dice: 1d4–2 (1 hp)
+Initiative: +3
+Speed: 10 ft., fly 40 ft. (average)
+AC: 16 (+4 size, +3 Dex), touch 16, flat-footed 13
+Base Attack/Grapple: +0/–17
+Attack: Peck +6 melee (1)
+Abilities: Str 1, Dex 17, Con 6, Int 1, Wis 10, Cha 4
+Skills: Listen +4, Spot +4
+Feats: Weapon Finesse
+Environment: Any
+Alignment: Neutral
+Notes: Ubiquitous. Can be used for flavor, spying, or spell components.

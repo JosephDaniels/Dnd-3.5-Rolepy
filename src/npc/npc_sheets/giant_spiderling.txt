@@ -1,0 +1,32 @@
+{
+  "name": "Giant Spiderling",
+  "type": "Vermin",
+  "hd": "2d8+2",
+  "hp": 11,
+  "ac": 14,
+  "initiative": 3,
+  "speed": "30 ft., climb 20 ft.",
+  "attacks": [
+    {
+      "type": "bite",
+      "attack_bonus": 3,
+      "damage": "1d6",
+      "special": "poison (DC 11)"
+    }
+  ],
+  "stats": {
+    "str": 11,
+    "dex": 17,
+    "con": 12,
+    "int": 1,
+    "wis": 10,
+    "cha": 2
+  },
+  "skills": {
+    "Hide": 8,
+    "Move Silently": 6,
+    "Climb": 10
+  },
+  "feats": ["Weapon Finesse"],
+  "notes": "Young but dangerous—poisonous bite."
+}

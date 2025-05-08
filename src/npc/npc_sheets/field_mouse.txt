@@ -1,0 +1,15 @@
+Name: Field Mouse
+Type: Diminutive Animal
+Hit Dice: 1d4–2 (1 hp)
+Initiative: +3
+Speed: 20 ft.
+AC: 15 (+4 size, +3 Dex), touch 15, flat-footed 12
+Base Attack/Grapple: +0/–17
+Attack: Bite +6 melee (1d2–5)
+Special Qualities: Scent
+Abilities: Str 1, Dex 17, Con 6, Int 1, Wis 10, Cha 2
+Skills: Hide +15, Move Silently +6
+Feats: Weapon Finesse
+Environment: Fields, plains
+Alignment: Neutral
+Notes: Harmless, usually hunted. Can startle NPCs in comedic scenes.

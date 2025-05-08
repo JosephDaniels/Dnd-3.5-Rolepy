@@ -1,0 +1,237 @@
+Mental Status Event Examples
+
+Below are concrete in‑game events that can raise or lower each mental bar.
+
+Happiness
+
+Positive
+
+NPC thanks you profusely for helping them.
+
+You discover a forgotten trove of treasure.
+
+You pass a difficult skill check in style.
+
+Negative
+
+A companion falls gravely injured.
+
+You fail a personal quest goal.
+
+Village you saved is later destroyed by bandits.
+
+Sadness
+
+Positive (lower)
+
+You find a lost heirloom and return it to its owner.
+
+Friends throw a celebratory feast in your honor.
+
+Negative (raise)
+
+A beloved NPC dies of illness.
+
+You’re betrayed by an allied faction.
+
+You watch an innocent suffer.
+
+Anger
+
+Positive (lower)
+
+You successfully broker peace between warring clans.
+
+You vent frustrations by smashing a training dummy.
+
+Negative (raise)
+
+A corrupt official publicly insults you.
+
+You witness an injustice you’re powerless to stop.
+
+An enemy tortures a prisoner before your eyes.
+
+Fear
+
+Positive (lower)
+
+You pass a daring Will save against a ghost’s chill.
+
+A protective ward spell dispels an unseen terror.
+
+Negative (raise)
+
+You walk into a haunted crypt and hear whispers.
+
+A massive dragon shadow passes overhead.
+
+Your healing spell fails when you need it most.
+
+Boredom
+
+Positive (lower)
+
+You stumble on a hidden riddle in an ancient ruin.
+
+Local bards invite you to join their storytelling circle.
+
+Negative (raise)
+
+Days of uneventful travel across featureless plains.
+
+Endless bookkeeping at the guild hall.
+
+Relaxation
+
+Positive (raise)
+
+You find a secluded hot spring and soak for hours.
+
+A gentle bardic melody lulls you to rest.
+
+Negative (lower)
+
+Camp is ambushed in the middle of the night.
+
+You’re ordered on immediate duty with no downtime.
+
+Stress
+
+Positive (lower)
+
+You solve a complex puzzle, clearing your mind.
+
+You meditate under the guidance of a wise monk.
+
+Negative (raise)
+
+Multiple enemies attack simultaneously.
+
+Time‑sensitive goal (a ritual nears completion).
+
+Hope
+
+Positive (raise)
+
+You find a critical clue advancing the main plot.
+
+A distant ally sends reinforcements.
+
+Negative (lower)
+
+The trail goes cold on a vital lead.
+
+You run out of component reagents for a key spell.
+
+Courage
+
+Positive (raise)
+
+You lead a charge into the fray and succeed.
+
+You stand your ground while allies retreat.
+
+Negative (lower)
+
+You’re ambushed and forced to flee.
+
+Repeated failures erode your confidence.
+
+Inspiration
+
+Positive (raise)
+
+You witness a breathtaking sunset over mountains.
+
+An eccentric inventor shows you a wild gadget.
+
+Negative (lower)
+
+Your design is criticized by a rigid council.
+
+You’re in a drab, soulless bureaucratic hall.
+
+Curiosity
+
+Positive (raise)
+
+You uncover a locked door marked with runes.
+
+A scholar offers to teach you forgotten lore.
+
+Negative (lower)
+
+Your questions are met with hostility.
+
+A section of the dungeon is completely empty.
+
+Social
+
+Positive (raise)
+
+You’re invited to a grand masquerade.
+
+Townsfolk cheer your arrival.
+
+Negative (lower)
+
+You offend a local dignitary in conversation.
+
+You spend days stranded alone.
+
+Arousal
+
+Positive (raise)
+
+Romantic subplot advancement (a first kiss).
+
+Sensual feast with exotic spiced wine.
+
+Negative (lower)
+
+Witnessing a disturbing ritual.
+
+Physical trauma or poisoning dulls desire.
+
+Shame
+
+Positive (lower)
+
+You apologize and make amends publicly.
+
+A friend defends you from gossip.
+
+Negative (raise)
+
+You’re caught pocketing a sacred relic.
+
+You botch a public speech in front of nobles.
+
+Loneliness
+
+Positive (lower)
+
+You reunite with a long‑lost sibling.
+
+A stray animal follows you faithfully.
+
+Negative (raise)
+
+Your party splits and you’re left behind.
+
+A trusted ally abandons the group.
+
+Disgust
+
+Positive (lower)
+
+You cleanse a tainted shrine with holy water.
+
+You observe a ritual of purification.
+
+Negative (raise)
+
+You wade through a plague‑ridden village.
+
+You spy an atrocity too vile to describe.

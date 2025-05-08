@@ -1,0 +1,24 @@
+{
+  "name": "Pond Fish",
+  "type": "Tiny Animal",
+  "hd": "1d2",
+  "hp": 1,
+  "ac": 12,
+  "initiative": 0,
+  "speed": "swim 30 ft.",
+  "attacks": [],
+  "stats": {
+    "str": 1,
+    "dex": 10,
+    "con": 10,
+    "int": 1,
+    "wis": 10,
+    "cha": 2
+  },
+  "skills": {
+    "Hide": 6,
+    "Swim": 8
+  },
+  "feats": [],
+  "notes": "Just vibin'."
+}

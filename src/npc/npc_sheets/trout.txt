@@ -1,0 +1,14 @@
+Name: River Trout
+Type: Small Animal
+Hit Dice: 1d4 (2 hp)
+Initiative: +1
+Speed: Swim 30 ft.
+AC: 13 (+1 Dex, +1 size), touch 13, flat-footed 12
+Base Attack/Grapple: +0/–4
+Attack: Flop +2 melee (1)
+Abilities: Str 2, Dex 13, Con 10, Int 1, Wis 10, Cha 2
+Skills: Swim +8
+Feats: Alertness
+Environment: Freshwater rivers
+Alignment: Neutral
+Notes: Edible. Passive. Can be caught or poisoned.
